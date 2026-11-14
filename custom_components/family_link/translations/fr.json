@@ -3,18 +3,18 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link n'a pas d'API officielle : l'intégration utilise votre session Google, comme l'application web familylink.google.com.\n\n1. Sur un ordinateur, connectez-vous à https://familylink.google.com avec votre compte **parent**.\n2. Exportez les cookies de cette page, par exemple avec l'extension Cookie-Editor (Export → JSON), ou copiez l'en-tête de requête `Cookie` depuis les outils de développement du navigateur (onglet Réseau, une requête vers kidsmanagement-pa.clients6.google.com).\n3. Collez-les ci-dessous.\n\nLes cookies restent dans Home Assistant ; l'intégration les maintient à jour toute seule.",
+        "description": "Family Link n'a pas d'API officielle : l'intégration utilise votre session Google, comme l'application web familylink.google.com.\n\n1. Sur un ordinateur, connectez-vous à {url} avec votre compte **parent**.\n2. Exportez les cookies de cette page, par exemple avec l'extension Cookie-Editor (Export → JSON), ou copiez l'en-tête de requête `Cookie` depuis les outils de développement du navigateur (onglet Réseau, une requête vers kidsmanagement-pa.clients6.google.com).\n3. Collez-les ci-dessous.\n\nLes cookies restent dans Home Assistant ; l'intégration les maintient à jour toute seule.",
         "data": { "cookies": "Cookies" },
         "data_description": { "cookies": "Export JSON, cookies.txt ou en-tête Cookie. Doit contenir SAPISID (ou __Secure-3PAPISID)." }
       },
       "reauth_confirm": {
         "title": "Se reconnecter",
-        "description": "Google n'accepte plus la session de {account}. Reconnectez-vous à https://familylink.google.com, exportez les cookies et collez-les ci-dessous.",
+        "description": "Google n'accepte plus la session de {account}. Reconnectez-vous à {url}, exportez les cookies et collez-les ci-dessous.",
         "data": { "cookies": "Cookies" }
       },
       "reconfigure": {
         "title": "Remplacer les cookies",
-        "description": "Collez des cookies récents exportés depuis https://familylink.google.com.",
+        "description": "Collez des cookies récents exportés depuis {url}.",
         "data": { "cookies": "Cookies" }
       }
     },

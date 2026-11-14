@@ -8,6 +8,14 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+
+try:  # Home Assistant 2025.8+: the options flow reloads the entry itself
+    from homeassistant.config_entries import OptionsFlowWithReload as _OptionsFlowBase
+
+    OPTIONS_FLOW_RELOADS = True
+except ImportError:
+    _OptionsFlowBase = OptionsFlow
+    OPTIONS_FLOW_RELOADS = False
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
@@ -38,6 +46,7 @@ from .models import parse_members, parse_my_email
 
 _LOGGER = logging.getLogger(__name__)
 
+URL = "https://familylink.google.com"
 COOKIES_SCHEMA = vol.Schema({vol.Required(CONF_COOKIES): TextSelector(TextSelectorConfig(multiline=True))})
 
 
@@ -82,7 +91,9 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
                     title=f"{NAME} ({email})" if email else NAME,
                     data={CONF_COOKIES: cookies.to_storage(), CONF_ACCOUNT: email},
                 )
-        return self.async_show_form(step_id="user", data_schema=COOKIES_SCHEMA, errors=errors)
+        return self.async_show_form(
+            step_id="user", data_schema=COOKIES_SCHEMA, errors=errors, description_placeholders={"url": URL}
+        )
 
     async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         return await self.async_step_reauth_confirm()
@@ -103,7 +114,7 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="reauth_confirm",
             data_schema=COOKIES_SCHEMA,
             errors=errors,
-            description_placeholders={"account": entry.data.get(CONF_ACCOUNT) or entry.title},
+            description_placeholders={"account": entry.data.get(CONF_ACCOUNT) or entry.title, "url": URL},
         )
 
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
@@ -116,7 +127,9 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_update_reload_and_abort(
                     entry, data={**entry.data, CONF_COOKIES: cookies.to_storage()}
                 )
-        return self.async_show_form(step_id="reconfigure", data_schema=COOKIES_SCHEMA, errors=errors)
+        return self.async_show_form(
+            step_id="reconfigure", data_schema=COOKIES_SCHEMA, errors=errors, description_placeholders={"url": URL}
+        )
 
     @staticmethod
     @callback
@@ -130,7 +143,7 @@ def _seconds(minimum: int, maximum: int, step: int) -> NumberSelector:
     )
 
 
-class FamilyLinkOptionsFlow(OptionsFlow):
+class FamilyLinkOptionsFlow(_OptionsFlowBase):
     """Update intervals, and the notify service of each child for the emergency message (one line per child)."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:

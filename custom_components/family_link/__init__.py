@@ -20,6 +20,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from .api import AuthError, FamilyLinkClient
 from .auth import GoogleCookies
+from .config_flow import OPTIONS_FLOW_RELOADS
 from .const import CARD_FILENAME, CONF_COOKIES, DOMAIN, FRONTEND_URL, REAUTH_NOTIFICATION_ID
 from .coordinator import FamilyLinkConfigEntry, FamilyLinkCoordinator
 from .services import async_setup_services
@@ -59,7 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
         # The child devices exist before their phones and tablets, which are linked to them (via_device)
         registry = dr.async_get(hass)
         for child_id, child in coordinator.data.children.items():
-            registry.async_get_or_create(
+            coordinator.child_device_ids[child_id] = registry.async_get_or_create(
                 config_entry_id=entry.entry_id,
                 identifiers={(DOMAIN, child_id)},
                 name=child.member.name,
@@ -67,13 +68,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
                 model="Supervised account",
                 entry_type=dr.DeviceEntryType.SERVICE,
                 configuration_url="https://familylink.google.com",
-            )
+            ).id
 
     register_children()
     entry.async_on_unload(coordinator.async_add_listener(register_children))
     coordinator.async_start_background()
     entry.async_on_unload(coordinator.async_stop_background)
-    entry.async_on_unload(entry.add_update_listener(_async_reload_on_options))
+    if not OPTIONS_FLOW_RELOADS:
+        entry.async_on_unload(entry.add_update_listener(_async_reload_on_options))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # Every entity now exists: write the states again so the status sensors name their tracker
     coordinator.async_update_listeners()

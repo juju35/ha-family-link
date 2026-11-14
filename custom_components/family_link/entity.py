@@ -59,15 +59,20 @@ class DeviceEntity(ChildEntity):
         self.device_id = device_id
         self._attr_unique_id = f"{child_id}_{device_id}_{key}"
         device = self.device
-        self._attr_device_info = DeviceInfo(
+        info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},
             name=device.name if device else device_id[:8],
-            manufacturer="Google" if not device or not device.model else None,
-            model=device.model if device else None,
-            via_device=(DOMAIN, child_id),
             configuration_url="https://familylink.google.com",
         )
-        self._attr_device_info = {k: v for k, v in self._attr_device_info.items() if v is not None}  # type: ignore[assignment]
+        if device and device.model:
+            info["model"] = device.model
+        # Linked to the child's device: by registry id since 2026.10 (via_device is deprecated), else by identifier
+        parent_id = coordinator.child_device_ids.get(child_id)
+        if parent_id and "via_device_id" in DeviceInfo.__optional_keys__:
+            info["via_device_id"] = parent_id  # type: ignore[typeddict-unknown-key]
+        else:
+            info["via_device"] = (DOMAIN, child_id)
+        self._attr_device_info = info
 
     @property
     def device(self) -> Device | None:

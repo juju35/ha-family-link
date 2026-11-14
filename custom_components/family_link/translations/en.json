@@ -3,18 +3,18 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link has no official API: the integration uses your Google session, like the familylink.google.com web app.\n\n1. On a computer, sign in to https://familylink.google.com with your **parent** account.\n2. Export the cookies of that page, for instance with the Cookie-Editor extension (Export → JSON), or copy the `Cookie` request header from the browser's developer tools (Network tab, any request to kidsmanagement-pa.clients6.google.com).\n3. Paste them below.\n\nThe cookies stay in Home Assistant; the integration keeps them fresh by itself.",
+        "description": "Family Link has no official API: the integration uses your Google session, like the familylink.google.com web app.\n\n1. On a computer, sign in to {url} with your **parent** account.\n2. Export the cookies of that page, for instance with the Cookie-Editor extension (Export → JSON), or copy the `Cookie` request header from the browser's developer tools (Network tab, any request to kidsmanagement-pa.clients6.google.com).\n3. Paste them below.\n\nThe cookies stay in Home Assistant; the integration keeps them fresh by itself.",
         "data": { "cookies": "Cookies" },
         "data_description": { "cookies": "JSON export, cookies.txt or Cookie header. It must hold SAPISID (or __Secure-3PAPISID)." }
       },
       "reauth_confirm": {
         "title": "Sign in again",
-        "description": "Google no longer accepts the session of {account}. Sign in to https://familylink.google.com again, export the cookies and paste them below.",
+        "description": "Google no longer accepts the session of {account}. Sign in to {url} again, export the cookies and paste them below.",
         "data": { "cookies": "Cookies" }
       },
       "reconfigure": {
         "title": "Replace the cookies",
-        "description": "Paste fresh cookies exported from https://familylink.google.com.",
+        "description": "Paste fresh cookies exported from {url}.",
         "data": { "cookies": "Cookies" }
       }
     },

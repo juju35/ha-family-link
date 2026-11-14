@@ -97,6 +97,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         self.client = client
         client.set_cookie_listener(self.cookies_changed)
         self.options_snapshot = dict(entry.options)
+        self.child_device_ids: dict[str, str] = {}  # child user id -> device registry id
         self.location_interval = timedelta(
             seconds=int(entry.options.get(CONF_LOCATION_INTERVAL, DEFAULT_LOCATION_INTERVAL))
         )
