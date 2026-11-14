@@ -1,0 +1,129 @@
+add_bonus:
+  fields:
+    child:
+      required: true
+      example: "Alex"
+      selector:
+        text:
+    device:
+      example: "Pixel 8"
+      selector:
+        text:
+    minutes:
+      required: true
+      default: 30
+      selector:
+        number:
+          min: 1
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+
+revoke_bonus:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    device:
+      selector:
+        text:
+
+lock:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    device:
+      selector:
+        text:
+
+unlock:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    device:
+      selector:
+        text:
+
+ring:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    device:
+      selector:
+        text:
+
+refresh_location:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+
+set_app:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    app:
+      required: true
+      example: "com.google.android.youtube"
+      selector:
+        text:
+    mode:
+      required: true
+      selector:
+        select:
+          translation_key: app_mode
+          options:
+            - limit
+            - block
+            - always_allow
+            - default
+    minutes:
+      selector:
+        number:
+          min: 0
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+
+emergency:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    device:
+      selector:
+        text:
+    message:
+      example: "Call me back right now please."
+      selector:
+        text:
+          multiline: true
+    ring:
+      default: true
+      selector:
+        boolean:
+    notify_service:
+      example: "notify.mobile_app_pixel_8"
+      selector:
+        text:
+    refresh_location:
+      default: false
+      selector:
+        boolean:
+
+refresh:
+  fields:
+    child:
+      selector:
+        text:

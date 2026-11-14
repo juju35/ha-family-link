@@ -1,0 +1,183 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link n'a pas d'API officielle : l'intégration utilise votre session Google, comme l'application web familylink.google.com.\n\n1. Sur un ordinateur, connectez-vous à https://familylink.google.com avec votre compte **parent**.\n2. Exportez les cookies de cette page, par exemple avec l'extension Cookie-Editor (Export → JSON), ou copiez l'en-tête de requête `Cookie` depuis les outils de développement du navigateur (onglet Réseau, une requête vers kidsmanagement-pa.clients6.google.com).\n3. Collez-les ci-dessous.\n\nLes cookies restent dans Home Assistant ; l'intégration les maintient à jour toute seule.",
+        "data": { "cookies": "Cookies" },
+        "data_description": { "cookies": "Export JSON, cookies.txt ou en-tête Cookie. Doit contenir SAPISID (ou __Secure-3PAPISID)." }
+      },
+      "reauth_confirm": {
+        "title": "Se reconnecter",
+        "description": "Google n'accepte plus la session de {account}. Reconnectez-vous à https://familylink.google.com, exportez les cookies et collez-les ci-dessous.",
+        "data": { "cookies": "Cookies" }
+      },
+      "reconfigure": {
+        "title": "Remplacer les cookies",
+        "description": "Collez des cookies récents exportés depuis https://familylink.google.com.",
+        "data": { "cookies": "Cookies" }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Aucun cookie de session Google trouvé : le texte doit contenir SAPISID ou __Secure-3PAPISID.",
+      "invalid_auth": "Google a refusé ces cookies. Reconnectez-vous à familylink.google.com et exportez-les à nouveau.",
+      "cannot_connect": "Impossible de joindre Family Link. Réessayez dans un instant.",
+      "no_children": "Ce compte ne supervise aucun enfant dans Family Link."
+    },
+    "abort": {
+      "already_configured": "Ce compte Google est déjà configuré.",
+      "reauth_successful": "Reconnexion réussie.",
+      "reconfigure_successful": "Cookies remplacés.",
+      "wrong_account": "Ces cookies appartiennent à un autre compte Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Family Link",
+        "description": "Enfants : {children}.",
+        "data": {
+          "scan_interval": "Intervalle de mise à jour",
+          "location_interval": "Intervalle de localisation",
+          "stale_after": "Garder les données en cache pendant",
+          "notify_services": "Service de notification d'urgence par enfant"
+        },
+        "data_description": {
+          "scan_interval": "Temps d'écran, verrouillages et bonus.",
+          "location_interval": "Dernière position connue (l'appareil n'est pas réveillé).",
+          "stale_after": "Quand Family Link est injoignable, les dernières données restent affichées pendant cette durée avant que les entités deviennent indisponibles.",
+          "notify_services": "Une ligne par enfant, pour le message d'urgence via l'application Home Assistant du téléphone de l'enfant, par ex. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Une ligne ne correspond à aucun enfant de la famille."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Statut",
+        "state": {
+          "tracked": "Suivi",
+          "attention": "Attention",
+          "locked": "Verrouillé",
+          "not_tracked": "Non suivi"
+        }
+      },
+      "screen_time": { "name": "Temps d'écran" },
+      "battery": { "name": "Batterie" },
+      "device_screen_time": { "name": "Temps d'écran" },
+      "remaining_time": { "name": "Temps restant" }
+    },
+    "switch": {
+      "lock": { "name": "Verrouillage" }
+    },
+    "button": {
+      "ring": { "name": "Faire sonner" },
+      "refresh_location": { "name": "Actualiser la position" }
+    },
+    "device_tracker": {
+      "location": { "name": "Position" }
+    }
+  },
+  "exceptions": {
+    "unknown_child": { "message": "Aucun enfant supervisé ne correspond à « {child} »." },
+    "unknown_device": { "message": "Aucun appareil de cet enfant ne correspond à « {device} »." },
+    "device_required": { "message": "Cet enfant a plusieurs appareils : indiquez l'appareil." },
+    "no_bonus": { "message": "Aucun bonus en cours sur cet appareil." },
+    "minutes_required": { "message": "Une limite demande un nombre de minutes." },
+    "emergency_nothing": { "message": "Rien à faire : activez la sonnerie, ou donnez un message et un service de notification." },
+    "unknown_notify": { "message": "Le service de notification {service} n'existe pas." },
+    "action_failed": { "message": "Family Link a refusé l'action ({action}) : {error}" }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Limite quotidienne",
+        "block": "Bloquer",
+        "always_allow": "Toujours autoriser",
+        "default": "Par défaut (aucune règle)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Ajouter du temps bonus",
+      "description": "Donne du temps d'écran en plus pour aujourd'hui sur un appareil.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant, ou une de ses entités." },
+        "device": { "name": "Appareil", "description": "Nom ou identifiant de l'appareil ; facultatif si l'enfant n'en a qu'un." },
+        "minutes": { "name": "Minutes", "description": "Temps en plus." }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Révoquer le bonus",
+      "description": "Annule le bonus de temps en cours sur un appareil.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "device": { "name": "Appareil", "description": "Nom ou identifiant de l'appareil." }
+      }
+    },
+    "lock": {
+      "name": "Verrouiller",
+      "description": "Verrouille un appareil maintenant (appels et applis toujours autorisées restent disponibles).",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "device": { "name": "Appareil", "description": "Nom ou identifiant de l'appareil." }
+      }
+    },
+    "unlock": {
+      "name": "Déverrouiller",
+      "description": "Déverrouille un appareil jusqu'à la prochaine restriction programmée.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "device": { "name": "Appareil", "description": "Nom ou identifiant de l'appareil." }
+      }
+    },
+    "ring": {
+      "name": "Faire sonner",
+      "description": "Fait sonner un appareil, même en silencieux, pour le retrouver.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "device": { "name": "Appareil", "description": "Nom ou identifiant de l'appareil." }
+      }
+    },
+    "refresh_location": {
+      "name": "Actualiser la position",
+      "description": "Demande une position récente à l'appareil de l'enfant (consomme sa batterie).",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." }
+      }
+    },
+    "set_app": {
+      "name": "Régler une appli",
+      "description": "Bloque une appli, l'autorise toujours, la limite par jour ou supprime sa règle.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "app": { "name": "Appli", "description": "Nom de paquet ou titre de l'appli." },
+        "mode": { "name": "Règle", "description": "Ce qu'il faut appliquer." },
+        "minutes": { "name": "Minutes", "description": "Limite quotidienne, pour la règle limite." }
+      }
+    },
+    "emergency": {
+      "name": "Urgence",
+      "description": "Fait sonner l'appareil via Family Link et, avec un service de notification, envoie une notification critique avec le message.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
+        "device": { "name": "Appareil", "description": "Appareil à faire sonner." },
+        "message": { "name": "Message", "description": "Texte de la notification." },
+        "ring": { "name": "Faire sonner", "description": "Faire sonner l'appareil via Family Link." },
+        "notify_service": { "name": "Service de notification", "description": "Remplace le service des options, par ex. notify.mobile_app_pixel_8." },
+        "refresh_location": { "name": "Actualiser la position", "description": "Demander aussi une position récente." }
+      }
+    },
+    "refresh": {
+      "name": "Actualiser",
+      "description": "Récupère les données Family Link maintenant.",
+      "fields": {
+        "child": { "name": "Enfant", "description": "Seulement cet enfant (tous si vide)." }
+      }
+    }
+  }
+}

@@ -1,0 +1,124 @@
+"""Client: signing, retries, cookie rotation, error classes, action payloads."""
+
+from __future__ import annotations
+
+import json
+from unittest.mock import patch
+
+import pytest
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+from custom_components.family_link.api import ApiError, AuthError, FamilyLinkClient, TransientError
+from custom_components.family_link.auth import GoogleCookies
+
+from . import data
+
+
+@pytest.fixture(autouse=True)
+def no_sleep():
+    with patch("custom_components.family_link.api.asyncio.sleep") as sleep:
+        yield sleep
+
+
+def client(hass: HomeAssistant, listener=None) -> FamilyLinkClient:
+    c = FamilyLinkClient(async_get_clientsession(hass), GoogleCookies.parse(data.COOKIES))
+    if listener:
+        c.set_cookie_listener(listener)
+    return c
+
+
+async def test_request_headers(hass: HomeAssistant, aioclient_mock) -> None:
+    data.mock_api(aioclient_mock)
+    members = await client(hass).get_members()
+    assert [m.name for m in members] == ["Parent", "Alex"]
+    _method, _url, _body, headers = aioclient_mock.mock_calls[0]
+    assert headers["Authorization"].startswith("SAPISIDHASH ")
+    assert "SAPISID=sapisid/abc" in headers["Cookie"]
+    assert headers["Origin"] == "https://familylink.google.com"
+
+
+async def test_transient_errors_are_retried(hass: HomeAssistant, aioclient_mock, no_sleep) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=503)
+    with pytest.raises(TransientError):
+        await client(hass).get_members()
+    assert aioclient_mock.call_count == 3
+    assert no_sleep.call_count == 2
+
+
+async def test_retry_after_is_honored(hass: HomeAssistant, aioclient_mock, no_sleep) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=429, headers={"Retry-After": "7"})
+    with pytest.raises(TransientError):
+        await client(hass).get_members()
+    assert no_sleep.call_args_list[0].args[0] == 7
+
+
+async def test_timeout_is_transient(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", exc=TimeoutError())
+    with pytest.raises(TransientError):
+        await client(hass).get_members()
+
+
+async def test_401_rotates_then_reports_auth(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=401)
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    with pytest.raises(AuthError):
+        await client(hass).get_members()
+    urls = [str(call[1]) for call in aioclient_mock.mock_calls]
+    assert urls.count("https://accounts.google.com/RotateCookies") == 1
+    assert sum("members" in u for u in urls) == 2
+
+
+async def test_403_forbidden_action_is_not_auth(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post(
+        f"{data.BASE}/people/{data.CHILD}/devices/{data.PHONE}:executeRemoteAction",
+        status=403,
+        text='{"error": {"status": "PERMISSION_DENIED"}}',
+    )
+    with pytest.raises(ApiError):
+        await client(hass).ring(data.CHILD, data.PHONE)
+
+
+async def test_rotation_saves_new_cookies(hass: HomeAssistant, aioclient_mock) -> None:
+    saved = []
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="", cookies={"__Secure-1PSIDTS": "sidts-new"})
+    c = client(hass, saved.append)
+    assert await c.rotate_cookies(force=True) is True
+    assert c.cookies.values["__Secure-1PSIDTS"] == "sidts-new"
+    assert saved
+    # A second rotation within a minute is skipped unless forced
+    assert await c.rotate_cookies() is False
+
+
+async def test_location_unavailable_is_none(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/location/{data.CHILD}", status=404)
+    assert await client(hass).get_location(data.CHILD) is None
+
+
+async def test_action_payloads(hass: HomeAssistant, aioclient_mock) -> None:
+    data.mock_api(aioclient_mock)
+    c = client(hass)
+    await c.lock(data.CHILD, data.PHONE)
+    await c.unlock(data.CHILD, data.PHONE)
+    assert await c.add_bonus(data.CHILD, data.PHONE, 30) == data.BONUS_ID
+    await c.revoke_bonus(data.CHILD, data.BONUS_ID)
+    await c.ring(data.CHILD, data.PHONE)
+    await c.set_app(data.CHILD, "com.mojang.minecraftpe", "limit", 45)
+    bodies = [json.loads(call[2]) for call in aioclient_mock.mock_calls if call[2]]
+    assert bodies[0] == [None, data.CHILD, [[None, None, 7, data.PHONE]], [1]]
+    assert bodies[1][2][0][2] == 4
+    assert bodies[2][2][0][2] == 10 and bodies[2][2][0][-1] == [["1800", 0]]
+    assert bodies[3] == [None, data.CHILD, data.PHONE, [2, None, data.PHONE, 0]]
+    assert bodies[4] == [data.CHILD, [[["com.mojang.minecraftpe"], None, [45, 1]]]]
+    revoke = next(call for call in aioclient_mock.mock_calls if "timeLimitOverride/" in str(call[1]))
+    assert "%24httpMethod=DELETE" in str(revoke[1]) or "$httpMethod=DELETE" in str(revoke[1])
+
+
+async def test_invalid_ids_are_refused(hass: HomeAssistant) -> None:
+    c = client(hass)
+    with pytest.raises(ApiError):
+        await c.ring(data.CHILD, "../../etc")
+    with pytest.raises(ApiError):
+        await c.revoke_bonus(data.CHILD, "not-a-uuid")
+    with pytest.raises(ApiError):
+        await c.set_app(data.CHILD, "com.x", "limit")
