@@ -48,18 +48,24 @@
           "scan_interval": "Uppdateringsintervall",
           "location_interval": "Platsintervall",
           "stale_after": "Behåll cachade data i",
-          "notify_services": "Nödaviseringstjänst per barn"
+          "notify_services": "Nödaviseringstjänst per barn",
+          "pronote_timetables": "Pronote-schema per barn (skolläge)",
+          "school_mode_apps": "Appar som nås i skolläge"
         },
         "data_description": {
           "scan_interval": "Skärmtid, låsningar och bonusar.",
           "location_interval": "Senast kända plats (enheten väcks inte).",
           "stale_after": "När Family Link inte kan nås visas senaste data så länge innan entiteterna blir otillgängliga.",
-          "notify_services": "En rad per barn, för nödmeddelandet via Home Assistant-appen på barnets telefon, t.ex. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "En rad per barn, för nödmeddelandet via Home Assistant-appen på barnets telefon, t.ex. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "En rad per barn med sensorn ”dagens schema” från Pronote-integrationen, t.ex. `Alex: sensor.pronote_alex_today_s_timetable`: skolläget startar då 15 min före första lektionen och stängs av efter den sista.",
+          "school_mode_apps": "Paketnamn, ett per rad, utöver de viktiga apparna (telefon, meddelanden, kartor, Home Assistant, Pronote…) och de alltid tillåtna."
         }
       }
     },
     "error": {
-      "unknown_child": "En rad nämner inget barn i familjen."
+      "unknown_child": "En rad nämner inget barn i familjen.",
+      "invalid_sensor": "Ange en sensor (sensor.…) från Pronote-integrationen.",
+      "invalid_app": "En rad är inte ett paketnamn (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,41 @@
       },
       "remaining_time": {
         "name": "Återstående tid"
+      },
+      "blocked_apps": {
+        "name": "Blockerade appar"
+      },
+      "limited_apps": {
+        "name": "Begränsade appar"
+      },
+      "always_allowed_apps": {
+        "name": "Alltid tillåtna appar"
+      },
+      "daily_limit": {
+        "name": "Daglig gräns"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Nästa begränsning"
       }
     },
     "switch": {
       "lock": {
         "name": "Lås"
+      },
+      "school_mode": {
+        "name": "Skolläge"
+      },
+      "bedtime": {
+        "name": "Läggdags"
+      },
+      "school_time": {
+        "name": "Skoltid"
+      },
+      "daily_limit": {
+        "name": "Daglig gräns"
       }
     },
     "button": {
@@ -97,11 +133,54 @@
       },
       "refresh_location": {
         "name": "Uppdatera plats"
+      },
+      "add_bonus": {
+        "name": "Lägg till {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Plats"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Läggdags"
+      },
+      "schooltime_active": {
+        "name": "Skoltid"
+      },
+      "limit_reached": {
+        "name": "Daglig gräns nådd"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Gräns {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Läggdags börjar, {day}"
+      },
+      "bedtime_end": {
+        "name": "Läggdags slutar, {day}"
+      },
+      "school_time_start": {
+        "name": "Skoltid börjar, {day}"
+      },
+      "school_time_end": {
+        "name": "Skoltid slutar, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Samtal och sms",
+        "state": {
+          "anyone": "Alla",
+          "contacts": "Bara kontakter du lägger till",
+          "contacts_groups": "Kontakter du lägger till och begränsade grupper"
+        }
       }
     }
   },
@@ -132,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link avvisade åtgärden ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Schemat för {child} har inte kunnat läsas från Family Link än."
+    },
+    "no_window_today": {
+      "message": "{child} har ingen läggdags i dag: ange start och slut."
+    },
+    "no_slot": {
+      "message": "Inget tidsfönster på {day} i veckoschemat: skapa det först i Family Link-appen."
+    },
+    "two_slots": {
+      "message": "{day} har två skoltidsfönster (en rast): ändra dem i Family Link-appen."
+    },
+    "schedule_nothing": {
+      "message": "Ange en start, ett slut, eller slå på eller av dagarna."
     }
   },
   "selector": {
@@ -141,6 +235,23 @@
         "block": "Blockera",
         "always_allow": "Tillåt alltid",
         "default": "Standard (ingen appregel)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Läggdags",
+        "school_time": "Skoltid"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Måndag",
+        "tue": "Tisdag",
+        "wed": "Onsdag",
+        "thu": "Torsdag",
+        "fri": "Fredag",
+        "sat": "Lördag",
+        "sun": "Söndag"
       }
     }
   },
@@ -288,6 +399,98 @@
         "child": {
           "name": "Barn",
           "description": "Bara det här barnet (alla om tomt)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Skolläge",
+      "description": "Blockerar alla barnets appar utom de viktiga (telefon, meddelanden, kartor, Home Assistant, skolappar…) och de alltid tillåtna, eller återställer deras regler.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "enable": {
+          "name": "På",
+          "description": "På för att blockera apparna, av för att återställa deras regler."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Ändra veckoschemat",
+      "description": "Ändrar veckans tider för läggdags eller skoltid vissa dagar, eller slår på eller av de dagarna.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Läggdags eller skoltid."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Veckodagar att ändra."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Starttid; den nuvarande om tomt."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Sluttid; den nuvarande om tomt."
+        },
+        "enable": {
+          "name": "På",
+          "description": "Slår på eller av dessa dagar; oförändrat om tomt."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Läggdags eller skoltid i dag",
+      "description": "Slår på eller av läggdags eller skoltid bara i dag, med dagens tider om inga andra anges.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Läggdags eller skoltid."
+        },
+        "enable": {
+          "name": "På",
+          "description": "På eller av i dag."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Starttid; den nuvarande om tomt."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Sluttid; den nuvarande om tomt."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Ändra daglig gräns",
+      "description": "Anger skärmtidskvoten: för vissa veckodagar varje vecka (alla enheter) eller för i dag (vissa eller alla enheter).",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "minutes": {
+          "name": "Minuter",
+          "description": "Kvot i minuter; 0 spärrar dagen."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Veckodagar att ändra varje vecka; tomt bara för i dag."
+        },
+        "devices": {
+          "name": "Enheter",
+          "description": "Enheter för dagens kvot (namn eller id); alla om tomt."
         }
       }
     }

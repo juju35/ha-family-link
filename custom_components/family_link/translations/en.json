@@ -4,18 +4,26 @@
       "user": {
         "title": "Family Link",
         "description": "Family Link has no official API: the integration uses your Google session, like the familylink.google.com web app.\n\n1. On a computer, sign in to {url} with your **parent** account.\n2. Export the cookies of that page, for instance with the Cookie-Editor extension (Export → JSON), or copy the `Cookie` request header from the browser's developer tools (Network tab, any request to kidsmanagement-pa.clients6.google.com).\n3. Paste them below.\n\nThe cookies stay in Home Assistant; the integration keeps them fresh by itself.",
-        "data": { "cookies": "Cookies" },
-        "data_description": { "cookies": "JSON export, cookies.txt or Cookie header. It must hold SAPISID (or __Secure-3PAPISID)." }
+        "data": {
+          "cookies": "Cookies"
+        },
+        "data_description": {
+          "cookies": "JSON export, cookies.txt or Cookie header. It must hold SAPISID (or __Secure-3PAPISID)."
+        }
       },
       "reauth_confirm": {
         "title": "Sign in again",
         "description": "Google no longer accepts the session of {account}. Sign in to {url} again, export the cookies and paste them below.",
-        "data": { "cookies": "Cookies" }
+        "data": {
+          "cookies": "Cookies"
+        }
       },
       "reconfigure": {
         "title": "Replace the cookies",
         "description": "Paste fresh cookies exported from {url}.",
-        "data": { "cookies": "Cookies" }
+        "data": {
+          "cookies": "Cookies"
+        }
       }
     },
     "error": {
@@ -40,18 +48,24 @@
           "scan_interval": "Update interval",
           "location_interval": "Location interval",
           "stale_after": "Keep cached data for",
-          "notify_services": "Emergency notification service per child"
+          "notify_services": "Emergency notification service per child",
+          "pronote_timetables": "Pronote timetable per child (school mode)",
+          "school_mode_apps": "Apps left reachable by the school mode"
         },
         "data_description": {
           "scan_interval": "Screen time, locks and bonuses.",
           "location_interval": "Last known location (the device is not woken up).",
           "stale_after": "When Family Link can't be reached, the last data stays shown this long before the entities become unavailable.",
-          "notify_services": "One line per child, for the emergency message through the Home Assistant app on the child's phone, e.g. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "One line per child, for the emergency message through the Home Assistant app on the child's phone, e.g. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "One line per child with the \"today's timetable\" sensor of the Pronote integration, e.g. `Alex: sensor.pronote_alex_today_s_timetable`: the school mode then turns on 15 min before the first lesson and off after the last one.",
+          "school_mode_apps": "Package names, one per line, on top of the essential apps (phone, messages, maps, Home Assistant, Pronote…) and the always allowed ones."
         }
       }
     },
     "error": {
-      "unknown_child": "A line names no child of the family."
+      "unknown_child": "A line names no child of the family.",
+      "invalid_sensor": "Give a sensor (sensor.…) of the Pronote integration.",
+      "invalid_app": "A line is not a package name (com.example.app)."
     }
   },
   "entity": {
@@ -65,32 +79,154 @@
           "not_tracked": "Not tracked"
         }
       },
-      "screen_time": { "name": "Screen time" },
-      "battery": { "name": "Battery" },
-      "device_screen_time": { "name": "Screen time" },
-      "remaining_time": { "name": "Time left" }
+      "screen_time": {
+        "name": "Screen time"
+      },
+      "battery": {
+        "name": "Battery"
+      },
+      "device_screen_time": {
+        "name": "Screen time"
+      },
+      "remaining_time": {
+        "name": "Time left"
+      },
+      "blocked_apps": {
+        "name": "Blocked apps"
+      },
+      "limited_apps": {
+        "name": "Limited apps"
+      },
+      "always_allowed_apps": {
+        "name": "Always allowed apps"
+      },
+      "daily_limit": {
+        "name": "Daily limit"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Next restriction"
+      }
     },
     "switch": {
-      "lock": { "name": "Lock" }
+      "lock": {
+        "name": "Lock"
+      },
+      "school_mode": {
+        "name": "School mode"
+      },
+      "bedtime": {
+        "name": "Bedtime"
+      },
+      "school_time": {
+        "name": "School time"
+      },
+      "daily_limit": {
+        "name": "Daily limit"
+      }
     },
     "button": {
-      "ring": { "name": "Ring" },
-      "refresh_location": { "name": "Update location" }
+      "ring": {
+        "name": "Ring"
+      },
+      "refresh_location": {
+        "name": "Update location"
+      },
+      "add_bonus": {
+        "name": "Add {minutes} min"
+      }
     },
     "device_tracker": {
-      "location": { "name": "Location" }
+      "location": {
+        "name": "Location"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Bedtime"
+      },
+      "schooltime_active": {
+        "name": "School time"
+      },
+      "limit_reached": {
+        "name": "Daily limit reached"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Bedtime start {day}"
+      },
+      "bedtime_end": {
+        "name": "Bedtime end {day}"
+      },
+      "school_time_start": {
+        "name": "School time start {day}"
+      },
+      "school_time_end": {
+        "name": "School time end {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Calls and texts",
+        "state": {
+          "anyone": "Anyone",
+          "contacts": "Only contacts you add",
+          "contacts_groups": "Contacts you add and limited groups"
+        }
+      }
     }
   },
   "exceptions": {
-    "unknown_child": { "message": "No supervised child matches \"{child}\"." },
-    "unknown_device": { "message": "No device of this child matches \"{device}\"." },
-    "device_required": { "message": "This child has several devices: give the device." },
-    "no_bonus": { "message": "No bonus is running on this device." },
-    "minutes_required": { "message": "A limit needs a number of minutes." },
-    "emergency_nothing": { "message": "Nothing to do: turn on the ring, or give a message and a notify service." },
-    "unknown_notify": { "message": "The notify service {service} does not exist." },
-    "unknown_app": { "message": "No app of this child matches \"{app}\": give its exact title or its package name (com.example.app)." },
-    "action_failed": { "message": "Family Link refused the action ({action}): {error}" }
+    "unknown_child": {
+      "message": "No supervised child matches \"{child}\"."
+    },
+    "unknown_device": {
+      "message": "No device of this child matches \"{device}\"."
+    },
+    "device_required": {
+      "message": "This child has several devices: give the device."
+    },
+    "no_bonus": {
+      "message": "No bonus is running on this device."
+    },
+    "minutes_required": {
+      "message": "A limit needs a number of minutes."
+    },
+    "emergency_nothing": {
+      "message": "Nothing to do: turn on the ring, or give a message and a notify service."
+    },
+    "unknown_notify": {
+      "message": "The notify service {service} does not exist."
+    },
+    "unknown_app": {
+      "message": "No app of this child matches \"{app}\": give its exact title or its package name (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link refused the action ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "The schedule of {child} could not be read from Family Link yet."
+    },
+    "no_window_today": {
+      "message": "{child} has no bedtime today: give its start and end."
+    },
+    "no_slot": {
+      "message": "No slot on {day} in the weekly schedule: create it in the Family Link app first."
+    },
+    "two_slots": {
+      "message": "{day} has two school time slots (a break): change them in the Family Link app."
+    },
+    "schedule_nothing": {
+      "message": "Give a start, an end, or turn the days on or off."
+    }
   },
   "selector": {
     "app_mode": {
@@ -100,6 +236,23 @@
         "always_allow": "Always allow",
         "default": "Default (no app rule)"
       }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Bedtime",
+        "school_time": "School time"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
     }
   },
   "services": {
@@ -107,77 +260,238 @@
       "name": "Add a time bonus",
       "description": "Gives extra screen time for today on a device.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child, or one of their entities." },
-        "device": { "name": "Device", "description": "Name or id of the device; optional when the child has only one." },
-        "minutes": { "name": "Minutes", "description": "Extra time." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child, or one of their entities."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Name or id of the device; optional when the child has only one."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "Extra time."
+        }
       }
     },
     "revoke_bonus": {
       "name": "Revoke the bonus",
       "description": "Cancels the time bonus running on a device.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Name or id of the device." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Name or id of the device."
+        }
       }
     },
     "lock": {
       "name": "Lock",
       "description": "Locks a device now (calls and always-allowed apps keep working).",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Name or id of the device." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Name or id of the device."
+        }
       }
     },
     "unlock": {
       "name": "Unlock",
       "description": "Unlocks a device until the next scheduled restriction.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Name or id of the device." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Name or id of the device."
+        }
       }
     },
     "ring": {
       "name": "Ring",
       "description": "Makes a device ring, even on silent, to find it.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Name or id of the device." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Name or id of the device."
+        }
       }
     },
     "refresh_location": {
       "name": "Update location",
       "description": "Asks the child's device for a fresh location (uses its battery).",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        }
       }
     },
     "set_app": {
       "name": "Set an app rule",
       "description": "Blocks an app, always allows it, limits it per day or removes its rule.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "app": { "name": "App", "description": "Package name or title of the app." },
-        "mode": { "name": "Rule", "description": "What to apply." },
-        "minutes": { "name": "Minutes", "description": "Daily limit, for the limit rule." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "app": {
+          "name": "App",
+          "description": "Package name or title of the app."
+        },
+        "mode": {
+          "name": "Rule",
+          "description": "What to apply."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "Daily limit, for the limit rule."
+        }
       }
     },
     "emergency": {
       "name": "Emergency",
       "description": "Rings the device through Family Link and, with a notify service, sends a critical notification with the message.",
       "fields": {
-        "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Device to ring; every device of the child when empty." },
-        "message": { "name": "Message", "description": "Text of the notification." },
-        "ring": { "name": "Ring", "description": "Ring the device through Family Link." },
-        "notify_service": { "name": "Notify service", "description": "Overrides the service set in the options, e.g. notify.mobile_app_pixel_8." },
-        "refresh_location": { "name": "Update location", "description": "Also ask for a fresh location." }
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "device": {
+          "name": "Device",
+          "description": "Device to ring; every device of the child when empty."
+        },
+        "message": {
+          "name": "Message",
+          "description": "Text of the notification."
+        },
+        "ring": {
+          "name": "Ring",
+          "description": "Ring the device through Family Link."
+        },
+        "notify_service": {
+          "name": "Notify service",
+          "description": "Overrides the service set in the options, e.g. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Update location",
+          "description": "Also ask for a fresh location."
+        }
       }
     },
     "refresh": {
       "name": "Refresh",
       "description": "Fetches Family Link data now.",
       "fields": {
-        "child": { "name": "Child", "description": "Only this child (all when empty)." }
+        "child": {
+          "name": "Child",
+          "description": "Only this child (all when empty)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "School mode",
+      "description": "Blocks every app of the child but the essential ones (phone, messages, maps, Home Assistant, school apps…) and the always allowed ones, or puts their rules back.",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "enable": {
+          "name": "On",
+          "description": "On to block the apps, off to put their rules back."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Set the weekly schedule",
+      "description": "Changes the weekly hours of bedtime or school time on some days, or turns those days on or off.",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Bedtime or school time."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Weekdays to change."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Start time; the current one when empty."
+        },
+        "end": {
+          "name": "End",
+          "description": "End time; the current one when empty."
+        },
+        "enable": {
+          "name": "On",
+          "description": "Turns these days on or off; unchanged when empty."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Bedtime or school time today",
+      "description": "Turns bedtime or school time on or off for today only, with today's hours unless others are given.",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Bedtime or school time."
+        },
+        "enable": {
+          "name": "On",
+          "description": "On or off for today."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Start time; the current one when empty."
+        },
+        "end": {
+          "name": "End",
+          "description": "End time; the current one when empty."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Set the daily limit",
+      "description": "Sets the screen time quota: of some weekdays every week (all devices), or of today (some or all devices).",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "Quota in minutes; 0 blocks the day."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Weekdays to change every week; empty for today only."
+        },
+        "devices": {
+          "name": "Devices",
+          "description": "Devices for today's quota (names or ids); every device when empty."
+        }
       }
     }
   }

@@ -48,18 +48,24 @@
           "scan_interval": "Interval aktualizace",
           "location_interval": "Interval polohy",
           "stale_after": "Uchovávat data v mezipaměti",
-          "notify_services": "Služba nouzových oznámení pro každé dítě"
+          "notify_services": "Služba nouzových oznámení pro každé dítě",
+          "pronote_timetables": "Rozvrh Pronote pro každé dítě (školní režim)",
+          "school_mode_apps": "Aplikace dostupné ve školním režimu"
         },
         "data_description": {
           "scan_interval": "Čas u obrazovky, zámky a bonusy.",
           "location_interval": "Poslední známá poloha (zařízení se neprobudí).",
           "stale_after": "Když je Family Link nedostupný, poslední data zůstanou zobrazena po tuto dobu, než se entity stanou nedostupnými.",
-          "notify_services": "Jeden řádek na dítě pro nouzovou zprávu přes aplikaci Home Assistant v telefonu dítěte, např. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Jeden řádek na dítě pro nouzovou zprávu přes aplikaci Home Assistant v telefonu dítěte, např. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Jeden řádek na dítě se senzorem „dnešní rozvrh“ integrace Pronote, např. `Alex: sensor.pronote_alex_today_s_timetable`: školní režim se pak zapne 15 min před první hodinou a vypne po poslední.",
+          "school_mode_apps": "Názvy balíčků, jeden na řádek, kromě základních aplikací (telefon, zprávy, mapy, Home Assistant, Pronote…) a vždy povolených."
         }
       }
     },
     "error": {
-      "unknown_child": "Jeden řádek neuvádí žádné dítě z rodiny."
+      "unknown_child": "Jeden řádek neuvádí žádné dítě z rodiny.",
+      "invalid_sensor": "Uveďte senzor (sensor.…) integrace Pronote.",
+      "invalid_app": "Jeden řádek není název balíčku (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,41 @@
       },
       "remaining_time": {
         "name": "Zbývající čas"
+      },
+      "blocked_apps": {
+        "name": "Zablokované aplikace"
+      },
+      "limited_apps": {
+        "name": "Omezené aplikace"
+      },
+      "always_allowed_apps": {
+        "name": "Vždy povolené aplikace"
+      },
+      "daily_limit": {
+        "name": "Denní limit"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Další omezení"
       }
     },
     "switch": {
       "lock": {
         "name": "Zámek"
+      },
+      "school_mode": {
+        "name": "Školní režim"
+      },
+      "bedtime": {
+        "name": "Večerka"
+      },
+      "school_time": {
+        "name": "Školní čas"
+      },
+      "daily_limit": {
+        "name": "Denní limit"
       }
     },
     "button": {
@@ -97,11 +133,54 @@
       },
       "refresh_location": {
         "name": "Aktualizovat polohu"
+      },
+      "add_bonus": {
+        "name": "Přidat {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Poloha"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Večerka"
+      },
+      "schooltime_active": {
+        "name": "Školní čas"
+      },
+      "limit_reached": {
+        "name": "Dosažen denní limit"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Začátek večerky: {day}"
+      },
+      "bedtime_end": {
+        "name": "Konec večerky: {day}"
+      },
+      "school_time_start": {
+        "name": "Začátek školního času: {day}"
+      },
+      "school_time_end": {
+        "name": "Konec školního času: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Hovory a SMS",
+        "state": {
+          "anyone": "Kdokoli",
+          "contacts": "Jen kontakty, které přidáte",
+          "contacts_groups": "Přidané kontakty a omezené skupiny"
+        }
       }
     }
   },
@@ -132,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link odmítl akci ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Rozvrh pro {child} se zatím nepodařilo načíst z Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} dnes nemá večerku: uveďte začátek a konec."
+    },
+    "no_slot": {
+      "message": "V týdenním rozvrhu není úsek na {day}: nejprve ho vytvořte v aplikaci Family Link."
+    },
+    "two_slots": {
+      "message": "{day} má dva úseky školního času (přestávku): změňte je v aplikaci Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Uveďte začátek, konec nebo zapněte či vypněte dny."
     }
   },
   "selector": {
@@ -141,6 +235,23 @@
         "block": "Zablokovat",
         "always_allow": "Vždy povolit",
         "default": "Výchozí (bez pravidla pro aplikaci)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Večerka",
+        "school_time": "Školní čas"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Pondělí",
+        "tue": "Úterý",
+        "wed": "Středa",
+        "thu": "Čtvrtek",
+        "fri": "Pátek",
+        "sat": "Sobota",
+        "sun": "Neděle"
       }
     }
   },
@@ -288,6 +399,98 @@
         "child": {
           "name": "Dítě",
           "description": "Pouze toto dítě (všechny, pokud je prázdné)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Školní režim",
+      "description": "Zablokuje všechny aplikace dítěte kromě základních (telefon, zprávy, mapy, Home Assistant, školní aplikace…) a vždy povolených, nebo vrátí jejich pravidla.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "enable": {
+          "name": "Zapnuto",
+          "description": "Zapnuto pro zablokování aplikací, vypnuto pro vrácení jejich pravidel."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Změnit týdenní rozvrh",
+      "description": "Změní týdenní časy večerky nebo školního času v některé dny, nebo tyto dny zapne či vypne.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Večerka nebo školní čas."
+        },
+        "days": {
+          "name": "Dny",
+          "description": "Dny v týdnu ke změně."
+        },
+        "start": {
+          "name": "Začátek",
+          "description": "Čas začátku; současný, pokud je prázdné."
+        },
+        "end": {
+          "name": "Konec",
+          "description": "Čas konce; současný, pokud je prázdné."
+        },
+        "enable": {
+          "name": "Zapnuto",
+          "description": "Zapne nebo vypne tyto dny; beze změny, pokud je prázdné."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Večerka nebo školní čas dnes",
+      "description": "Zapne nebo vypne večerku nebo školní čas jen pro dnešek, s dnešními časy, pokud nejsou uvedeny jiné.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Večerka nebo školní čas."
+        },
+        "enable": {
+          "name": "Zapnuto",
+          "description": "Zapnuto nebo vypnuto pro dnešek."
+        },
+        "start": {
+          "name": "Začátek",
+          "description": "Čas začátku; současný, pokud je prázdné."
+        },
+        "end": {
+          "name": "Konec",
+          "description": "Čas konce; současný, pokud je prázdné."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Změnit denní limit",
+      "description": "Nastaví limit času u obrazovky: v některé dny každý týden (všechna zařízení) nebo pro dnešek (některá nebo všechna zařízení).",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Limit v minutách; 0 zablokuje den."
+        },
+        "days": {
+          "name": "Dny",
+          "description": "Dny ke změně každý týden; prázdné jen pro dnešek."
+        },
+        "devices": {
+          "name": "Zařízení",
+          "description": "Zařízení pro dnešní limit (názvy nebo ID); všechna, pokud je prázdné."
         }
       }
     }

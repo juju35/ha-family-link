@@ -31,8 +31,11 @@ from homeassistant.util import dt as dt_util
 from .auth import ORIGIN, GoogleCookies
 from .models import (
     CHROMEOS_ID_MIN_LEN,
+    CONTACT_LEVELS,
     OVERRIDE_BONUS,
     OVERRIDE_BONUS_CHROMEOS,
+    OVERRIDE_DAY_LIMIT,
+    OVERRIDE_DAY_SCHEDULE,
     OVERRIDE_LOCK,
     OVERRIDE_LOCK_ALLOWED_APPS,
     OVERRIDE_UNLOCK,
@@ -40,10 +43,12 @@ from .models import (
     DeviceLimits,
     Location,
     Member,
+    Schedule,
     parse_applied_limits,
     parse_apps_usage,
     parse_location,
     parse_members,
+    parse_time_limit,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -154,7 +159,7 @@ class FamilyLinkClient:
         auth_retry_done = False
         attempt = 0
         # An action may have been applied when its answer got lost: only retry it when Google surely didn't get it
-        idempotent = method == "GET"
+        idempotent = method in ("GET", "PUT")  # a PUT sets values: sending it twice changes nothing
         while True:
             try:
                 async with self._session.request(
@@ -256,6 +261,96 @@ class FamilyLinkClient:
         )
         return parse_applied_limits(data, now)
 
+    async def get_time_limit(self, child_id: str, today: date) -> Schedule:
+        """The weekly schedule: bedtime and school time windows, daily quotas, weekly switches, today's state."""
+        data = await self._request(
+            "GET",
+            f"people/{_check_id(child_id, 'child id')}/timeLimit",
+            params=[
+                ("capabilities", "TIME_LIMIT_CLIENT_CAPABILITY_SCHOOLTIME"),
+                ("timeLimitKey.type", "SUPERVISED_DEVICES"),
+            ],
+        )
+        try:
+            return parse_time_limit(data, today)
+        except (IndexError, KeyError, TypeError, ValueError) as err:  # a shape not seen yet: the rest goes on
+            raise ApiError(f"unreadable schedule: {err!r}") from err
+
+    async def _update_time_limit(self, child_id: str, block: list) -> None:
+        """Change part of the weekly schedule; Google merges what is sent into what it has."""
+        _check_id(child_id, "child id")
+        await self._request(
+            "PUT",
+            f"people/{child_id}/timeLimit:update",
+            params=[("$httpMethod", "PUT")],
+            payload=[None, child_id, block, None, [1]],
+        )
+
+    async def set_policy(self, child_id: str, policy_id: str, on: bool) -> None:
+        """Weekly switch of bedtime or school time."""
+        policy = _check_id(policy_id, "policy id")
+        await self._update_time_limit(child_id, [[None] * 4, None, None, None, [None, [[policy, _state(on)]]]])
+
+    async def set_daily_limit_enabled(self, child_id: str, on: bool) -> None:
+        await self._update_time_limit(child_id, [None, [[_state(on), None, None, None]]])
+
+    async def set_weekly_quota(self, child_id: str, slot_id: str, minutes: int, limit_on: bool = True) -> None:
+        """Daily quota of one weekday (its slot), every device of the child."""
+        if not 0 <= int(minutes) <= 1440:
+            raise ApiError("a quota is 0 to 1440 minutes")
+        slot = _check_id(slot_id, "slot id")
+        await self._update_time_limit(child_id, [None, [[_state(limit_on), None, None, [[slot, int(minutes)]]]]])
+
+    async def set_slot_hours(self, child_id: str, slot_id: str, start: tuple[int, int], end: tuple[int, int]) -> None:
+        """Hours of one weekly bedtime or school time slot."""
+        slot = _check_id(slot_id, "slot id")
+        await self._update_time_limit(
+            child_id, [[None, None, None, [[slot, _hm_list(start), _hm_list(end)]], None, None], None, None, None, []]
+        )
+
+    async def set_slot_enabled(self, child_id: str, slot_id: str, on: bool) -> None:
+        """Turn one weekly slot (a day's bedtime or school time) on or off, keeping its hours."""
+        slot = _check_id(slot_id, "slot id")
+        windows = [None, None, [[slot, _state(on)]], None, None, None]
+        await self._update_time_limit(child_id, [windows, None, None, None, []])
+
+    async def bedtime_today(
+        self, child_id: str, on: bool, start: tuple[int, int], end: tuple[int, int], slot_code: str
+    ) -> None:
+        """Bedtime on or off for tonight only (the weekly schedule stays)."""
+        payload = [_state(on), _hm_list(start), _hm_list(end), _check_id(slot_code, "slot id")]
+        await self._override(child_id, [None, None, OVERRIDE_DAY_SCHEDULE, *([None] * 9), payload])
+
+    async def school_time_today(
+        self, child_id: str, on: bool, start: tuple[int, int], end: tuple[int, int], weekday: int, policy_id: str
+    ) -> None:
+        """School time on or off for today only."""
+        payload = [_state(on), _hm_list(start), _hm_list(end), None, [weekday, _check_id(policy_id, "policy id")]]
+        await self._override(child_id, [None, None, OVERRIDE_DAY_SCHEDULE, *([None] * 9), payload])
+
+    async def set_today_limit(self, child_id: str, device_id: str, minutes: int, day_code: str) -> None:
+        """Today's quota of one device (day_code must be today's)."""
+        if not 0 <= int(minutes) <= 1440:
+            raise ApiError("a quota is 0 to 1440 minutes")
+        payload = [2, int(minutes), _check_id(day_code, "slot id")]
+        await self._override(
+            child_id, [None, None, OVERRIDE_DAY_LIMIT, _check_id(device_id, "device id"), *([None] * 7), payload]
+        )
+
+    async def get_contacts_level(self, child_id: str) -> int | None:
+        """Who can call and text the child: 1 anyone, 3 contacts the parent added, 4 those and limited groups."""
+        data = await self._request("GET", f"people/{_check_id(child_id, 'child id')}/trustedcontacts")
+        level = data[2] if isinstance(data, list) and len(data) > 2 else None
+        return 1 if level == 0 else level if isinstance(level, int) else None
+
+    async def set_contacts_level(self, child_id: str, level: int) -> None:
+        if level not in CONTACT_LEVELS.values():
+            raise ApiError(f"unknown contacts level {level}")
+        _check_id(child_id, "child id")
+        await self._request(
+            "POST", f"people/{child_id}/trustedcontacts:update", payload=[None, child_id, None, None, level]
+        )
+
     async def get_location(self, child_id: str, refresh: bool = False) -> Location | None:
         """Last known location; refresh=True asks the device for a new fix (uses its battery)."""
         try:
@@ -318,21 +413,41 @@ class FamilyLinkClient:
 
     async def set_app(self, child_id: str, package: str, mode: str, minutes: int | None = None) -> None:
         """mode: block, always_allow, limit (minutes per day) or default (no app-specific rule)."""
+        await self.set_apps(child_id, [(package, mode, minutes)])
+
+    async def set_apps(self, child_id: str, rules: list[tuple[str, str, int | None]]) -> None:
+        """Several app rules in one request: (package, mode, minutes) as for set_app."""
         _check_id(child_id, "child id")
-        _check_id(package, "app")
-        if mode == "block":
-            rule: list = [[package], [1]]
-        elif mode == "always_allow":
-            rule = [[package], None, None, [1]]
-        elif mode == "limit":
-            if minutes is None or minutes < 0:
-                raise ApiError("a limit needs minutes")
-            rule = [[package], None, [int(minutes), 1]]
-        elif mode == "default":
-            rule = [[package]]
-        else:
-            raise ApiError(f"unknown mode {mode}")
-        await self._request("POST", f"people/{child_id}/apps:updateRestrictions", payload=[child_id, [rule]])
+        if not rules:
+            return
+        payload = [_app_rule(package, mode, minutes) for package, mode, minutes in rules]
+        await self._request("POST", f"people/{child_id}/apps:updateRestrictions", payload=[child_id, payload])
+
+
+def _state(on: bool) -> int:
+    return 2 if on else 1
+
+
+def _hm_list(value: tuple[int, int]) -> list[int]:
+    hour, minute = value
+    if not (0 <= hour <= 23 and 0 <= minute <= 59):
+        raise ApiError(f"invalid time {hour}:{minute}")
+    return [int(hour), int(minute)]
+
+
+def _app_rule(package: str, mode: str, minutes: int | None) -> list:
+    _check_id(package, "app")
+    if mode == "block":
+        return [[package], [1]]
+    if mode == "always_allow":
+        return [[package], None, None, [1]]
+    if mode == "limit":
+        if minutes is None or minutes < 0:
+            raise ApiError("a limit needs minutes")
+        return [[package], None, [int(minutes), 1]]
+    if mode == "default":
+        return [[package]]
+    raise ApiError(f"unknown mode {mode}")
 
 
 class _Retry(Exception):

@@ -15,6 +15,7 @@ from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 
 from .api import AuthError, FamilyLinkClient, create_session
@@ -22,11 +23,21 @@ from .auth import GoogleCookies
 from .config_flow import OPTIONS_FLOW_RELOADS
 from .const import CARD_FILENAME, CONF_COOKIES, DOMAIN, FRONTEND_URL, REAUTH_NOTIFICATION_ID
 from .coordinator import FamilyLinkConfigEntry, FamilyLinkCoordinator
+from .school_mode import SchoolMode
 from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.BUTTON, Platform.DEVICE_TRACKER, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS = [
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.DEVICE_TRACKER,
+    Platform.NUMBER,
+    Platform.SELECT,
+    Platform.SENSOR,
+    Platform.SWITCH,
+    Platform.TIME,
+]
 CARD_PATH = Path(__file__).parent / "frontend" / CARD_FILENAME
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 CHILD_MODEL = "Supervised account"  # the model of the child devices (their phones and tablets have theirs)
@@ -85,6 +96,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
     entry.async_on_unload(coordinator.async_add_listener(register_children))
     coordinator.async_start_background()
     entry.async_on_unload(coordinator.async_stop_background)
+    coordinator.school = SchoolMode(hass, coordinator)
+    await coordinator.school.async_load()
+    coordinator.school.async_start()
+    entry.async_on_unload(coordinator.school.async_stop)
     if not OPTIONS_FLOW_RELOADS:
         entry.async_on_unload(entry.add_update_listener(_async_reload_on_options))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -129,6 +144,7 @@ def _remove_gone_children(hass: HomeAssistant, entry: FamilyLinkConfigEntry, chi
 
 async def async_remove_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -> None:
     persistent_notification.async_dismiss(hass, REAUTH_NOTIFICATION_ID.format(entry_id=entry.entry_id))
+    await Store(hass, 1, f"{DOMAIN}.school_mode.{entry.entry_id}").async_remove()
 
 
 async def _async_reload_on_options(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -> None:

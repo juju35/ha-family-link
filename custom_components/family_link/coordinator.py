@@ -16,7 +16,7 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
@@ -49,11 +49,16 @@ from .const import (
     STATUS_SEVERITY,
     STATUS_TRACKED,
 )
-from .models import AppsUsage, DeviceLimits, Location, Member
+from .models import AppsUsage, DeviceLimits, Location, Member, Schedule
+
+if TYPE_CHECKING:
+    from .school_mode import SchoolMode
 
 _LOGGER = logging.getLogger(__name__)
 
 AUTH_FAILURES_BEFORE_REAUTH = 2
+OPTIONAL_SECTIONS = frozenset({"schedule", "contacts"})  # settings: their failure doesn't make the data stale
+CONTACTS_INTERVAL = timedelta(minutes=15)  # who can call and text changes rarely
 SAVE_COOKIES_DELAY = 10  # seconds: several rotated cookies in a row are saved once
 CONFIRM_DELAY = 6  # seconds Google takes to apply an action before the confirming refresh
 
@@ -66,13 +71,16 @@ class ChildData:
     usage: AppsUsage | None = None
     limits: dict[str, DeviceLimits] = field(default_factory=dict)
     location: Location | None = None
+    schedule: Schedule | None = None  # weekly bedtime / school time / quotas (timeLimit)
+    contacts: int | None = None  # who can call and text: CONTACT_LEVELS value
     # Last successful fetch of each section, and the error of its last attempt (None when it succeeded)
     fetched: dict[str, datetime] = field(default_factory=dict)
     errors: dict[str, str] = field(default_factory=dict)
 
     @property
     def stale(self) -> bool:
-        return bool(self.errors)
+        """Screen time, limits or location could not be refreshed (the settings sections don't count)."""
+        return any(name not in OPTIONAL_SECTIONS for name in self.errors)
 
 
 @dataclass
@@ -98,6 +106,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         client.set_cookie_listener(self.cookies_changed)
         self.options_snapshot = dict(entry.options)
         self.child_device_ids: dict[str, str] = {}  # child user id -> device registry id
+        self.school: SchoolMode | None = None  # set by the setup (school_mode.py)
         self.location_interval = timedelta(
             seconds=int(entry.options.get(CONF_LOCATION_INTERVAL, DEFAULT_LOCATION_INTERVAL))
         )
@@ -199,6 +208,10 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
             "usage": self.client.get_apps_usage(child_id, now.date()),
             "limits": self.client.get_applied_limits(child_id, now),
         }
+        sections["schedule"] = self.client.get_time_limit(child_id, now.date())
+        last_contacts = child.fetched.get("contacts")
+        if last_contacts is None or now - last_contacts >= CONTACTS_INTERVAL:
+            sections["contacts"] = self.client.get_contacts_level(child_id)
         last_location = child.fetched.get("location")
         if last_location is None or now - last_location >= self.location_interval - timedelta(seconds=5):
             sections["location"] = self.client.get_location(child_id)
@@ -271,6 +284,11 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
             limits = child.limits.setdefault(device_id, DeviceLimits(device_id=device_id))
             for key, value in changes.items():
                 setattr(limits, key, value)
+        self.show_change()
+
+    @callback
+    def show_change(self) -> None:
+        """Entities show the data as changed by an action; Family Link's answer is read a few seconds later."""
         self.async_update_listeners()
         if self._confirm_unsub:
             self._confirm_unsub()

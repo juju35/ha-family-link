@@ -48,18 +48,24 @@
           "scan_interval": "Interwał aktualizacji",
           "location_interval": "Interwał lokalizacji",
           "stale_after": "Przechowuj dane w pamięci podręcznej przez",
-          "notify_services": "Usługa powiadomień alarmowych dla każdego dziecka"
+          "notify_services": "Usługa powiadomień alarmowych dla każdego dziecka",
+          "pronote_timetables": "Plan lekcji Pronote dla dziecka (tryb szkolny)",
+          "school_mode_apps": "Aplikacje dostępne w trybie szkolnym"
         },
         "data_description": {
           "scan_interval": "Czas przed ekranem, blokady i bonusy.",
           "location_interval": "Ostatnia znana lokalizacja (urządzenie nie jest wybudzane).",
           "stale_after": "Gdy Family Link jest niedostępny, ostatnie dane pozostają widoczne przez ten czas, zanim encje staną się niedostępne.",
-          "notify_services": "Jedna linia na dziecko, dla wiadomości alarmowej przez aplikację Home Assistant na telefonie dziecka, np. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Jedna linia na dziecko, dla wiadomości alarmowej przez aplikację Home Assistant na telefonie dziecka, np. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Jeden wiersz na dziecko z czujnikiem „dzisiejszy plan lekcji” integracji Pronote, np. `Alex: sensor.pronote_alex_today_s_timetable`: tryb szkolny włącza się wtedy 15 min przed pierwszą lekcją i wyłącza po ostatniej.",
+          "school_mode_apps": "Nazwy pakietów, po jednej w wierszu, oprócz aplikacji podstawowych (telefon, wiadomości, mapy, Home Assistant, Pronote…) i zawsze dozwolonych."
         }
       }
     },
     "error": {
-      "unknown_child": "Jedna z linii nie wskazuje żadnego dziecka z rodziny."
+      "unknown_child": "Jedna z linii nie wskazuje żadnego dziecka z rodziny.",
+      "invalid_sensor": "Podaj czujnik (sensor.…) integracji Pronote.",
+      "invalid_app": "Wiersz nie jest nazwą pakietu (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,41 @@
       },
       "remaining_time": {
         "name": "Pozostały czas"
+      },
+      "blocked_apps": {
+        "name": "Zablokowane aplikacje"
+      },
+      "limited_apps": {
+        "name": "Ograniczone aplikacje"
+      },
+      "always_allowed_apps": {
+        "name": "Zawsze dozwolone aplikacje"
+      },
+      "daily_limit": {
+        "name": "Dzienny limit"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Następne ograniczenie"
       }
     },
     "switch": {
       "lock": {
         "name": "Blokada"
+      },
+      "school_mode": {
+        "name": "Tryb szkolny"
+      },
+      "bedtime": {
+        "name": "Pora snu"
+      },
+      "school_time": {
+        "name": "Czas szkolny"
+      },
+      "daily_limit": {
+        "name": "Dzienny limit"
       }
     },
     "button": {
@@ -97,11 +133,54 @@
       },
       "refresh_location": {
         "name": "Odśwież lokalizację"
+      },
+      "add_bonus": {
+        "name": "Dodaj {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Lokalizacja"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Pora snu"
+      },
+      "schooltime_active": {
+        "name": "Czas szkolny"
+      },
+      "limit_reached": {
+        "name": "Osiągnięto dzienny limit"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Początek pory snu: {day}"
+      },
+      "bedtime_end": {
+        "name": "Koniec pory snu: {day}"
+      },
+      "school_time_start": {
+        "name": "Początek czasu szkolnego: {day}"
+      },
+      "school_time_end": {
+        "name": "Koniec czasu szkolnego: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Połączenia i SMS-y",
+        "state": {
+          "anyone": "Wszyscy",
+          "contacts": "Tylko dodane przez Ciebie kontakty",
+          "contacts_groups": "Dodane kontakty i ograniczone grupy"
+        }
       }
     }
   },
@@ -132,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link odrzucił akcję ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Nie udało się jeszcze odczytać harmonogramu {child} z Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} nie ma dziś pory snu: podaj jej początek i koniec."
+    },
+    "no_slot": {
+      "message": "Brak przedziału w dniu {day} w harmonogramie tygodniowym: najpierw utwórz go w aplikacji Family Link."
+    },
+    "two_slots": {
+      "message": "{day} ma dwa przedziały czasu szkolnego (przerwę): zmień je w aplikacji Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Podaj początek, koniec albo włącz lub wyłącz dni."
     }
   },
   "selector": {
@@ -141,6 +235,23 @@
         "block": "Zablokuj",
         "always_allow": "Zawsze zezwalaj",
         "default": "Domyślnie (bez reguły aplikacji)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Pora snu",
+        "school_time": "Czas szkolny"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Poniedziałek",
+        "tue": "Wtorek",
+        "wed": "Środa",
+        "thu": "Czwartek",
+        "fri": "Piątek",
+        "sat": "Sobota",
+        "sun": "Niedziela"
       }
     }
   },
@@ -288,6 +399,98 @@
         "child": {
           "name": "Dziecko",
           "description": "Tylko to dziecko (wszystkie, gdy puste)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Tryb szkolny",
+      "description": "Blokuje wszystkie aplikacje dziecka poza podstawowymi (telefon, wiadomości, mapy, Home Assistant, aplikacje szkolne…) i zawsze dozwolonymi albo przywraca ich reguły.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "enable": {
+          "name": "Włączony",
+          "description": "Włączony, aby zablokować aplikacje, wyłączony, aby przywrócić ich reguły."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Zmień harmonogram tygodniowy",
+      "description": "Zmienia tygodniowe godziny pory snu lub czasu szkolnego w niektóre dni albo włącza lub wyłącza te dni.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "kind": {
+          "name": "Rodzaj",
+          "description": "Pora snu lub czas szkolny."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni tygodnia do zmiany."
+        },
+        "start": {
+          "name": "Początek",
+          "description": "Godzina początku; obecna, jeśli puste."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Godzina końca; obecna, jeśli puste."
+        },
+        "enable": {
+          "name": "Włączone",
+          "description": "Włącza lub wyłącza te dni; bez zmian, jeśli puste."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Pora snu lub czas szkolny dziś",
+      "description": "Włącza lub wyłącza porę snu albo czas szkolny tylko na dziś, z dzisiejszymi godzinami, chyba że podano inne.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "kind": {
+          "name": "Rodzaj",
+          "description": "Pora snu lub czas szkolny."
+        },
+        "enable": {
+          "name": "Włączone",
+          "description": "Włączone lub wyłączone na dziś."
+        },
+        "start": {
+          "name": "Początek",
+          "description": "Godzina początku; obecna, jeśli puste."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Godzina końca; obecna, jeśli puste."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Zmień dzienny limit",
+      "description": "Ustawia limit czasu przed ekranem: w niektóre dni co tydzień (wszystkie urządzenia) albo na dziś (niektóre lub wszystkie urządzenia).",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Limit w minutach; 0 blokuje dzień."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni do zmiany co tydzień; puste tylko na dziś."
+        },
+        "devices": {
+          "name": "Urządzenia",
+          "description": "Urządzenia dla dzisiejszego limitu (nazwy lub identyfikatory); wszystkie, jeśli puste."
         }
       }
     }

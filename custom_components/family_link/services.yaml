@@ -127,3 +127,98 @@ refresh:
     child:
       selector:
         text:
+
+school_mode:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    enable:
+      required: true
+      default: true
+      selector:
+        boolean:
+
+set_schedule:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    kind:
+      required: true
+      selector:
+        select:
+          translation_key: schedule_kind
+          options:
+            - bedtime
+            - school_time
+    days:
+      required: true
+      selector:
+        select:
+          translation_key: weekday
+          multiple: true
+          options: [mon, tue, wed, thu, fri, sat, sun]
+    start:
+      selector:
+        time:
+    end:
+      selector:
+        time:
+    enable:
+      selector:
+        boolean:
+
+schedule_today:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    kind:
+      required: true
+      selector:
+        select:
+          translation_key: schedule_kind
+          options:
+            - bedtime
+            - school_time
+    enable:
+      required: true
+      default: false
+      selector:
+        boolean:
+    start:
+      selector:
+        time:
+    end:
+      selector:
+        time:
+
+set_daily_limit:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    minutes:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 1440
+          step: 5
+          unit_of_measurement: min
+          mode: box
+    days:
+      selector:
+        select:
+          translation_key: weekday
+          multiple: true
+          options: [mon, tue, wed, thu, fri, sat, sun]
+    devices:
+      selector:
+        text:
+          multiple: true

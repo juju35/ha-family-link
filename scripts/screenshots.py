@@ -94,6 +94,7 @@ def child(devices, **extra):
             ("YouTube", 48, {"limit": 60}), ("Netflix", 65, {}), ("Minecraft", 31, {}), ("YouTube Kids", 38, {})
         ),
         "blocked_apps": 3,
+        "school_mode": {"active": False, "source": None, "until": None, "blocked": 0, "pronote": "sensor.pronote_alex"},
         "devices": devices,
         "location": {
             "latitude": 48.11,
@@ -129,6 +130,15 @@ SCENES = {
         "family-link-card",
         {"entity": "sensor.alex_status"},
         child([{**PHONE, "status": "tracked", "bonus": 30, "bonus_remaining": 22, "bonus_id": "b", "remaining": 22}]),
+        None,
+    ),
+    "card-school": (
+        "family-link-card",
+        {"entity": "sensor.alex_status", "device": "phone-1"},
+        child(
+            [PHONE, TABLET],
+            school_mode={"active": True, "source": "pronote", "until": iso(150), "blocked": 12, "pronote": "s"},
+        ),
         None,
     ),
     "card-emergency": (

@@ -167,3 +167,13 @@ test('emergency without a picked device rings every device of the child', () => 
   const none = card._emergencyPopup({ ...a, devices: [] }, en, { type: 'emergency', ring: true });
   assert.ok(!none.includes('data-key="ring"'));
 });
+
+test('school mode row: off, on by Pronote with the end of the school day and the blocked apps', () => {
+  const card = new FamilyLinkCard();
+  card._busy = {};
+  assert.equal(card._schoolRow({}, en), '');
+  const off = card._schoolRow({ school_mode: { active: false, pronote: 'sensor.x' } }, en);
+  assert.ok(off.includes('aria-checked="false"') && off.includes('Pronote'));
+  const on = card._schoolRow({ school_mode: { active: true, source: 'pronote', until: '2026-11-16T16:30:00+01:00', blocked: 12 } }, en);
+  assert.ok(on.includes('class="switch on"') && on.includes('12 apps blocked') && on.includes('Pronote'));
+});
