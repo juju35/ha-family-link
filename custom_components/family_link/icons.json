@@ -1,0 +1,39 @@
+{
+  "entity": {
+    "sensor": {
+      "status": {
+        "default": "mdi:shield-account",
+        "state": {
+          "tracked": "mdi:shield-check",
+          "attention": "mdi:shield-alert",
+          "locked": "mdi:shield-lock",
+          "not_tracked": "mdi:shield-off-outline"
+        }
+      },
+      "screen_time": { "default": "mdi:cellphone-clock" },
+      "device_screen_time": { "default": "mdi:cellphone-clock" },
+      "remaining_time": { "default": "mdi:timer-sand" }
+    },
+    "switch": {
+      "lock": { "default": "mdi:cellphone", "state": { "on": "mdi:cellphone-lock" } }
+    },
+    "button": {
+      "ring": { "default": "mdi:bell-ring" },
+      "refresh_location": { "default": "mdi:crosshairs-gps" }
+    },
+    "device_tracker": {
+      "location": { "default": "mdi:map-marker-account" }
+    }
+  },
+  "services": {
+    "add_bonus": { "service": "mdi:timer-plus" },
+    "revoke_bonus": { "service": "mdi:timer-remove" },
+    "lock": { "service": "mdi:cellphone-lock" },
+    "unlock": { "service": "mdi:cellphone-check" },
+    "ring": { "service": "mdi:bell-ring" },
+    "refresh_location": { "service": "mdi:crosshairs-gps" },
+    "set_app": { "service": "mdi:application-cog" },
+    "emergency": { "service": "mdi:alert" },
+    "refresh": { "service": "mdi:refresh" }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Family Link",
+  "content_in_root": false,
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "family_link.zip",
+  "homeassistant": "2025.2.0"
+}

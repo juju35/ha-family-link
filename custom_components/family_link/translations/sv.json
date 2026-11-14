@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link har inget officiellt API: integrationen använder din Google-session, precis som webbappen familylink.google.com.\n\n1. Logga in på {url} på en dator med ditt **förälder**konto.\n2. Exportera sidans cookies, till exempel med tillägget Cookie-Editor (Export → JSON), eller kopiera begärandehuvudet `Cookie` från webbläsarens utvecklarverktyg (fliken Nätverk, valfri begäran till kidsmanagement-pa.clients6.google.com).\n3. Klistra in dem nedan.\n\nCookies stannar i Home Assistant; integrationen håller dem själv uppdaterade.",
+        "data": {
+          "cookies": "Cookies"
+        },
+        "data_description": {
+          "cookies": "JSON-export, cookies.txt eller Cookie-huvud. Måste innehålla SAPISID (eller __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Logga in igen",
+        "description": "Google accepterar inte längre sessionen för {account}. Logga in på {url} igen, exportera cookies och klistra in dem nedan.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      },
+      "reconfigure": {
+        "title": "Ersätt cookies",
+        "description": "Klistra in färska cookies exporterade från {url}.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Ingen Google-sessionscookie hittades: texten måste innehålla SAPISID eller __Secure-3PAPISID.",
+      "invalid_auth": "Google avvisade dessa cookies. Logga in på familylink.google.com igen och exportera dem en gång till.",
+      "cannot_connect": "Family Link kan inte nås. Försök igen om en stund.",
+      "no_children": "Det här kontot övervakar inget barn i Family Link."
+    },
+    "abort": {
+      "already_configured": "Det här Google-kontot är redan konfigurerat.",
+      "reauth_successful": "Inloggad igen.",
+      "reconfigure_successful": "Cookies ersatta.",
+      "wrong_account": "Dessa cookies tillhör ett annat Google-konto."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Alternativ för Family Link",
+        "description": "Barn: {children}.",
+        "data": {
+          "scan_interval": "Uppdateringsintervall",
+          "location_interval": "Platsintervall",
+          "stale_after": "Behåll cachade data i",
+          "notify_services": "Nödaviseringstjänst per barn"
+        },
+        "data_description": {
+          "scan_interval": "Skärmtid, låsningar och bonusar.",
+          "location_interval": "Senast kända plats (enheten väcks inte).",
+          "stale_after": "När Family Link inte kan nås visas senaste data så länge innan entiteterna blir otillgängliga.",
+          "notify_services": "En rad per barn, för nödmeddelandet via Home Assistant-appen på barnets telefon, t.ex. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "En rad nämner inget barn i familjen."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "tracked": "Övervakad",
+          "attention": "Observera",
+          "locked": "Låst",
+          "not_tracked": "Inte övervakad"
+        }
+      },
+      "screen_time": {
+        "name": "Skärmtid"
+      },
+      "battery": {
+        "name": "Batteri"
+      },
+      "device_screen_time": {
+        "name": "Skärmtid"
+      },
+      "remaining_time": {
+        "name": "Återstående tid"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Lås"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Låt ringa"
+      },
+      "refresh_location": {
+        "name": "Uppdatera plats"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Plats"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Inget övervakat barn matchar ”{child}”."
+    },
+    "unknown_device": {
+      "message": "Ingen enhet hos det här barnet matchar ”{device}”."
+    },
+    "device_required": {
+      "message": "Det här barnet har flera enheter: ange enheten."
+    },
+    "no_bonus": {
+      "message": "Ingen bonus pågår på den här enheten."
+    },
+    "minutes_required": {
+      "message": "En gräns behöver ett antal minuter."
+    },
+    "emergency_nothing": {
+      "message": "Inget att göra: slå på ringning, eller ange ett meddelande och en aviseringstjänst."
+    },
+    "unknown_notify": {
+      "message": "Aviseringstjänsten {service} finns inte."
+    },
+    "unknown_app": {
+      "message": "Ingen app hos det här barnet matchar ”{app}”: ange dess exakta titel eller paketnamn (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link avvisade åtgärden ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Daglig gräns",
+        "block": "Blockera",
+        "always_allow": "Tillåt alltid",
+        "default": "Standard (ingen appregel)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Lägg till tidsbonus",
+      "description": "Ger extra skärmtid i dag på en enhet.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id, eller någon av dess entiteter."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhetens namn eller id; valfritt när barnet bara har en."
+        },
+        "minutes": {
+          "name": "Minuter",
+          "description": "Extra tid."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Återkalla bonus",
+      "description": "Avbryter tidsbonusen som pågår på en enhet.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhetens namn eller id."
+        }
+      }
+    },
+    "lock": {
+      "name": "Lås",
+      "description": "Låser en enhet direkt (samtal och alltid tillåtna appar fungerar fortfarande).",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhetens namn eller id."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Lås upp",
+      "description": "Låser upp en enhet till nästa schemalagda begränsning.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhetens namn eller id."
+        }
+      }
+    },
+    "ring": {
+      "name": "Låt ringa",
+      "description": "Låter en enhet ringa, även på ljudlöst, för att hitta den.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhetens namn eller id."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Uppdatera plats",
+      "description": "Ber barnets enhet om en aktuell plats (drar batteri).",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Ange appregel",
+      "description": "Blockerar en app, tillåter den alltid, begränsar den per dag eller tar bort dess regel.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "app": {
+          "name": "App",
+          "description": "Paketnamn eller titel på appen."
+        },
+        "mode": {
+          "name": "Regel",
+          "description": "Vad som ska tillämpas."
+        },
+        "minutes": {
+          "name": "Minuter",
+          "description": "Daglig gräns, för gränsregeln."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Nödläge",
+      "description": "Låter enheten ringa via Family Link och skickar, med en aviseringstjänst, en kritisk avisering med meddelandet.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "device": {
+          "name": "Enhet",
+          "description": "Enhet som ska ringa; alla barnets enheter om tomt."
+        },
+        "message": {
+          "name": "Meddelande",
+          "description": "Aviseringens text."
+        },
+        "ring": {
+          "name": "Låt ringa",
+          "description": "Låt enheten ringa via Family Link."
+        },
+        "notify_service": {
+          "name": "Aviseringstjänst",
+          "description": "Ersätter tjänsten i alternativen, t.ex. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Uppdatera plats",
+          "description": "Be också om en aktuell plats."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Uppdatera",
+      "description": "Hämtar Family Link-data nu.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Bara det här barnet (alla om tomt)."
+        }
+      }
+    }
+  }
+}

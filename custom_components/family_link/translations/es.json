@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link no tiene API oficial: la integración usa tu sesión de Google, como la aplicación web familylink.google.com.\n\n1. En un ordenador, inicia sesión en {url} con tu cuenta de **padre o madre**.\n2. Exporta las cookies de esa página, por ejemplo con la extensión Cookie-Editor (Export → JSON), o copia la cabecera de solicitud `Cookie` desde las herramientas de desarrollo del navegador (pestaña Red, cualquier solicitud a kidsmanagement-pa.clients6.google.com).\n3. Pégalas abajo.\n\nLas cookies se quedan en Home Assistant; la integración las mantiene al día por sí sola.",
+        "data": {
+          "cookies": "Cookies"
+        },
+        "data_description": {
+          "cookies": "Exportación JSON, cookies.txt o cabecera Cookie. Debe contener SAPISID (o __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Volver a iniciar sesión",
+        "description": "Google ya no acepta la sesión de {account}. Vuelve a iniciar sesión en {url}, exporta las cookies y pégalas abajo.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      },
+      "reconfigure": {
+        "title": "Reemplazar las cookies",
+        "description": "Pega cookies recientes exportadas desde {url}.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "No se ha encontrado ninguna cookie de sesión de Google: el texto debe contener SAPISID o __Secure-3PAPISID.",
+      "invalid_auth": "Google ha rechazado estas cookies. Vuelve a iniciar sesión en familylink.google.com y expórtalas de nuevo.",
+      "cannot_connect": "No se puede contactar con Family Link. Inténtalo de nuevo en un momento.",
+      "no_children": "Esta cuenta no supervisa a ningún niño en Family Link."
+    },
+    "abort": {
+      "already_configured": "Esta cuenta de Google ya está configurada.",
+      "reauth_successful": "Sesión iniciada de nuevo.",
+      "reconfigure_successful": "Cookies reemplazadas.",
+      "wrong_account": "Estas cookies pertenecen a otra cuenta de Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones de Family Link",
+        "description": "Niños: {children}.",
+        "data": {
+          "scan_interval": "Intervalo de actualización",
+          "location_interval": "Intervalo de ubicación",
+          "stale_after": "Conservar los datos en caché durante",
+          "notify_services": "Servicio de notificación de emergencia por niño"
+        },
+        "data_description": {
+          "scan_interval": "Tiempo de pantalla, bloqueos y bonificaciones.",
+          "location_interval": "Última ubicación conocida (el dispositivo no se despierta).",
+          "stale_after": "Cuando no se puede contactar con Family Link, los últimos datos se siguen mostrando durante este tiempo antes de que las entidades dejen de estar disponibles.",
+          "notify_services": "Una línea por niño, para el mensaje de emergencia a través de la app de Home Assistant del teléfono del niño, p. ej. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Una línea no corresponde a ningún niño de la familia."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Estado",
+        "state": {
+          "tracked": "Supervisado",
+          "attention": "Atención",
+          "locked": "Bloqueado",
+          "not_tracked": "Sin supervisión"
+        }
+      },
+      "screen_time": {
+        "name": "Tiempo de pantalla"
+      },
+      "battery": {
+        "name": "Batería"
+      },
+      "device_screen_time": {
+        "name": "Tiempo de pantalla"
+      },
+      "remaining_time": {
+        "name": "Tiempo restante"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Bloqueo"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Hacer sonar"
+      },
+      "refresh_location": {
+        "name": "Actualizar ubicación"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Ubicación"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Ningún niño supervisado coincide con «{child}»."
+    },
+    "unknown_device": {
+      "message": "Ningún dispositivo de este niño coincide con «{device}»."
+    },
+    "device_required": {
+      "message": "Este niño tiene varios dispositivos: indica el dispositivo."
+    },
+    "no_bonus": {
+      "message": "No hay ninguna bonificación activa en este dispositivo."
+    },
+    "minutes_required": {
+      "message": "Un límite necesita un número de minutos."
+    },
+    "emergency_nothing": {
+      "message": "Nada que hacer: activa el sonido, o indica un mensaje y un servicio de notificación."
+    },
+    "unknown_notify": {
+      "message": "El servicio de notificación {service} no existe."
+    },
+    "unknown_app": {
+      "message": "Ninguna aplicación de este niño coincide con «{app}»: indica su título exacto o su nombre de paquete (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link ha rechazado la acción ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Límite diario",
+        "block": "Bloquear",
+        "always_allow": "Permitir siempre",
+        "default": "Predeterminado (sin regla de app)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Añadir una bonificación de tiempo",
+      "description": "Da tiempo de pantalla extra para hoy en un dispositivo.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño, o una de sus entidades."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Nombre o ID del dispositivo; opcional si el niño solo tiene uno."
+        },
+        "minutes": {
+          "name": "Minutos",
+          "description": "Tiempo extra."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Revocar la bonificación",
+      "description": "Cancela la bonificación de tiempo activa en un dispositivo.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Nombre o ID del dispositivo."
+        }
+      }
+    },
+    "lock": {
+      "name": "Bloqueo",
+      "description": "Bloquea un dispositivo ahora (las llamadas y las apps siempre permitidas siguen funcionando).",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Nombre o ID del dispositivo."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Desbloquear",
+      "description": "Desbloquea un dispositivo hasta la próxima restricción programada.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Nombre o ID del dispositivo."
+        }
+      }
+    },
+    "ring": {
+      "name": "Hacer sonar",
+      "description": "Hace sonar un dispositivo, incluso en silencio, para encontrarlo.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Nombre o ID del dispositivo."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Actualizar ubicación",
+      "description": "Pide al dispositivo del niño una ubicación reciente (consume su batería).",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Definir una regla de app",
+      "description": "Bloquea una app, la permite siempre, la limita por día o elimina su regla.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "app": {
+          "name": "App",
+          "description": "Nombre del paquete o título de la app."
+        },
+        "mode": {
+          "name": "Regla",
+          "description": "Qué aplicar."
+        },
+        "minutes": {
+          "name": "Minutos",
+          "description": "Límite diario, para la regla de límite."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Emergencia",
+      "description": "Hace sonar el dispositivo mediante Family Link y, con un servicio de notificación, envía una notificación crítica con el mensaje.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "device": {
+          "name": "Dispositivo",
+          "description": "Dispositivo que sonará; todos los dispositivos del niño si está vacío."
+        },
+        "message": {
+          "name": "Mensaje",
+          "description": "Texto de la notificación."
+        },
+        "ring": {
+          "name": "Hacer sonar",
+          "description": "Hacer sonar el dispositivo mediante Family Link."
+        },
+        "notify_service": {
+          "name": "Servicio de notificación",
+          "description": "Sustituye al servicio definido en las opciones, p. ej. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Actualizar ubicación",
+          "description": "Pedir también una ubicación reciente."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Actualizar",
+      "description": "Obtiene ahora los datos de Family Link.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Solo este niño (todos si está vacío)."
+        }
+      }
+    }
+  }
+}

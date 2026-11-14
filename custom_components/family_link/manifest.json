@@ -1,0 +1,14 @@
+{
+  "domain": "family_link",
+  "name": "Family Link",
+  "after_dependencies": ["lovelace", "recorder"],
+  "codeowners": ["@juju35"],
+  "config_flow": true,
+  "dependencies": ["frontend", "http"],
+  "documentation": "https://github.com/juju35/ha-family-link",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/juju35/ha-family-link/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

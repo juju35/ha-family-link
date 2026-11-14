@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link nav oficiāla API: integrācija izmanto jūsu Google sesiju, tāpat kā tīmekļa lietotne familylink.google.com.\n\n1. Datorā pierakstieties {url} ar **vecāka** kontu.\n2. Eksportējiet šīs lapas sīkfailus, piemēram, ar paplašinājumu Cookie-Editor (Export → JSON), vai nokopējiet pieprasījuma galveni `Cookie` no pārlūka izstrādātāja rīkiem (cilne Tīkls, jebkurš pieprasījums uz kidsmanagement-pa.clients6.google.com).\n3. Ielīmējiet tos zemāk.\n\nSīkfaili paliek Home Assistant; integrācija pati tos uztur aktuālus.",
+        "data": {
+          "cookies": "Sīkfaili"
+        },
+        "data_description": {
+          "cookies": "JSON eksports, cookies.txt vai Cookie galvene. Jāietver SAPISID (vai __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Pierakstieties vēlreiz",
+        "description": "Google vairs nepieņem konta {account} sesiju. Pierakstieties vēlreiz {url}, eksportējiet sīkfailus un ielīmējiet tos zemāk.",
+        "data": {
+          "cookies": "Sīkfaili"
+        }
+      },
+      "reconfigure": {
+        "title": "Aizstāt sīkfailus",
+        "description": "Ielīmējiet svaigus sīkfailus, kas eksportēti no {url}.",
+        "data": {
+          "cookies": "Sīkfaili"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Nav atrasts Google sesijas sīkfails: tekstā jābūt SAPISID vai __Secure-3PAPISID.",
+      "invalid_auth": "Google noraidīja šos sīkfailus. Pierakstieties vēlreiz familylink.google.com un eksportējiet tos vēlreiz.",
+      "cannot_connect": "Family Link nav sasniedzams. Mēģiniet vēlreiz pēc brīža.",
+      "no_children": "Šis konts Family Link neuzrauga nevienu bērnu."
+    },
+    "abort": {
+      "already_configured": "Šis Google konts jau ir iestatīts.",
+      "reauth_successful": "Pierakstīšanās atjaunota.",
+      "reconfigure_successful": "Sīkfaili aizstāti.",
+      "wrong_account": "Šie sīkfaili pieder citam Google kontam."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Family Link opcijas",
+        "description": "Bērni: {children}.",
+        "data": {
+          "scan_interval": "Atjaunināšanas intervāls",
+          "location_interval": "Atrašanās vietas intervāls",
+          "stale_after": "Saglabāt kešotos datus",
+          "notify_services": "Ārkārtas paziņojumu pakalpojums katram bērnam"
+        },
+        "data_description": {
+          "scan_interval": "Ekrāna laiks, bloķēšanas un bonusi.",
+          "location_interval": "Pēdējā zināmā atrašanās vieta (ierīce netiek pamodināta).",
+          "stale_after": "Kad Family Link nav sasniedzams, pēdējie dati paliek redzami tik ilgi, pirms entītijas kļūst nepieejamas.",
+          "notify_services": "Viena rinda katram bērnam ārkārtas ziņai caur Home Assistant lietotni bērna tālrunī, piem., `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Kāda rinda nenorāda nevienu ģimenes bērnu."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Statuss",
+        "state": {
+          "tracked": "Uzraudzīts",
+          "attention": "Uzmanību",
+          "locked": "Bloķēts",
+          "not_tracked": "Neuzraudzīts"
+        }
+      },
+      "screen_time": {
+        "name": "Ekrāna laiks"
+      },
+      "battery": {
+        "name": "Akumulators"
+      },
+      "device_screen_time": {
+        "name": "Ekrāna laiks"
+      },
+      "remaining_time": {
+        "name": "Atlikušais laiks"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Bloķēšana"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Zvanīt"
+      },
+      "refresh_location": {
+        "name": "Atjaunināt atrašanās vietu"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Atrašanās vieta"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Neviens uzraudzīts bērns neatbilst “{child}”."
+    },
+    "unknown_device": {
+      "message": "Neviena šī bērna ierīce neatbilst “{device}”."
+    },
+    "device_required": {
+      "message": "Šim bērnam ir vairākas ierīces: norādiet ierīci."
+    },
+    "no_bonus": {
+      "message": "Šajā ierīcē nav aktīva bonusa."
+    },
+    "minutes_required": {
+      "message": "Limitam nepieciešams minūšu skaits."
+    },
+    "emergency_nothing": {
+      "message": "Nav ko darīt: ieslēdziet zvanīšanu vai norādiet ziņu un paziņojumu pakalpojumu."
+    },
+    "unknown_notify": {
+      "message": "Paziņojumu pakalpojums {service} neeksistē."
+    },
+    "unknown_app": {
+      "message": "Neviena šī bērna lietotne neatbilst “{app}”: norādiet tās precīzu nosaukumu vai pakotnes nosaukumu (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link noraidīja darbību ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Dienas limits",
+        "block": "Bloķēt",
+        "always_allow": "Vienmēr atļaut",
+        "default": "Noklusējums (nav lietotnes noteikuma)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Pievienot bonusa laiku",
+      "description": "Piešķir ierīcē papildu ekrāna laiku šodienai.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID, vai kāda no viņa entītijām."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīces nosaukums vai ID; nav obligāts, ja bērnam ir tikai viena."
+        },
+        "minutes": {
+          "name": "Minūtes",
+          "description": "Papildu laiks."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Atsaukt bonusu",
+      "description": "Atceļ aktīvo bonusa laiku ierīcē.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīces nosaukums vai ID."
+        }
+      }
+    },
+    "lock": {
+      "name": "Bloķēšana",
+      "description": "Nekavējoties bloķē ierīci (zvani un vienmēr atļautās lietotnes joprojām darbojas).",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīces nosaukums vai ID."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Atbloķēt",
+      "description": "Atbloķē ierīci līdz nākamajam ieplānotajam ierobežojumam.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīces nosaukums vai ID."
+        }
+      }
+    },
+    "ring": {
+      "name": "Zvanīt",
+      "description": "Liek ierīcei zvanīt, arī klusajā režīmā, lai jūs to atrastu.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīces nosaukums vai ID."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Atjaunināt atrašanās vietu",
+      "description": "Pieprasa bērna ierīcei svaigu atrašanās vietu (patērē akumulatoru).",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Iestatīt lietotnes noteikumu",
+      "description": "Bloķē lietotni, vienmēr to atļauj, ierobežo to dienā vai noņem tās noteikumu.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "app": {
+          "name": "Lietotne",
+          "description": "Pakotnes nosaukums vai lietotnes nosaukums."
+        },
+        "mode": {
+          "name": "Noteikums",
+          "description": "Ko piemērot."
+        },
+        "minutes": {
+          "name": "Minūtes",
+          "description": "Dienas limits, limita noteikumam."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Ārkārtas",
+      "description": "Liek ierīcei zvanīt caur Family Link un ar paziņojumu pakalpojumu nosūta kritisku paziņojumu ar ziņu.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "device": {
+          "name": "Ierīce",
+          "description": "Ierīce, kurai zvanīt; visas bērna ierīces, ja tukšs."
+        },
+        "message": {
+          "name": "Ziņa",
+          "description": "Paziņojuma teksts."
+        },
+        "ring": {
+          "name": "Zvanīt",
+          "description": "Likt ierīcei zvanīt caur Family Link."
+        },
+        "notify_service": {
+          "name": "Paziņojumu pakalpojums",
+          "description": "Aizstāj opcijās norādīto pakalpojumu, piem., notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Atjaunināt atrašanās vietu",
+          "description": "Pieprasīt arī svaigu atrašanās vietu."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Atsvaidzināt",
+      "description": "Tagad ielādē Family Link datus.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Tikai šis bērns (visi, ja tukšs)."
+        }
+      }
+    }
+  }
+}

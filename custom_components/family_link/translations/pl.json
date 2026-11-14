@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link nie ma oficjalnego API: integracja korzysta z Twojej sesji Google, tak jak aplikacja webowa familylink.google.com.\n\n1. Na komputerze zaloguj się na {url} kontem **rodzica**.\n2. Wyeksportuj pliki cookie tej strony, na przykład rozszerzeniem Cookie-Editor (Export → JSON), albo skopiuj nagłówek żądania `Cookie` z narzędzi deweloperskich przeglądarki (karta Sieć, dowolne żądanie do kidsmanagement-pa.clients6.google.com).\n3. Wklej je poniżej.\n\nPliki cookie zostają w Home Assistant; integracja sama utrzymuje je aktualne.",
+        "data": {
+          "cookies": "Pliki cookie"
+        },
+        "data_description": {
+          "cookies": "Eksport JSON, cookies.txt lub nagłówek Cookie. Musi zawierać SAPISID (lub __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Zaloguj się ponownie",
+        "description": "Google nie akceptuje już sesji {account}. Zaloguj się ponownie na {url}, wyeksportuj pliki cookie i wklej je poniżej.",
+        "data": {
+          "cookies": "Pliki cookie"
+        }
+      },
+      "reconfigure": {
+        "title": "Zastąp pliki cookie",
+        "description": "Wklej świeże pliki cookie wyeksportowane z {url}.",
+        "data": {
+          "cookies": "Pliki cookie"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Nie znaleziono pliku cookie sesji Google: tekst musi zawierać SAPISID lub __Secure-3PAPISID.",
+      "invalid_auth": "Google odrzucił te pliki cookie. Zaloguj się ponownie na familylink.google.com i wyeksportuj je jeszcze raz.",
+      "cannot_connect": "Nie można połączyć się z Family Link. Spróbuj ponownie za chwilę.",
+      "no_children": "To konto nie nadzoruje żadnego dziecka w Family Link."
+    },
+    "abort": {
+      "already_configured": "To konto Google jest już skonfigurowane.",
+      "reauth_successful": "Zalogowano ponownie.",
+      "reconfigure_successful": "Pliki cookie zastąpione.",
+      "wrong_account": "Te pliki cookie należą do innego konta Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje Family Link",
+        "description": "Dzieci: {children}.",
+        "data": {
+          "scan_interval": "Interwał aktualizacji",
+          "location_interval": "Interwał lokalizacji",
+          "stale_after": "Przechowuj dane w pamięci podręcznej przez",
+          "notify_services": "Usługa powiadomień alarmowych dla każdego dziecka"
+        },
+        "data_description": {
+          "scan_interval": "Czas przed ekranem, blokady i bonusy.",
+          "location_interval": "Ostatnia znana lokalizacja (urządzenie nie jest wybudzane).",
+          "stale_after": "Gdy Family Link jest niedostępny, ostatnie dane pozostają widoczne przez ten czas, zanim encje staną się niedostępne.",
+          "notify_services": "Jedna linia na dziecko, dla wiadomości alarmowej przez aplikację Home Assistant na telefonie dziecka, np. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Jedna z linii nie wskazuje żadnego dziecka z rodziny."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Stan",
+        "state": {
+          "tracked": "Nadzorowane",
+          "attention": "Uwaga",
+          "locked": "Zablokowane",
+          "not_tracked": "Bez nadzoru"
+        }
+      },
+      "screen_time": {
+        "name": "Czas przed ekranem"
+      },
+      "battery": {
+        "name": "Bateria"
+      },
+      "device_screen_time": {
+        "name": "Czas przed ekranem"
+      },
+      "remaining_time": {
+        "name": "Pozostały czas"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Blokada"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Zadzwoń"
+      },
+      "refresh_location": {
+        "name": "Odśwież lokalizację"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Lokalizacja"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Żadne nadzorowane dziecko nie pasuje do „{child}”."
+    },
+    "unknown_device": {
+      "message": "Żadne urządzenie tego dziecka nie pasuje do „{device}”."
+    },
+    "device_required": {
+      "message": "To dziecko ma kilka urządzeń: podaj urządzenie."
+    },
+    "no_bonus": {
+      "message": "Na tym urządzeniu nie trwa żaden bonus."
+    },
+    "minutes_required": {
+      "message": "Limit wymaga liczby minut."
+    },
+    "emergency_nothing": {
+      "message": "Nic do zrobienia: włącz dzwonienie albo podaj wiadomość i usługę powiadomień."
+    },
+    "unknown_notify": {
+      "message": "Usługa powiadomień {service} nie istnieje."
+    },
+    "unknown_app": {
+      "message": "Żadna aplikacja tego dziecka nie pasuje do „{app}”: podaj jej dokładny tytuł lub nazwę pakietu (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link odrzucił akcję ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Dzienny limit",
+        "block": "Zablokuj",
+        "always_allow": "Zawsze zezwalaj",
+        "default": "Domyślnie (bez reguły aplikacji)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Dodaj bonus czasu",
+      "description": "Daje dodatkowy czas przed ekranem na dzisiaj na urządzeniu.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka albo jedna z jego encji."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Nazwa lub ID urządzenia; opcjonalne, gdy dziecko ma tylko jedno."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Dodatkowy czas."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Cofnij bonus",
+      "description": "Anuluje bonus czasu trwający na urządzeniu.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Nazwa lub ID urządzenia."
+        }
+      }
+    },
+    "lock": {
+      "name": "Blokada",
+      "description": "Natychmiast blokuje urządzenie (połączenia i zawsze dozwolone aplikacje nadal działają).",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Nazwa lub ID urządzenia."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Odblokuj",
+      "description": "Odblokowuje urządzenie do następnego zaplanowanego ograniczenia.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Nazwa lub ID urządzenia."
+        }
+      }
+    },
+    "ring": {
+      "name": "Zadzwoń",
+      "description": "Uruchamia dzwonienie urządzenia, także w trybie cichym, aby je znaleźć.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Nazwa lub ID urządzenia."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Odśwież lokalizację",
+      "description": "Prosi urządzenie dziecka o aktualną lokalizację (zużywa baterię).",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Ustaw regułę aplikacji",
+      "description": "Blokuje aplikację, zawsze na nią zezwala, ogranicza ją dziennie lub usuwa jej regułę.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "app": {
+          "name": "Aplikacja",
+          "description": "Nazwa pakietu lub tytuł aplikacji."
+        },
+        "mode": {
+          "name": "Reguła",
+          "description": "Co zastosować."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Dzienny limit, dla reguły limitu."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Alarm",
+      "description": "Uruchamia dzwonienie urządzenia przez Family Link i, z usługą powiadomień, wysyła krytyczne powiadomienie z wiadomością.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "device": {
+          "name": "Urządzenie",
+          "description": "Urządzenie, które ma zadzwonić; wszystkie urządzenia dziecka, jeśli puste."
+        },
+        "message": {
+          "name": "Wiadomość",
+          "description": "Treść powiadomienia."
+        },
+        "ring": {
+          "name": "Zadzwoń",
+          "description": "Zadzwoń na urządzenie przez Family Link."
+        },
+        "notify_service": {
+          "name": "Usługa powiadomień",
+          "description": "Zastępuje usługę ustawioną w opcjach, np. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Odśwież lokalizację",
+          "description": "Poproś także o aktualną lokalizację."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Odśwież",
+      "description": "Pobiera teraz dane Family Link.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Tylko to dziecko (wszystkie, gdy puste)."
+        }
+      }
+    }
+  }
+}

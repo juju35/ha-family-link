@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link nu are un API oficial: integrarea folosește sesiunea dvs. Google, ca aplicația web familylink.google.com.\n\n1. Pe un computer, conectați-vă la {url} cu contul de **părinte**.\n2. Exportați cookie-urile acelei pagini, de exemplu cu extensia Cookie-Editor (Export → JSON), sau copiați antetul de cerere `Cookie` din instrumentele pentru dezvoltatori ale browserului (fila Rețea, orice cerere către kidsmanagement-pa.clients6.google.com).\n3. Lipiți-le mai jos.\n\nCookie-urile rămân în Home Assistant; integrarea le menține actualizate singură.",
+        "data": {
+          "cookies": "Cookie-uri"
+        },
+        "data_description": {
+          "cookies": "Export JSON, cookies.txt sau antet Cookie. Trebuie să conțină SAPISID (sau __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Conectați-vă din nou",
+        "description": "Google nu mai acceptă sesiunea pentru {account}. Conectați-vă din nou la {url}, exportați cookie-urile și lipiți-le mai jos.",
+        "data": {
+          "cookies": "Cookie-uri"
+        }
+      },
+      "reconfigure": {
+        "title": "Înlocuiți cookie-urile",
+        "description": "Lipiți cookie-uri recente exportate din {url}.",
+        "data": {
+          "cookies": "Cookie-uri"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Niciun cookie de sesiune Google găsit: textul trebuie să conțină SAPISID sau __Secure-3PAPISID.",
+      "invalid_auth": "Google a refuzat aceste cookie-uri. Conectați-vă din nou la familylink.google.com și exportați-le încă o dată.",
+      "cannot_connect": "Family Link nu poate fi contactat. Încercați din nou peste puțin timp.",
+      "no_children": "Acest cont nu supraveghează niciun copil în Family Link."
+    },
+    "abort": {
+      "already_configured": "Acest cont Google este deja configurat.",
+      "reauth_successful": "Conectat din nou.",
+      "reconfigure_successful": "Cookie-uri înlocuite.",
+      "wrong_account": "Aceste cookie-uri aparțin altui cont Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni Family Link",
+        "description": "Copii: {children}.",
+        "data": {
+          "scan_interval": "Interval de actualizare",
+          "location_interval": "Interval de localizare",
+          "stale_after": "Păstrează datele în cache timp de",
+          "notify_services": "Serviciu de notificare de urgență pentru fiecare copil"
+        },
+        "data_description": {
+          "scan_interval": "Timp pe ecran, blocări și bonusuri.",
+          "location_interval": "Ultima locație cunoscută (dispozitivul nu este trezit).",
+          "stale_after": "Când Family Link nu poate fi contactat, ultimele date rămân afișate atât timp înainte ca entitățile să devină indisponibile.",
+          "notify_services": "O linie pentru fiecare copil, pentru mesajul de urgență prin aplicația Home Assistant de pe telefonul copilului, de ex. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "O linie nu numește niciun copil din familie."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Stare",
+        "state": {
+          "tracked": "Supravegheat",
+          "attention": "Atenție",
+          "locked": "Blocat",
+          "not_tracked": "Nesupravegheat"
+        }
+      },
+      "screen_time": {
+        "name": "Timp pe ecran"
+      },
+      "battery": {
+        "name": "Baterie"
+      },
+      "device_screen_time": {
+        "name": "Timp pe ecran"
+      },
+      "remaining_time": {
+        "name": "Timp rămas"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Blocare"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Sună"
+      },
+      "refresh_location": {
+        "name": "Actualizează locația"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Locație"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Niciun copil supravegheat nu corespunde cu „{child}”."
+    },
+    "unknown_device": {
+      "message": "Niciun dispozitiv al acestui copil nu corespunde cu „{device}”."
+    },
+    "device_required": {
+      "message": "Acest copil are mai multe dispozitive: indicați dispozitivul."
+    },
+    "no_bonus": {
+      "message": "Niciun bonus activ pe acest dispozitiv."
+    },
+    "minutes_required": {
+      "message": "O limită are nevoie de un număr de minute."
+    },
+    "emergency_nothing": {
+      "message": "Nimic de făcut: activați soneria sau indicați un mesaj și un serviciu de notificare."
+    },
+    "unknown_notify": {
+      "message": "Serviciul de notificare {service} nu există."
+    },
+    "unknown_app": {
+      "message": "Nicio aplicație a acestui copil nu corespunde cu „{app}”: indicați titlul exact sau numele pachetului (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link a refuzat acțiunea ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Limită zilnică",
+        "block": "Blochează",
+        "always_allow": "Permite mereu",
+        "default": "Implicit (fără regulă pentru aplicație)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Adaugă un bonus de timp",
+      "description": "Oferă timp suplimentar pe ecran pentru azi pe un dispozitiv.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului ori una dintre entitățile sale."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Numele sau ID-ul dispozitivului; opțional când copilul are doar unul."
+        },
+        "minutes": {
+          "name": "Minute",
+          "description": "Timp suplimentar."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Revocă bonusul",
+      "description": "Anulează bonusul de timp activ pe un dispozitiv.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Numele sau ID-ul dispozitivului."
+        }
+      }
+    },
+    "lock": {
+      "name": "Blocare",
+      "description": "Blochează un dispozitiv acum (apelurile și aplicațiile permise mereu funcționează în continuare).",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Numele sau ID-ul dispozitivului."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Deblochează",
+      "description": "Deblochează un dispozitiv până la următoarea restricție programată.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Numele sau ID-ul dispozitivului."
+        }
+      }
+    },
+    "ring": {
+      "name": "Sună",
+      "description": "Face un dispozitiv să sune, chiar și pe silențios, pentru a-l găsi.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Numele sau ID-ul dispozitivului."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Actualizează locația",
+      "description": "Cere dispozitivului copilului o locație recentă (consumă bateria).",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Setează o regulă pentru o aplicație",
+      "description": "Blochează o aplicație, o permite mereu, o limitează pe zi sau îi elimină regula.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "app": {
+          "name": "Aplicație",
+          "description": "Numele pachetului sau titlul aplicației."
+        },
+        "mode": {
+          "name": "Regulă",
+          "description": "Ce se aplică."
+        },
+        "minutes": {
+          "name": "Minute",
+          "description": "Limită zilnică, pentru regula de limită."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Urgență",
+      "description": "Face dispozitivul să sune prin Family Link și, cu un serviciu de notificare, trimite o notificare critică cu mesajul.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "device": {
+          "name": "Dispozitiv",
+          "description": "Dispozitivul care va suna; toate dispozitivele copilului dacă e gol."
+        },
+        "message": {
+          "name": "Mesaj",
+          "description": "Textul notificării."
+        },
+        "ring": {
+          "name": "Sună",
+          "description": "Fă dispozitivul să sune prin Family Link."
+        },
+        "notify_service": {
+          "name": "Serviciu de notificare",
+          "description": "Înlocuiește serviciul setat în opțiuni, de ex. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Actualizează locația",
+          "description": "Cere și o locație recentă."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Reîmprospătează",
+      "description": "Preia acum datele Family Link.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Doar acest copil (toți dacă e gol)."
+        }
+      }
+    }
+  }
+}

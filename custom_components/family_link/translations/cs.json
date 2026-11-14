@@ -1,0 +1,295 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link nemá oficiální API: integrace používá vaši relaci Google, stejně jako webová aplikace familylink.google.com.\n\n1. Na počítači se přihlaste na {url} **rodičovským** účtem.\n2. Exportujte soubory cookie této stránky, například rozšířením Cookie-Editor (Export → JSON), nebo zkopírujte hlavičku požadavku `Cookie` z vývojářských nástrojů prohlížeče (karta Síť, libovolný požadavek na kidsmanagement-pa.clients6.google.com).\n3. Vložte je níže.\n\nSoubory cookie zůstávají v Home Assistantu; integrace je sama udržuje aktuální.",
+        "data": {
+          "cookies": "Soubory cookie"
+        },
+        "data_description": {
+          "cookies": "Export JSON, cookies.txt nebo hlavička Cookie. Musí obsahovat SAPISID (nebo __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Přihlaste se znovu",
+        "description": "Google již nepřijímá relaci účtu {account}. Přihlaste se znovu na {url}, exportujte soubory cookie a vložte je níže.",
+        "data": {
+          "cookies": "Soubory cookie"
+        }
+      },
+      "reconfigure": {
+        "title": "Nahradit soubory cookie",
+        "description": "Vložte nové soubory cookie exportované z {url}.",
+        "data": {
+          "cookies": "Soubory cookie"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Nebyl nalezen soubor cookie relace Google: text musí obsahovat SAPISID nebo __Secure-3PAPISID.",
+      "invalid_auth": "Google tyto soubory cookie odmítl. Přihlaste se znovu na familylink.google.com a exportujte je ještě jednou.",
+      "cannot_connect": "Family Link je nedostupný. Zkuste to znovu za chvíli.",
+      "no_children": "Tento účet v Family Link nedohlíží na žádné dítě."
+    },
+    "abort": {
+      "already_configured": "Tento účet Google je již nastaven.",
+      "reauth_successful": "Znovu přihlášeno.",
+      "reconfigure_successful": "Soubory cookie nahrazeny.",
+      "wrong_account": "Tyto soubory cookie patří jinému účtu Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti Family Link",
+        "description": "Děti: {children}.",
+        "data": {
+          "scan_interval": "Interval aktualizace",
+          "location_interval": "Interval polohy",
+          "stale_after": "Uchovávat data v mezipaměti",
+          "notify_services": "Služba nouzových oznámení pro každé dítě"
+        },
+        "data_description": {
+          "scan_interval": "Čas u obrazovky, zámky a bonusy.",
+          "location_interval": "Poslední známá poloha (zařízení se neprobudí).",
+          "stale_after": "Když je Family Link nedostupný, poslední data zůstanou zobrazena po tuto dobu, než se entity stanou nedostupnými.",
+          "notify_services": "Jeden řádek na dítě pro nouzovou zprávu přes aplikaci Home Assistant v telefonu dítěte, např. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Jeden řádek neuvádí žádné dítě z rodiny."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Stav",
+        "state": {
+          "tracked": "Pod dohledem",
+          "attention": "Pozor",
+          "locked": "Zamčeno",
+          "not_tracked": "Bez dohledu"
+        }
+      },
+      "screen_time": {
+        "name": "Čas u obrazovky"
+      },
+      "battery": {
+        "name": "Baterie"
+      },
+      "device_screen_time": {
+        "name": "Čas u obrazovky"
+      },
+      "remaining_time": {
+        "name": "Zbývající čas"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Zámek"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Prozvonit"
+      },
+      "refresh_location": {
+        "name": "Aktualizovat polohu"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Poloha"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Žádné dítě pod dohledem neodpovídá „{child}“."
+    },
+    "unknown_device": {
+      "message": "Žádné zařízení tohoto dítěte neodpovídá „{device}“."
+    },
+    "device_required": {
+      "message": "Toto dítě má více zařízení: uveďte zařízení."
+    },
+    "no_bonus": {
+      "message": "Na tomto zařízení není aktivní žádný bonus."
+    },
+    "minutes_required": {
+      "message": "Limit vyžaduje počet minut."
+    },
+    "emergency_nothing": {
+      "message": "Není co dělat: zapněte zvonění nebo zadejte zprávu a službu oznámení."
+    },
+    "unknown_notify": {
+      "message": "Služba oznámení {service} neexistuje."
+    },
+    "unknown_app": {
+      "message": "Žádná aplikace tohoto dítěte neodpovídá „{app}“: uveďte její přesný název nebo název balíčku (com.example.app)."
+    },
+    "action_failed": {
+      "message": "Family Link odmítl akci ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Denní limit",
+        "block": "Zablokovat",
+        "always_allow": "Vždy povolit",
+        "default": "Výchozí (bez pravidla pro aplikaci)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Přidat bonusový čas",
+      "description": "Přidá dnes na zařízení čas u obrazovky navíc.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte, nebo jedna z jeho entit."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Název nebo ID zařízení; nepovinné, pokud má dítě jen jedno."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Čas navíc."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Zrušit bonus",
+      "description": "Zruší aktivní bonusový čas na zařízení.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Název nebo ID zařízení."
+        }
+      }
+    },
+    "lock": {
+      "name": "Zámek",
+      "description": "Okamžitě zamkne zařízení (hovory a vždy povolené aplikace nadále fungují).",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Název nebo ID zařízení."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Odemknout",
+      "description": "Odemkne zařízení do dalšího naplánovaného omezení.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Název nebo ID zařízení."
+        }
+      }
+    },
+    "ring": {
+      "name": "Prozvonit",
+      "description": "Prozvoní zařízení, i v tichém režimu, abyste ho našli.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Název nebo ID zařízení."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Aktualizovat polohu",
+      "description": "Požádá zařízení dítěte o aktuální polohu (spotřebovává baterii).",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Nastavit pravidlo aplikace",
+      "description": "Zablokuje aplikaci, vždy ji povolí, omezí ji denně nebo odstraní její pravidlo.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "app": {
+          "name": "Aplikace",
+          "description": "Název balíčku nebo název aplikace."
+        },
+        "mode": {
+          "name": "Pravidlo",
+          "description": "Co použít."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Denní limit, pro pravidlo limitu."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Nouze",
+      "description": "Prozvoní zařízení přes Family Link a se službou oznámení odešle kritické oznámení se zprávou.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "device": {
+          "name": "Zařízení",
+          "description": "Zařízení, které se má prozvonit; všechna zařízení dítěte, pokud je prázdné."
+        },
+        "message": {
+          "name": "Zpráva",
+          "description": "Text oznámení."
+        },
+        "ring": {
+          "name": "Prozvonit",
+          "description": "Prozvonit zařízení přes Family Link."
+        },
+        "notify_service": {
+          "name": "Služba oznámení",
+          "description": "Nahradí službu z možností, např. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Aktualizovat polohu",
+          "description": "Vyžádat také aktuální polohu."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Obnovit",
+      "description": "Nyní načte data Family Link.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Pouze toto dítě (všechny, pokud je prázdné)."
+        }
+      }
+    }
+  }
+}
