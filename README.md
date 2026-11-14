@@ -12,6 +12,10 @@
   <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/custom_components/family_link/brand/icon.png" alt="Family Link" width="96">
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/images/family-link.svg" alt="Google Family Link" height="40">
+</p>
+
 Home Assistant integration for **Google Family Link**: your children's **screen time**, the **apps** they use, their **devices' lock state**, **time bonuses**, **bedtime and school time**, their **location and route** — and the actions to go with them: add or revoke a bonus, lock, unlock, ring, update the location, set an app rule, send an **emergency** alert. With its own **animated Lovelace cards**, full and mini.
 
 [![Open your Home Assistant instance and open a repository inside the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-family-link&category=integration)
