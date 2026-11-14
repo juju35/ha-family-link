@@ -1,0 +1,292 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "У Family Link нет официального API: интеграция использует вашу сессию Google, как веб-приложение familylink.google.com.\n\n1. На компьютере войдите на {url} с **родительским** аккаунтом.\n2. Экспортируйте файлы cookie этой страницы, например расширением Cookie-Editor (Export → JSON), или скопируйте заголовок запроса `Cookie` из инструментов разработчика браузера (вкладка «Сеть», любой запрос к kidsmanagement-pa.clients6.google.com).\n3. Вставьте их ниже.\n\nФайлы cookie остаются в Home Assistant; интеграция сама поддерживает их актуальными.",
+        "data": {
+          "cookies": "Файлы cookie"
+        },
+        "data_description": {
+          "cookies": "Экспорт JSON, cookies.txt или заголовок Cookie. Должен содержать SAPISID (или __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Войти снова",
+        "description": "Google больше не принимает сессию {account}. Снова войдите на {url}, экспортируйте файлы cookie и вставьте их ниже.",
+        "data": {
+          "cookies": "Файлы cookie"
+        }
+      },
+      "reconfigure": {
+        "title": "Заменить файлы cookie",
+        "description": "Вставьте свежие файлы cookie, экспортированные с {url}.",
+        "data": {
+          "cookies": "Файлы cookie"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Файл cookie сессии Google не найден: текст должен содержать SAPISID или __Secure-3PAPISID.",
+      "invalid_auth": "Google отклонил эти файлы cookie. Снова войдите на familylink.google.com и экспортируйте их ещё раз.",
+      "cannot_connect": "Не удаётся связаться с Family Link. Повторите попытку чуть позже.",
+      "no_children": "Этот аккаунт не контролирует ни одного ребёнка в Family Link."
+    },
+    "abort": {
+      "already_configured": "Этот аккаунт Google уже настроен.",
+      "reauth_successful": "Вход выполнен снова.",
+      "reconfigure_successful": "Файлы cookie заменены.",
+      "wrong_account": "Эти файлы cookie принадлежат другому аккаунту Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметры Family Link",
+        "description": "Дети: {children}.",
+        "data": {
+          "scan_interval": "Интервал обновления",
+          "location_interval": "Интервал местоположения",
+          "stale_after": "Хранить кэшированные данные",
+          "notify_services": "Служба экстренных уведомлений для каждого ребёнка"
+        },
+        "data_description": {
+          "scan_interval": "Время у экрана, блокировки и бонусы.",
+          "location_interval": "Последнее известное местоположение (устройство не пробуждается).",
+          "stale_after": "Если Family Link недоступен, последние данные показываются столько времени, прежде чем объекты станут недоступными.",
+          "notify_services": "Одна строка на ребёнка — для экстренного сообщения через приложение Home Assistant на телефоне ребёнка, например `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Одна из строк не называет ни одного ребёнка семьи."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Статус",
+        "state": {
+          "tracked": "Под контролем",
+          "attention": "Внимание",
+          "locked": "Заблокировано",
+          "not_tracked": "Без контроля"
+        }
+      },
+      "screen_time": {
+        "name": "Время у экрана"
+      },
+      "battery": {
+        "name": "Батарея"
+      },
+      "device_screen_time": {
+        "name": "Время у экрана"
+      },
+      "remaining_time": {
+        "name": "Оставшееся время"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Блокировка"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Позвонить"
+      },
+      "refresh_location": {
+        "name": "Обновить местоположение"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Местоположение"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Ни один контролируемый ребёнок не соответствует «{child}»."
+    },
+    "unknown_device": {
+      "message": "Ни одно устройство этого ребёнка не соответствует «{device}»."
+    },
+    "device_required": {
+      "message": "У этого ребёнка несколько устройств: укажите устройство."
+    },
+    "no_bonus": {
+      "message": "На этом устройстве нет активного бонуса."
+    },
+    "minutes_required": {
+      "message": "Для лимита нужно число минут."
+    },
+    "emergency_nothing": {
+      "message": "Нечего делать: включите звонок или укажите сообщение и службу уведомлений."
+    },
+    "unknown_notify": {
+      "message": "Служба уведомлений {service} не существует."
+    },
+    "action_failed": {
+      "message": "Family Link отклонил действие ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Дневной лимит",
+        "block": "Заблокировать",
+        "always_allow": "Всегда разрешать",
+        "default": "По умолчанию (без правила для приложения)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Добавить бонус времени",
+      "description": "Даёт дополнительное время у экрана на сегодня на устройстве.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка либо один из его объектов."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Имя или ID устройства; необязательно, если у ребёнка одно устройство."
+        },
+        "minutes": {
+          "name": "Минуты",
+          "description": "Дополнительное время."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Отменить бонус",
+      "description": "Отменяет активный бонус времени на устройстве.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Имя или ID устройства."
+        }
+      }
+    },
+    "lock": {
+      "name": "Блокировка",
+      "description": "Сразу блокирует устройство (звонки и всегда разрешённые приложения работают).",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Имя или ID устройства."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Разблокировать",
+      "description": "Разблокирует устройство до следующего запланированного ограничения.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Имя или ID устройства."
+        }
+      }
+    },
+    "ring": {
+      "name": "Позвонить",
+      "description": "Заставляет устройство звонить, даже в беззвучном режиме, чтобы его найти.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Имя или ID устройства."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Обновить местоположение",
+      "description": "Запрашивает у устройства ребёнка свежее местоположение (расходует батарею).",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Задать правило для приложения",
+      "description": "Блокирует приложение, всегда разрешает его, ограничивает в день или удаляет его правило.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "app": {
+          "name": "Приложение",
+          "description": "Имя пакета или название приложения."
+        },
+        "mode": {
+          "name": "Правило",
+          "description": "Что применить."
+        },
+        "minutes": {
+          "name": "Минуты",
+          "description": "Дневной лимит для правила лимита."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Тревога",
+      "description": "Звонит на устройство через Family Link и, при наличии службы уведомлений, отправляет критическое уведомление с сообщением.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Имя или ID пользователя ребёнка."
+        },
+        "device": {
+          "name": "Устройство",
+          "description": "Устройство, на которое нужно позвонить."
+        },
+        "message": {
+          "name": "Сообщение",
+          "description": "Текст уведомления."
+        },
+        "ring": {
+          "name": "Позвонить",
+          "description": "Позвонить на устройство через Family Link."
+        },
+        "notify_service": {
+          "name": "Служба уведомлений",
+          "description": "Заменяет службу из параметров, например notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Обновить местоположение",
+          "description": "Также запросить свежее местоположение."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Обновить",
+      "description": "Получает данные Family Link сейчас.",
+      "fields": {
+        "child": {
+          "name": "Ребёнок",
+          "description": "Только этот ребёнок (все, если пусто)."
+        }
+      }
+    }
+  }
+}

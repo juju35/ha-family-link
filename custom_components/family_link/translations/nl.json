@@ -1,0 +1,292 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link heeft geen officiële API: de integratie gebruikt je Google-sessie, zoals de webapp familylink.google.com.\n\n1. Meld je op een computer aan bij {url} met je **ouder**account.\n2. Exporteer de cookies van die pagina, bijvoorbeeld met de extensie Cookie-Editor (Export → JSON), of kopieer de requestheader `Cookie` uit de ontwikkelaarstools van de browser (tabblad Netwerk, een willekeurig verzoek naar kidsmanagement-pa.clients6.google.com).\n3. Plak ze hieronder.\n\nDe cookies blijven in Home Assistant; de integratie houdt ze zelf actueel.",
+        "data": {
+          "cookies": "Cookies"
+        },
+        "data_description": {
+          "cookies": "JSON-export, cookies.txt of Cookie-header. Moet SAPISID (of __Secure-3PAPISID) bevatten."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw aanmelden",
+        "description": "Google accepteert de sessie van {account} niet meer. Meld je opnieuw aan bij {url}, exporteer de cookies en plak ze hieronder.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      },
+      "reconfigure": {
+        "title": "Cookies vervangen",
+        "description": "Plak verse cookies die je uit {url} hebt geëxporteerd.",
+        "data": {
+          "cookies": "Cookies"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Geen Google-sessiecookie gevonden: de tekst moet SAPISID of __Secure-3PAPISID bevatten.",
+      "invalid_auth": "Google heeft deze cookies geweigerd. Meld je opnieuw aan bij familylink.google.com en exporteer ze nogmaals.",
+      "cannot_connect": "Family Link is niet bereikbaar. Probeer het zo meteen opnieuw.",
+      "no_children": "Dit account houdt in Family Link toezicht op geen enkel kind."
+    },
+    "abort": {
+      "already_configured": "Dit Google-account is al ingesteld.",
+      "reauth_successful": "Opnieuw aangemeld.",
+      "reconfigure_successful": "Cookies vervangen.",
+      "wrong_account": "Deze cookies horen bij een ander Google-account."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties van Family Link",
+        "description": "Kinderen: {children}.",
+        "data": {
+          "scan_interval": "Update-interval",
+          "location_interval": "Locatie-interval",
+          "stale_after": "Gegevens in cache bewaren gedurende",
+          "notify_services": "Noodmeldingsdienst per kind"
+        },
+        "data_description": {
+          "scan_interval": "Schermtijd, vergrendelingen en bonussen.",
+          "location_interval": "Laatst bekende locatie (het apparaat wordt niet gewekt).",
+          "stale_after": "Als Family Link niet bereikbaar is, blijven de laatste gegevens zo lang zichtbaar voordat de entiteiten onbeschikbaar worden.",
+          "notify_services": "Eén regel per kind, voor het noodbericht via de Home Assistant-app op de telefoon van het kind, bijv. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Een regel noemt geen kind van het gezin."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "tracked": "Gevolgd",
+          "attention": "Let op",
+          "locked": "Vergrendeld",
+          "not_tracked": "Niet gevolgd"
+        }
+      },
+      "screen_time": {
+        "name": "Schermtijd"
+      },
+      "battery": {
+        "name": "Batterij"
+      },
+      "device_screen_time": {
+        "name": "Schermtijd"
+      },
+      "remaining_time": {
+        "name": "Resterende tijd"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Vergrendeling"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Laten overgaan"
+      },
+      "refresh_location": {
+        "name": "Locatie bijwerken"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Locatie"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Geen kind onder toezicht komt overeen met „{child}”."
+    },
+    "unknown_device": {
+      "message": "Geen apparaat van dit kind komt overeen met „{device}”."
+    },
+    "device_required": {
+      "message": "Dit kind heeft meerdere apparaten: geef het apparaat op."
+    },
+    "no_bonus": {
+      "message": "Er loopt geen bonus op dit apparaat."
+    },
+    "minutes_required": {
+      "message": "Een limiet heeft een aantal minuten nodig."
+    },
+    "emergency_nothing": {
+      "message": "Niets te doen: zet het overgaan aan, of geef een bericht en een meldingsdienst op."
+    },
+    "unknown_notify": {
+      "message": "De meldingsdienst {service} bestaat niet."
+    },
+    "action_failed": {
+      "message": "Family Link heeft de actie ({action}) geweigerd: {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Daglimiet",
+        "block": "Blokkeren",
+        "always_allow": "Altijd toestaan",
+        "default": "Standaard (geen app-regel)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Tijdbonus toevoegen",
+      "description": "Geeft vandaag extra schermtijd op een apparaat.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind, of een van zijn entiteiten."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Naam of ID van het apparaat; optioneel als het kind er maar één heeft."
+        },
+        "minutes": {
+          "name": "Minuten",
+          "description": "Extra tijd."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Bonus intrekken",
+      "description": "Annuleert de tijdbonus die op een apparaat loopt.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Naam of ID van het apparaat."
+        }
+      }
+    },
+    "lock": {
+      "name": "Vergrendeling",
+      "description": "Vergrendelt een apparaat meteen (bellen en altijd toegestane apps blijven werken).",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Naam of ID van het apparaat."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Ontgrendelen",
+      "description": "Ontgrendelt een apparaat tot de volgende geplande beperking.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Naam of ID van het apparaat."
+        }
+      }
+    },
+    "ring": {
+      "name": "Laten overgaan",
+      "description": "Laat een apparaat overgaan, ook op stil, om het te vinden.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Naam of ID van het apparaat."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Locatie bijwerken",
+      "description": "Vraagt het apparaat van het kind om een actuele locatie (verbruikt batterij).",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        }
+      }
+    },
+    "set_app": {
+      "name": "App-regel instellen",
+      "description": "Blokkeert een app, staat hem altijd toe, beperkt hem per dag of verwijdert zijn regel.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "app": {
+          "name": "App",
+          "description": "Pakketnaam of titel van de app."
+        },
+        "mode": {
+          "name": "Regel",
+          "description": "Wat er toegepast moet worden."
+        },
+        "minutes": {
+          "name": "Minuten",
+          "description": "Daglimiet, voor de limietregel."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Noodgeval",
+      "description": "Laat het apparaat via Family Link overgaan en stuurt, met een meldingsdienst, een kritieke melding met het bericht.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "device": {
+          "name": "Apparaat",
+          "description": "Apparaat dat moet overgaan."
+        },
+        "message": {
+          "name": "Bericht",
+          "description": "Tekst van de melding."
+        },
+        "ring": {
+          "name": "Laten overgaan",
+          "description": "Apparaat via Family Link laten overgaan."
+        },
+        "notify_service": {
+          "name": "Meldingsdienst",
+          "description": "Vervangt de dienst uit de opties, bijv. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Locatie bijwerken",
+          "description": "Ook om een actuele locatie vragen."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Vernieuwen",
+      "description": "Haalt de gegevens van Family Link nu op.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Alleen dit kind (alle als leeg)."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "Family Link nema zvanični API: integracija koristi vašu Google sesiju, kao veb aplikacija familylink.google.com.\n\n1. Na računaru se prijavite na {url} **roditeljskim** nalogom.\n2. Izvezite kolačiće te stranice, na primer proširenjem Cookie-Editor (Export → JSON), ili kopirajte zaglavlje zahteva `Cookie` iz alatki za programere pregledača (kartica Mreža, bilo koji zahtev ka kidsmanagement-pa.clients6.google.com).\n3. Nalepite ih ispod.\n\nKolačići ostaju u Home Assistant-u; integracija ih sama održava ažurnim.",
+        "data": {
+          "cookies": "Kolačići"
+        },
+        "data_description": {
+          "cookies": "JSON izvoz, cookies.txt ili zaglavlje Cookie. Mora sadržati SAPISID (ili __Secure-3PAPISID)."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ponovo se prijavite",
+        "description": "Google više ne prihvata sesiju naloga {account}. Ponovo se prijavite na {url}, izvezite kolačiće i nalepite ih ispod.",
+        "data": {
+          "cookies": "Kolačići"
+        }
+      },
+      "reconfigure": {
+        "title": "Zameni kolačiće",
+        "description": "Nalepite sveže kolačiće izvezene sa {url}.",
+        "data": {
+          "cookies": "Kolačići"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Nije pronađen kolačić Google sesije: tekst mora sadržati SAPISID ili __Secure-3PAPISID.",
+      "invalid_auth": "Google je odbio ove kolačiće. Ponovo se prijavite na familylink.google.com i izvezite ih još jednom.",
+      "cannot_connect": "Family Link nije dostupan. Pokušajte ponovo za trenutak.",
+      "no_children": "Ovaj nalog ne nadzire nijedno dete u Family Link-u."
+    },
+    "abort": {
+      "already_configured": "Ovaj Google nalog je već podešen.",
+      "reauth_successful": "Ponovo prijavljeni.",
+      "reconfigure_successful": "Kolačići zamenjeni.",
+      "wrong_account": "Ovi kolačići pripadaju drugom Google nalogu."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcije za Family Link",
+        "description": "Deca: {children}.",
+        "data": {
+          "scan_interval": "Interval ažuriranja",
+          "location_interval": "Interval lokacije",
+          "stale_after": "Čuvaj keširane podatke",
+          "notify_services": "Usluga hitnih obaveštenja po detetu"
+        },
+        "data_description": {
+          "scan_interval": "Vreme pred ekranom, zaključavanja i bonusi.",
+          "location_interval": "Poslednja poznata lokacija (uređaj se ne budi).",
+          "stale_after": "Kada Family Link nije dostupan, poslednji podaci ostaju prikazani ovoliko dugo pre nego što entiteti postanu nedostupni.",
+          "notify_services": "Jedan red po detetu, za hitnu poruku preko aplikacije Home Assistant na telefonu deteta, npr. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Jedan red ne navodi nijedno dete iz porodice."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "tracked": "Pod nadzorom",
+          "attention": "Pažnja",
+          "locked": "Zaključano",
+          "not_tracked": "Bez nadzora"
+        }
+      },
+      "screen_time": {
+        "name": "Vreme pred ekranom"
+      },
+      "battery": {
+        "name": "Baterija"
+      },
+      "device_screen_time": {
+        "name": "Vreme pred ekranom"
+      },
+      "remaining_time": {
+        "name": "Preostalo vreme"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Zaključavanje"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Pozvoni"
+      },
+      "refresh_location": {
+        "name": "Ažuriraj lokaciju"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Lokacija"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Nijedno dete pod nadzorom ne odgovara „{child}”."
+    },
+    "unknown_device": {
+      "message": "Nijedan uređaj ovog deteta ne odgovara „{device}”."
+    },
+    "device_required": {
+      "message": "Ovo dete ima više uređaja: navedite uređaj."
+    },
+    "no_bonus": {
+      "message": "Na ovom uređaju nije aktivan nijedan bonus."
+    },
+    "minutes_required": {
+      "message": "Ograničenju je potreban broj minuta."
+    },
+    "emergency_nothing": {
+      "message": "Nema šta da se uradi: uključite zvonjenje ili navedite poruku i uslugu obaveštenja."
+    },
+    "unknown_notify": {
+      "message": "Usluga obaveštenja {service} ne postoji."
+    },
+    "action_failed": {
+      "message": "Family Link je odbio radnju ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Dnevno ograničenje",
+        "block": "Blokiraj",
+        "always_allow": "Uvek dozvoli",
+        "default": "Podrazumevano (bez pravila za aplikaciju)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Dodaj bonus vremena",
+      "description": "Daje dodatno vreme pred ekranom za danas na uređaju.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta, ili jedan od njegovih entiteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Naziv ili ID uređaja; opciono ako dete ima samo jedan."
+        },
+        "minutes": {
+          "name": "Minuti",
+          "description": "Dodatno vreme."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Opozovi bonus",
+      "description": "Otkazuje aktivni bonus vremena na uređaju.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Naziv ili ID uređaja."
+        }
+      }
+    },
+    "lock": {
+      "name": "Zaključavanje",
+      "description": "Odmah zaključava uređaj (pozivi i uvek dozvoljene aplikacije i dalje rade).",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Naziv ili ID uređaja."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Otključaj",
+      "description": "Otključava uređaj do sledećeg zakazanog ograničenja.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Naziv ili ID uređaja."
+        }
+      }
+    },
+    "ring": {
+      "name": "Pozvoni",
+      "description": "Uređaj zvoni, i u nečujnom režimu, da biste ga pronašli.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Naziv ili ID uređaja."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Ažuriraj lokaciju",
+      "description": "Traži od uređaja deteta svežu lokaciju (troši bateriju).",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Podesi pravilo aplikacije",
+      "description": "Blokira aplikaciju, uvek je dozvoljava, ograničava je dnevno ili uklanja njeno pravilo.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "app": {
+          "name": "Aplikacija",
+          "description": "Naziv paketa ili naslov aplikacije."
+        },
+        "mode": {
+          "name": "Pravilo",
+          "description": "Šta primeniti."
+        },
+        "minutes": {
+          "name": "Minuti",
+          "description": "Dnevno ograničenje, za pravilo ograničenja."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Hitno",
+      "description": "Uređaj zvoni preko Family Link-a i, uz uslugu obaveštenja, šalje kritično obaveštenje sa porukom.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "device": {
+          "name": "Uređaj",
+          "description": "Uređaj koji treba da zazvoni."
+        },
+        "message": {
+          "name": "Poruka",
+          "description": "Tekst obaveštenja."
+        },
+        "ring": {
+          "name": "Pozvoni",
+          "description": "Neka uređaj zazvoni preko Family Link-a."
+        },
+        "notify_service": {
+          "name": "Usluga obaveštenja",
+          "description": "Zamenjuje uslugu iz opcija, npr. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Ažuriraj lokaciju",
+          "description": "Zatraži i svežu lokaciju."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Osveži",
+      "description": "Sada preuzima podatke Family Link-a.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Samo ovo dete (sva ako je prazno)."
+        }
+      }
+    }
+  }
+}

@@ -42,7 +42,7 @@ Home Assistant integration for **Google Family Link**: your children's **screen 
 - `custom:family-link-card`, **shipped with the integration** and loaded automatically: an animated phone or tablet showing the week's screen time and the apps, a protection shield, the lock dropping in when the device is locked, device chips for children with several devices, top apps, bonus band with **Revoke**, add-time presets and custom duration, lock / ring / locate / emergency buttons, a **location popup with the route on the map** and a replay slider
 - `custom:family-link-mini-card`: the child at a glance (a small device filling up with the time used, or one tile per device), with a button to open the full card
 - Diagnostics download without cookies, names, e-mails or positions
-- English and French
+- 22 languages for the integration and the cards (see [Translations](#translations))
 
 ## Prerequisites
 
@@ -328,8 +328,29 @@ The integration and the cards follow the language of Home Assistant (the card's 
 |---|---|
 | English | `en` |
 | Français | `fr` |
+| Deutsch | `de` |
+| Español | `es` |
+| Српски | `sr` |
+| Srpski (latinica) | `sr-Latn` |
+| Italiano | `it` |
+| Nederlands | `nl` |
+| Português (Portugal) | `pt` |
+| Português (Brasil) | `pt-BR` |
+| Polski | `pl` |
+| Română | `ro` |
+| Dansk | `da` |
+| Svenska | `sv` |
+| Български | `bg` |
+| Русский | `ru` |
+| Українська | `uk` |
+| Magyar | `hu` |
+| Slovenčina | `sk` |
+| Čeština | `cs` |
+| Slovenščina | `sl` |
+| Latviešu | `lv` |
+| Ελληνικά | `el` |
 
-Contributions for additional languages are welcome!
+`pt-BR` uses the European Portuguese texts for now; corrections and other languages are welcome!
 
 ## Credits
 

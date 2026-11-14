@@ -1,0 +1,292 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Family Link",
+        "description": "A Family Linknek nincs hivatalos API-ja: az integráció az Ön Google-munkamenetét használja, ahogy a familylink.google.com webalkalmazás is.\n\n1. Számítógépen jelentkezzen be ide: {url} a **szülői** fiókjával.\n2. Exportálja az oldal sütijeit, például a Cookie-Editor bővítménnyel (Export → JSON), vagy másolja ki a `Cookie` kérésfejlécet a böngésző fejlesztői eszközeiből (Hálózat lap, bármely kérés a kidsmanagement-pa.clients6.google.com felé).\n3. Illessze be őket alább.\n\nA sütik a Home Assistantben maradnak; az integráció maga tartja őket naprakészen.",
+        "data": {
+          "cookies": "Sütik"
+        },
+        "data_description": {
+          "cookies": "JSON-export, cookies.txt vagy Cookie fejléc. Tartalmaznia kell a SAPISID (vagy __Secure-3PAPISID) sütit."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Jelentkezzen be újra",
+        "description": "A Google már nem fogadja el {account} munkamenetét. Jelentkezzen be újra ide: {url}, exportálja a sütiket, és illessze be őket alább.",
+        "data": {
+          "cookies": "Sütik"
+        }
+      },
+      "reconfigure": {
+        "title": "Sütik cseréje",
+        "description": "Illessze be a(z) {url} oldalról exportált friss sütiket.",
+        "data": {
+          "cookies": "Sütik"
+        }
+      }
+    },
+    "error": {
+      "invalid_cookies": "Nem található Google-munkamenet süti: a szövegnek tartalmaznia kell a SAPISID vagy __Secure-3PAPISID sütit.",
+      "invalid_auth": "A Google elutasította ezeket a sütiket. Jelentkezzen be újra a familylink.google.com oldalon, és exportálja őket még egyszer.",
+      "cannot_connect": "A Family Link nem érhető el. Próbálja újra egy kicsit később.",
+      "no_children": "Ez a fiók egyetlen gyermeket sem felügyel a Family Linkben."
+    },
+    "abort": {
+      "already_configured": "Ez a Google-fiók már be van állítva.",
+      "reauth_successful": "Újra bejelentkezve.",
+      "reconfigure_successful": "Sütik lecserélve.",
+      "wrong_account": "Ezek a sütik egy másik Google-fiókhoz tartoznak."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Family Link beállítások",
+        "description": "Gyermekek: {children}.",
+        "data": {
+          "scan_interval": "Frissítési időköz",
+          "location_interval": "Helyfrissítési időköz",
+          "stale_after": "Gyorsítótárazott adatok megőrzése",
+          "notify_services": "Vészhelyzeti értesítési szolgáltatás gyermekenként"
+        },
+        "data_description": {
+          "scan_interval": "Képernyőidő, zárolások és bónuszok.",
+          "location_interval": "Utolsó ismert hely (az eszköz nem ébred fel).",
+          "stale_after": "Ha a Family Link nem érhető el, a legutóbbi adatok ennyi ideig láthatók maradnak, mielőtt az entitások elérhetetlenné válnak.",
+          "notify_services": "Gyermekenként egy sor a gyermek telefonján lévő Home Assistant alkalmazáson keresztüli vészüzenethez, pl. `Alex: notify.mobile_app_pixel_8`."
+        }
+      }
+    },
+    "error": {
+      "unknown_child": "Az egyik sor nem a család egyik gyermekét nevezi meg."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Állapot",
+        "state": {
+          "tracked": "Felügyelt",
+          "attention": "Figyelem",
+          "locked": "Zárolva",
+          "not_tracked": "Nem felügyelt"
+        }
+      },
+      "screen_time": {
+        "name": "Képernyőidő"
+      },
+      "battery": {
+        "name": "Akkumulátor"
+      },
+      "device_screen_time": {
+        "name": "Képernyőidő"
+      },
+      "remaining_time": {
+        "name": "Hátralévő idő"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Zárolás"
+      }
+    },
+    "button": {
+      "ring": {
+        "name": "Csengetés"
+      },
+      "refresh_location": {
+        "name": "Hely frissítése"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Hely"
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_child": {
+      "message": "Egyetlen felügyelt gyermek sem felel meg ennek: „{child}”."
+    },
+    "unknown_device": {
+      "message": "A gyermek egyik eszköze sem felel meg ennek: „{device}”."
+    },
+    "device_required": {
+      "message": "Ennek a gyermeknek több eszköze van: adja meg az eszközt."
+    },
+    "no_bonus": {
+      "message": "Ezen az eszközön nincs aktív bónusz."
+    },
+    "minutes_required": {
+      "message": "A korláthoz percek száma szükséges."
+    },
+    "emergency_nothing": {
+      "message": "Nincs teendő: kapcsolja be a csengetést, vagy adjon meg üzenetet és értesítési szolgáltatást."
+    },
+    "unknown_notify": {
+      "message": "A(z) {service} értesítési szolgáltatás nem létezik."
+    },
+    "action_failed": {
+      "message": "A Family Link elutasította a műveletet ({action}): {error}"
+    }
+  },
+  "selector": {
+    "app_mode": {
+      "options": {
+        "limit": "Napi korlát",
+        "block": "Letiltás",
+        "always_allow": "Mindig engedélyez",
+        "default": "Alapértelmezett (nincs alkalmazásszabály)"
+      }
+    }
+  },
+  "services": {
+    "add_bonus": {
+      "name": "Bónuszidő hozzáadása",
+      "description": "Plusz képernyőidőt ad mára egy eszközön.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója, vagy egyik entitása."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "Az eszköz neve vagy azonosítója; elhagyható, ha a gyermeknek csak egy van."
+        },
+        "minutes": {
+          "name": "Percek",
+          "description": "Plusz idő."
+        }
+      }
+    },
+    "revoke_bonus": {
+      "name": "Bónusz visszavonása",
+      "description": "Megszakítja egy eszköz aktív bónuszidejét.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "Az eszköz neve vagy azonosítója."
+        }
+      }
+    },
+    "lock": {
+      "name": "Zárolás",
+      "description": "Azonnal zárolja az eszközt (a hívások és a mindig engedélyezett alkalmazások továbbra is működnek).",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "Az eszköz neve vagy azonosítója."
+        }
+      }
+    },
+    "unlock": {
+      "name": "Feloldás",
+      "description": "Feloldja az eszközt a következő ütemezett korlátozásig.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "Az eszköz neve vagy azonosítója."
+        }
+      }
+    },
+    "ring": {
+      "name": "Csengetés",
+      "description": "Megcsörgeti az eszközt, néma módban is, hogy megtalálja.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "Az eszköz neve vagy azonosítója."
+        }
+      }
+    },
+    "refresh_location": {
+      "name": "Hely frissítése",
+      "description": "Friss helyet kér a gyermek eszközétől (akkumulátort használ).",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        }
+      }
+    },
+    "set_app": {
+      "name": "Alkalmazásszabály beállítása",
+      "description": "Letilt egy alkalmazást, mindig engedélyezi, napi korlátot szab rá, vagy eltávolítja a szabályát.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "app": {
+          "name": "Alkalmazás",
+          "description": "Csomagnév vagy az alkalmazás címe."
+        },
+        "mode": {
+          "name": "Szabály",
+          "description": "Mit alkalmazzon."
+        },
+        "minutes": {
+          "name": "Percek",
+          "description": "Napi korlát, a korlát szabályhoz."
+        }
+      }
+    },
+    "emergency": {
+      "name": "Vészhelyzet",
+      "description": "Megcsörgeti az eszközt a Family Linken keresztül, és értesítési szolgáltatással kritikus értesítést küld az üzenettel.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "device": {
+          "name": "Eszköz",
+          "description": "A megcsörgetendő eszköz."
+        },
+        "message": {
+          "name": "Üzenet",
+          "description": "Az értesítés szövege."
+        },
+        "ring": {
+          "name": "Csengetés",
+          "description": "Az eszköz megcsörgetése a Family Linken keresztül."
+        },
+        "notify_service": {
+          "name": "Értesítési szolgáltatás",
+          "description": "Felülírja a beállításokban megadott szolgáltatást, pl. notify.mobile_app_pixel_8."
+        },
+        "refresh_location": {
+          "name": "Hely frissítése",
+          "description": "Friss hely kérése is."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Frissítés",
+      "description": "Most lekéri a Family Link adatait.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "Csak ez a gyermek (üresen hagyva mind)."
+        }
+      }
+    }
+  }
+}
