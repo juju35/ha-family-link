@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Notifikationstjenesten {service} findes ikke."
     },
+    "unknown_app": {
+      "message": "Ingen app hos dette barn matcher \"{app}\": angiv dens nøjagtige titel eller pakkenavn (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link afviste handlingen ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Enhed",
-          "description": "Enhed, der skal ringe."
+          "description": "Enhed, der skal ringe; alle barnets enheder, hvis tomt."
         },
         "message": {
           "name": "Besked",

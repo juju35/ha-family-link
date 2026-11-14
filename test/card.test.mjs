@@ -155,3 +155,15 @@ test('editor schema lists the devices of the child', () => {
     ['', 'p'],
   );
 });
+
+test('emergency without a picked device rings every device of the child', () => {
+  const card = new FamilyLinkCard();
+  const a = { child_name: 'Alex', devices: [device('Pixel'), device('Tab')], location: null, notify_service: null };
+  const all = card._emergencyPopup(a, en, { type: 'emergency', ring: true });
+  assert.ok(all.includes('data-key="ring"'));
+  assert.ok(all.includes('Pixel, Tab'));
+  const one = card._emergencyPopup(a, en, { type: 'emergency', device: 'Tab', ring: true });
+  assert.ok(one.includes('data-key="ring"') && !one.includes('Pixel, Tab'));
+  const none = card._emergencyPopup({ ...a, devices: [] }, en, { type: 'emergency', ring: true });
+  assert.ok(!none.includes('data-key="ring"'));
+});

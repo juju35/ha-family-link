@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Служба сповіщень {service} не існує."
     },
+    "unknown_app": {
+      "message": "Жоден застосунок цієї дитини не відповідає «{app}»: вкажіть точну назву або ім’я пакета (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link відхилив дію ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Пристрій",
-          "description": "Пристрій, на який потрібно подзвонити."
+          "description": "Пристрій для дзвінка; усі пристрої дитини, якщо порожньо."
         },
         "message": {
           "name": "Повідомлення",

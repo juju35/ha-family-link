@@ -89,6 +89,7 @@
     "minutes_required": { "message": "Une limite demande un nombre de minutes." },
     "emergency_nothing": { "message": "Rien à faire : activez la sonnerie, ou donnez un message et un service de notification." },
     "unknown_notify": { "message": "Le service de notification {service} n'existe pas." },
+    "unknown_app": { "message": "Aucune application de cet enfant ne correspond à « {app} » : indiquez son titre exact ou son nom de paquet (com.example.app)." },
     "action_failed": { "message": "Family Link a refusé l'action ({action}) : {error}" }
   },
   "selector": {
@@ -165,7 +166,7 @@
       "description": "Fait sonner l'appareil via Family Link et, avec un service de notification, envoie une notification critique avec le message.",
       "fields": {
         "child": { "name": "Enfant", "description": "Nom ou identifiant de l'enfant." },
-        "device": { "name": "Appareil", "description": "Appareil à faire sonner." },
+        "device": { "name": "Appareil", "description": "Appareil à faire sonner ; tous les appareils de l'enfant si vide." },
         "message": { "name": "Message", "description": "Texte de la notification." },
         "ring": { "name": "Faire sonner", "description": "Faire sonner l'appareil via Family Link." },
         "notify_service": { "name": "Service de notification", "description": "Remplace le service des options, par ex. notify.mobile_app_pixel_8." },

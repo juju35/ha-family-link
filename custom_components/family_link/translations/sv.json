@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Aviseringstjänsten {service} finns inte."
     },
+    "unknown_app": {
+      "message": "Ingen app hos det här barnet matchar ”{app}”: ange dess exakta titel eller paketnamn (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link avvisade åtgärden ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Enhet",
-          "description": "Enhet som ska ringa."
+          "description": "Enhet som ska ringa; alla barnets enheter om tomt."
         },
         "message": {
           "name": "Meddelande",

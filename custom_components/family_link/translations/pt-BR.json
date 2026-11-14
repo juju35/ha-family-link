@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "O serviço de notificação {service} não existe."
     },
+    "unknown_app": {
+      "message": "Nenhuma aplicação desta criança corresponde a «{app}»: indique o título exato ou o nome do pacote (com.example.app)."
+    },
     "action_failed": {
       "message": "O Family Link recusou a ação ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Dispositivo",
-          "description": "Dispositivo a fazer tocar."
+          "description": "Dispositivo a fazer tocar; todos os dispositivos da criança se vazio."
         },
         "message": {
           "name": "Mensagem",

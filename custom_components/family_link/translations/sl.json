@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Storitev obvestil {service} ne obstaja."
     },
+    "unknown_app": {
+      "message": "Nobena aplikacija tega otroka se ne ujema z „{app}“: navedite njen točen naslov ali ime paketa (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link je zavrnil dejanje ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Naprava",
-          "description": "Naprava, ki naj pozvoni."
+          "description": "Naprava, ki naj pozvoni; vse otrokove naprave, če je prazno."
         },
         "message": {
           "name": "Sporočilo",

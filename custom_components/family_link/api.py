@@ -2,11 +2,15 @@
 
 Reliability choices, compared with the clients this integration learned from:
 - the Authorization header is signed again for every request (it carries a timestamp);
-- transient failures (network, timeouts, HTTP 429 and 5xx) are retried with backoff, honoring Retry-After;
+- transient failures (network, timeouts, HTTP 429 and 5xx) are retried with backoff, honoring Retry-After; an
+  action (POST) is only retried when Google surely did not get it (no connection, HTTP 429), so a timeout after
+  Google applied it never gives a bonus twice;
 - the short-lived session cookies Google rotates are taken from every answer and refreshed on a schedule
   (RotateCookies, what the browser does), so the session lasts as long as in a browser;
 - a 401 first tries a rotation and one more signed attempt before reporting that a new sign-in is needed;
-- one shared aiohttp session (Home Assistant's), cookies sent as a raw header: no per-client session to leak.
+- an own aiohttp session without cookie jar (see create_session): the cookies are sent as a raw header and the
+  ones Google sets are kept here only, never in Home Assistant's shared session where other integrations calling
+  google.com would send them.
 """
 
 from __future__ import annotations
@@ -20,6 +24,8 @@ from datetime import date, datetime
 from typing import Any
 
 import aiohttp
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.util import dt as dt_util
 
 from .auth import ORIGIN, GoogleCookies
@@ -55,6 +61,8 @@ TIMEOUT = aiohttp.ClientTimeout(total=25, connect=10)
 RETRIES = 3
 BACKOFF = (1.0, 3.0, 8.0)
 MAX_RETRY_AFTER = 30.0
+# A rotation this recent already gave fresh cookies to the requests that waited for it
+ROTATION_SHARED_SECONDS = 10
 LOCATION_REFRESH = "2"
 LOCATION_CACHED = "1"
 RING_ACTION = 2
@@ -80,6 +88,11 @@ class ApiError(FamilyLinkError):
     def __init__(self, message: str, status: int | None = None) -> None:
         super().__init__(message)
         self.status = status
+
+
+def create_session(hass: HomeAssistant, auto_cleanup: bool = True) -> aiohttp.ClientSession:
+    """An aiohttp session of our own, without cookie jar: the Google cookies stay in GoogleCookies only."""
+    return async_create_clientsession(hass, auto_cleanup=auto_cleanup, cookie_jar=aiohttp.DummyCookieJar())
 
 
 def _check_id(value: str, what: str) -> str:
@@ -140,6 +153,8 @@ class FamilyLinkClient:
         body = json.dumps(payload, separators=(",", ":")) if payload is not None else None
         auth_retry_done = False
         attempt = 0
+        # An action may have been applied when its answer got lost: only retry it when Google surely didn't get it
+        idempotent = method == "GET"
         while True:
             try:
                 async with self._session.request(
@@ -159,19 +174,21 @@ class FamilyLinkClient:
                         raise AuthError(f"HTTP {status}")
                     if status == 429 or status >= 500:
                         retry_after = _retry_after(response.headers.get("Retry-After"))
-                        raise _Retry(f"HTTP {status}", retry_after)
+                        raise _Retry(f"HTTP {status}", status, retry_after)
                     if status == 404:
                         raise ApiError("not found", status)
                     raise ApiError(f"HTTP {status}: {_short(text)}", status)
             except _Retry as err:
                 delay = err.retry_after
                 failure: Exception = TransientError(str(err))
+                retryable = idempotent or err.status == 429
             except (TimeoutError, aiohttp.ClientError) as err:
                 delay = None
                 failure = TransientError(f"{type(err).__name__}: {err}" if str(err) else type(err).__name__)
+                retryable = idempotent or isinstance(err, aiohttp.ClientConnectorError)
             except ValueError as err:  # JSON
                 raise ApiError(f"unreadable answer: {err}") from err
-            if attempt >= RETRIES - 1:
+            if not retryable or attempt >= RETRIES - 1:
                 raise failure
             wait = min(delay if delay is not None else BACKOFF[attempt], MAX_RETRY_AFTER)
             _LOGGER.debug("%s %s failed (%s), retry in %.0fs", method, path.split("/")[-1], failure, wait)
@@ -181,11 +198,13 @@ class FamilyLinkClient:
     async def rotate_cookies(self, force: bool = False) -> bool:
         """Ask Google for fresh short-lived session cookies, as the browser does. Best effort.
 
-        Returns True when new cookies came back. Several callers at once share one rotation.
+        Returns True when new cookies came back. Several callers at once share one rotation: the requests
+        refused together (a 401 for each section of each child) wait for the first one instead of rotating again.
         """
         async with self._rotate_lock:
             now = dt_util.utcnow()
-            if not force and self.last_rotation and (now - self.last_rotation).total_seconds() < 60:
+            since = (now - self.last_rotation).total_seconds() if self.last_rotation else None
+            if since is not None and since < (ROTATION_SHARED_SECONDS if force else 60):
                 return False
             self.last_rotation = now
             try:
@@ -317,8 +336,9 @@ class FamilyLinkClient:
 
 
 class _Retry(Exception):
-    def __init__(self, message: str, retry_after: float | None) -> None:
+    def __init__(self, message: str, status: int, retry_after: float | None) -> None:
         super().__init__(message)
+        self.status = status
         self.retry_after = retry_after
 
 

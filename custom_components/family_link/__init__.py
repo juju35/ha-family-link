@@ -15,10 +15,9 @@ from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
-from .api import AuthError, FamilyLinkClient
+from .api import AuthError, FamilyLinkClient, create_session
 from .auth import GoogleCookies
 from .config_flow import OPTIONS_FLOW_RELOADS
 from .const import CARD_FILENAME, CONF_COOKIES, DOMAIN, FRONTEND_URL, REAUTH_NOTIFICATION_ID
@@ -30,6 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.BUTTON, Platform.DEVICE_TRACKER, Platform.SENSOR, Platform.SWITCH]
 CARD_PATH = Path(__file__).parent / "frontend" / CARD_FILENAME
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+CHILD_MODEL = "Supervised account"  # the model of the child devices (their phones and tablets have theirs)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -44,7 +44,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
     cookies = GoogleCookies.from_storage(entry.data.get(CONF_COOKIES))
     if not cookies.can_sign:
         raise ConfigEntryAuthFailed("no Google session cookie saved")
-    client = FamilyLinkClient(async_get_clientsession(hass), cookies)
+    # Own session, closed with the entry: Google's cookies never land in Home Assistant's shared one
+    client = FamilyLinkClient(create_session(hass), cookies)
     coordinator = FamilyLinkCoordinator(hass, entry, client)
     try:
         await coordinator.async_config_entry_first_refresh()
@@ -56,16 +57,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
         raise ConfigEntryNotReady("no supervised child found in the family")
     entry.runtime_data = coordinator
 
+    # Children who left the family while Home Assistant was off: their devices go (the list just came from Google)
+    _remove_gone_children(hass, entry, set(coordinator.data.children))
+
     def register_children() -> None:
         # The child devices exist before their phones and tablets, which are linked to them (via_device)
         registry = dr.async_get(hass)
+        gone = [child_id for child_id in coordinator.child_device_ids if child_id not in coordinator.data.children]
+        if gone:
+            for child_id in gone:
+                del coordinator.child_device_ids[child_id]
+            _remove_gone_children(hass, entry, set(coordinator.data.children))
         for child_id, child in coordinator.data.children.items():
+            if child_id in coordinator.child_device_ids:
+                continue
             coordinator.child_device_ids[child_id] = registry.async_get_or_create(
                 config_entry_id=entry.entry_id,
                 identifiers={(DOMAIN, child_id)},
                 name=child.member.name,
                 manufacturer="Google",
-                model="Supervised account",
+                model=CHILD_MODEL,
                 entry_type=dr.DeviceEntryType.SERVICE,
                 configuration_url="https://familylink.google.com",
             ).id
@@ -84,6 +95,36 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
 
 async def async_unload_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -> bool:
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: FamilyLinkConfigEntry, device_entry: dr.DeviceEntry
+) -> bool:
+    """A device can be deleted by hand once it is no longer a supervised child or one of their devices."""
+    coordinator: FamilyLinkCoordinator | None = getattr(entry, "runtime_data", None)
+    if coordinator is None:
+        return True
+    current = set(coordinator.data.children)
+    for child in coordinator.data.children.values():
+        current.update(child.usage.devices if child.usage else ())
+    return not any(domain == DOMAIN and key in current for domain, key in device_entry.identifiers)
+
+
+def _remove_gone_children(hass: HomeAssistant, entry: FamilyLinkConfigEntry, children: set[str]) -> None:
+    """Detach the devices of children no longer supervised, with their phones and tablets (and their entities)."""
+    registry = dr.async_get(hass)
+    devices = dr.async_entries_for_config_entry(registry, entry.entry_id)
+    gone = {
+        device.id
+        for device in devices
+        if device.model == CHILD_MODEL
+        and any(domain == DOMAIN for domain, _ in device.identifiers)
+        and not any(domain == DOMAIN and key in children for domain, key in device.identifiers)
+    }
+    # Removed outright (their entities with them): these devices belong to this entry only
+    for device in devices:
+        if device.id in gone or device.via_device_id in gone:
+            registry.async_remove_device(device.id)
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -> None:

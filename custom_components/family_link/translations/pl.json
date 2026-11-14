@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Usługa powiadomień {service} nie istnieje."
     },
+    "unknown_app": {
+      "message": "Żadna aplikacja tego dziecka nie pasuje do „{app}”: podaj jej dokładny tytuł lub nazwę pakietu (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link odrzucił akcję ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Urządzenie",
-          "description": "Urządzenie, które ma zadzwonić."
+          "description": "Urządzenie, które ma zadzwonić; wszystkie urządzenia dziecka, jeśli puste."
         },
         "message": {
           "name": "Wiadomość",

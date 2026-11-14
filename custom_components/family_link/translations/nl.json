@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "De meldingsdienst {service} bestaat niet."
     },
+    "unknown_app": {
+      "message": "Geen app van dit kind komt overeen met \"{app}\": geef de exacte titel of de pakketnaam op (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link heeft de actie ({action}) geweigerd: {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Apparaat",
-          "description": "Apparaat dat moet overgaan."
+          "description": "Apparaat dat moet overgaan; alle apparaten van het kind als leeg."
         },
         "message": {
           "name": "Bericht",

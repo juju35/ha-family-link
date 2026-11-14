@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from unittest.mock import patch
 
+import aiohttp
 import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from custom_components.family_link.api import ApiError, AuthError, FamilyLinkClient, TransientError
+from custom_components.family_link.api import ApiError, AuthError, FamilyLinkClient, TransientError, create_session
 from custom_components.family_link.auth import GoogleCookies
 
 from . import data
@@ -122,3 +124,41 @@ async def test_invalid_ids_are_refused(hass: HomeAssistant) -> None:
         await c.revoke_bonus(data.CHILD, "not-a-uuid")
     with pytest.raises(ApiError):
         await c.set_app(data.CHILD, "com.x", "limit")
+
+
+async def test_action_is_not_retried_after_a_timeout(hass: HomeAssistant, aioclient_mock) -> None:
+    # Google may have applied the bonus before the answer got lost: a retry would give it twice
+    aioclient_mock.post(f"{data.BASE}/people/{data.CHILD}/timeLimitOverrides:batchCreate", exc=TimeoutError())
+    with pytest.raises(TransientError):
+        await client(hass).add_bonus(data.CHILD, data.PHONE, 15)
+    assert aioclient_mock.call_count == 1
+
+
+async def test_action_is_not_retried_after_a_server_error(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post(f"{data.BASE}/people/{data.CHILD}/timeLimitOverrides:batchCreate", status=502)
+    with pytest.raises(TransientError):
+        await client(hass).lock(data.CHILD, data.PHONE)
+    assert aioclient_mock.call_count == 1
+
+
+async def test_action_is_retried_when_rate_limited(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post(f"{data.BASE}/people/{data.CHILD}/timeLimitOverrides:batchCreate", status=429)
+    with pytest.raises(TransientError):
+        await client(hass).lock(data.CHILD, data.PHONE)
+    assert aioclient_mock.call_count == 3
+
+
+async def test_requests_refused_together_share_one_rotation(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=401)
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    c = client(hass)
+    results = await asyncio.gather(*(c.get_members() for _ in range(4)), return_exceptions=True)
+    assert all(isinstance(r, AuthError) for r in results)
+    urls = [str(call[1]) for call in aioclient_mock.mock_calls]
+    assert urls.count("https://accounts.google.com/RotateCookies") == 1
+
+
+async def test_own_session_without_cookie_jar(hass: HomeAssistant) -> None:
+    with patch("custom_components.family_link.api.async_create_clientsession") as create:
+        create_session(hass)
+    assert isinstance(create.call_args.kwargs["cookie_jar"], aiohttp.DummyCookieJar)

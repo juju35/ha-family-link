@@ -17,7 +17,6 @@ except ImportError:
     _OptionsFlowBase = OptionsFlow
     OPTIONS_FLOW_RELOADS = False
 from homeassistant.core import callback
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     NumberSelector,
     NumberSelectorConfig,
@@ -26,7 +25,7 @@ from homeassistant.helpers.selector import (
     TextSelectorConfig,
 )
 
-from .api import AuthError, FamilyLinkClient, FamilyLinkError
+from .api import AuthError, FamilyLinkClient, FamilyLinkError, create_session
 from .auth import CookieFormatError, GoogleCookies
 from .const import (
     CONF_ACCOUNT,
@@ -53,8 +52,11 @@ COOKIES_SCHEMA = vol.Schema({vol.Required(CONF_COOKIES): TextSelector(TextSelect
 async def _validate(hass: Any, text: str) -> tuple[GoogleCookies, str | None, int]:
     """Parse the cookies and check them against the API; returns them, the parent e-mail and the child count."""
     cookies = GoogleCookies.parse(text)
-    client = FamilyLinkClient(async_get_clientsession(hass), cookies)
-    raw = await client.get_members_raw()
+    session = create_session(hass, auto_cleanup=False)
+    try:
+        raw = await FamilyLinkClient(session, cookies).get_members_raw()
+    finally:
+        await session.close()
     children = [m for m in parse_members(raw) if m.supervised]
     return cookies, parse_my_email(raw), len(children)
 

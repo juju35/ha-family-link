@@ -103,7 +103,8 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         )
         self.stale_after = timedelta(seconds=int(entry.options.get(CONF_STALE_AFTER, DEFAULT_STALE_AFTER)))
         self._auth_failures = 0
-        self._last_full_success: datetime | None = None
+        # Counted from the start, so a setup that never gets any data still goes unavailable after "stale after"
+        self._last_full_success: datetime = dt_util.now()
         self._save_cookies_unsub: CALLBACK_TYPE | None = None
         self._confirm_unsub: CALLBACK_TYPE | None = None
         self._unsubs: list[CALLBACK_TYPE] = []
@@ -176,7 +177,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         self._dismiss_reauth_notification()
         if any(not child.stale for child in data.children.values()) or not data.children:
             self._last_full_success = now
-        elif self._last_full_success and now - self._last_full_success > self.stale_after:
+        elif now - self._last_full_success > self.stale_after:
             raise UpdateFailed(next(iter(next(iter(data.children.values())).errors.values()), "no data"))
         return data
 
@@ -224,7 +225,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
     def _keep_cached(self, data: FamilyLinkData, err: Exception, now: datetime) -> FamilyLinkData:
         if not data.children:
             raise UpdateFailed(str(err)) from err
-        if self._last_full_success and now - self._last_full_success > self.stale_after:
+        if now - self._last_full_success > self.stale_after:
             raise UpdateFailed(str(err)) from err
         for child in data.children.values():
             child.errors["all"] = str(err)

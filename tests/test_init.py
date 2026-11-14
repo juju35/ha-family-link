@@ -9,10 +9,12 @@ import pytest
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
+from homeassistant.helpers import device_registry as dr
 from homeassistant.setup import async_setup_component
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
+from custom_components.family_link import async_remove_config_entry_device
 from custom_components.family_link.auth import GoogleCookies
 from custom_components.family_link.const import CONF_COOKIES, CONF_NOTIFY_SERVICES, DOMAIN
 from custom_components.family_link.diagnostics import async_get_config_entry_diagnostics
@@ -215,7 +217,9 @@ async def test_action_errors(hass: HomeAssistant, aioclient_mock) -> None:
     with pytest.raises(ServiceValidationError):
         await hass.services.async_call(DOMAIN, "revoke_bonus", {"child": "Alex", "device": "Pixel 8"}, blocking=True)
     with pytest.raises(ServiceValidationError):
-        await hass.services.async_call(DOMAIN, "set_app", {"child": "Alex", "app": "x", "mode": "limit"}, blocking=True)
+        await hass.services.async_call(
+            DOMAIN, "set_app", {"child": "Alex", "app": "Minecraft", "mode": "limit"}, blocking=True
+        )
 
 
 async def test_emergency_rings_and_notifies(hass: HomeAssistant, aioclient_mock) -> None:
@@ -254,3 +258,72 @@ async def test_unload(hass: HomeAssistant, aioclient_mock) -> None:
     entry = await setup(hass, aioclient_mock)
     assert await hass.config_entries.async_unload(entry.entry_id)
     assert entry.state is ConfigEntryState.NOT_LOADED
+
+
+async def test_without_any_data_entities_go_unavailable_after_stale_after(hass: HomeAssistant, aioclient_mock) -> None:
+    entry = await setup(hass, aioclient_mock)
+    coordinator = entry.runtime_data
+    # Never a full success since the start: the "stale after" delay counts from it
+    coordinator._last_full_success = dt_util.now() - timedelta(hours=2)  # noqa: SLF001
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(f"{data.BASE}/people/{data.CHILD}/appsandusage", status=503)
+    aioclient_mock.get(f"{data.BASE}/people/{data.CHILD}/appliedTimeLimits", status=503)
+    aioclient_mock.get(f"{data.BASE}/families/mine/location/{data.CHILD}", status=503)
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    assert hass.states.get(STATUS).state == "unavailable"
+
+
+async def test_emergency_without_device_rings_every_device(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post(f"{data.BASE}/people/{data.CHILD}/devices/{data.TABLET}:executeRemoteAction", json=[])
+    await setup(hass, aioclient_mock)
+    events = []
+    hass.bus.async_listen("family_link_action", events.append)
+    await hass.services.async_call(DOMAIN, "emergency", {"child": "Alex"}, blocking=True)
+    await hass.async_block_till_done()
+    rung = [str(call[1]) for call in aioclient_mock.mock_calls if "executeRemoteAction" in str(call[1])]
+    assert any(data.PHONE in u for u in rung) and any(data.TABLET in u for u in rung)
+    assert set(events[0].data["devices"]) == {data.PHONE, data.TABLET}
+
+
+async def test_bonus_keeps_a_parent_lock(hass: HomeAssistant, aioclient_mock) -> None:
+    await setup(hass, aioclient_mock)
+    assert hass.states.get("switch.tab_a9_lock").state == "on"
+    await hass.services.async_call(
+        DOMAIN, "add_bonus", {"child": "Alex", "device": "Tab A9", "minutes": 15}, blocking=True
+    )
+    assert hass.states.get("switch.tab_a9_lock").state == "on"
+
+
+async def test_set_app_unknown_title(hass: HomeAssistant, aioclient_mock) -> None:
+    await setup(hass, aioclient_mock)
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(
+            DOMAIN, "set_app", {"child": "Alex", "app": "Some Game", "mode": "block"}, blocking=True
+        )
+    assert err.value.translation_key == "unknown_app"
+    # A package name the child has not used yet is accepted
+    await hass.services.async_call(
+        DOMAIN, "set_app", {"child": "Alex", "app": "com.example.newgame", "mode": "block"}, blocking=True
+    )
+
+
+async def test_child_leaving_the_family_removes_its_devices(hass: HomeAssistant, aioclient_mock) -> None:
+    entry = await setup(hass, aioclient_mock)
+    registry = dr.async_get(hass)
+    assert len(dr.async_entries_for_config_entry(registry, entry.entry_id)) == 3  # Alex, the phone and the tablet
+    coordinator = entry.runtime_data
+    del coordinator.data.children[data.CHILD]
+    coordinator.async_update_listeners()
+    await hass.async_block_till_done()
+    assert dr.async_entries_for_config_entry(registry, entry.entry_id) == []
+    assert hass.states.get(STATUS) is None
+
+
+async def test_remove_device_by_hand(hass: HomeAssistant, aioclient_mock) -> None:
+    entry = await setup(hass, aioclient_mock)
+    registry = dr.async_get(hass)
+    child = registry.async_get(entry.runtime_data.child_device_ids[data.CHILD])
+    old = registry.async_get_or_create(config_entry_id=entry.entry_id, identifiers={(DOMAIN, "oldphone123")})
+    assert not await async_remove_config_entry_device(hass, entry, child)
+    assert await async_remove_config_entry_device(hass, entry, old)

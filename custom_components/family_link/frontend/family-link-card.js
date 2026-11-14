@@ -2981,9 +2981,12 @@ class FamilyLinkCard extends HTMLElement {
   }
 
   _emergencyPopup(a, t, p) {
-    var dev = (a.devices || []).find((d) => d.id === p.device);
+    var devices = a.devices || [];
+    var dev = devices.find((d) => d.id === p.device);
     var loc = a.location;
-    var sub = [dev?.name, loc?.place, loc?.battery !== null && loc?.battery !== undefined ? `${loc.battery} %` : null].filter(Boolean).join(' · ');
+    // No device picked: every device of the child rings
+    var targets = dev ? dev.name : devices.map((d) => d.name).join(', ');
+    var sub = [targets, loc?.place, loc?.battery !== null && loc?.battery !== undefined ? `${loc.battery} %` : null].filter(Boolean).join(' · ');
     var check = (key, label, hint) =>
       `<button class="opt" data-action="toggle" data-key="${key}" role="checkbox" aria-checked="${!!p[key]}"><span class="box ${p[key] ? 'on' : ''}"></span><span><b>${flEsc(label)}</b><small>${flEsc(hint)}</small></span></button>`;
     return `<div class="popup sos-pop" role="dialog" aria-label="${flEsc(t.emergency)}">
@@ -2994,7 +2997,7 @@ class FamilyLinkCard extends HTMLElement {
       <div class="quick">${[t.quick_call, t.quick_home, t.quick_where].map((q) => `<button class="qchip" data-action="quick" data-text="${flEsc(q)}">${flEsc(q)}</button>`).join('')}</div>`
           : ''
       }
-      <div class="opts">${dev ? check('ring', t.opt_ring, t.opt_ring_hint) : ''}${a.notify_service ? check('notify', t.opt_notify, flTr(t, 'opt_notify_hint', { service: a.notify_service })) : ''}${check('locate', t.opt_locate, t.opt_locate_hint)}</div>
+      <div class="opts">${devices.length ? check('ring', t.opt_ring, t.opt_ring_hint) : ''}${a.notify_service ? check('notify', t.opt_notify, flTr(t, 'opt_notify_hint', { service: a.notify_service })) : ''}${check('locate', t.opt_locate, t.opt_locate_hint)}</div>
       <button class="btn red big" data-action="send-emergency" ${p.sending ? 'disabled' : ''}>${flEsc(t.send_emergency)}</button>
     </div>`;
   }

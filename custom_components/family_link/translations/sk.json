@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Služba upozornení {service} neexistuje."
     },
+    "unknown_app": {
+      "message": "Žiadna aplikácia tohto dieťaťa nezodpovedá „{app}“: uveďte jej presný názov alebo názov balíka (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link odmietol akciu ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Zariadenie",
-          "description": "Zariadenie, na ktorom má zazvoniť."
+          "description": "Zariadenie, na ktorom má zazvoniť; všetky zariadenia dieťaťa, ak je prázdne."
         },
         "message": {
           "name": "Správa",

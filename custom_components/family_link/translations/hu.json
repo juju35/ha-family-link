@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "A(z) {service} értesítési szolgáltatás nem létezik."
     },
+    "unknown_app": {
+      "message": "A gyermek egyik alkalmazása sem felel meg ennek: „{app}”. Adja meg a pontos címét vagy a csomagnevét (com.example.app)."
+    },
     "action_failed": {
       "message": "A Family Link elutasította a műveletet ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Eszköz",
-          "description": "A megcsörgetendő eszköz."
+          "description": "A megcsörgetendő eszköz; üresen hagyva a gyermek összes eszköze."
         },
         "message": {
           "name": "Üzenet",

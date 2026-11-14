@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Der Benachrichtigungsdienst {service} existiert nicht."
     },
+    "unknown_app": {
+      "message": "Keine App dieses Kindes entspricht „{app}“: Gib ihren genauen Titel oder ihren Paketnamen an (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link hat die Aktion ({action}) abgelehnt: {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Gerät",
-          "description": "Gerät, das klingeln soll."
+          "description": "Gerät, das klingeln soll; alle Geräte des Kindes, wenn leer."
         },
         "message": {
           "name": "Nachricht",

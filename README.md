@@ -31,11 +31,12 @@ Home Assistant integration for **Google Family Link**: your children's **screen 
 - **Bedtime and school time** windows, active or coming
 - **Location** of each child as a `device_tracker` (place, address, accuracy, battery of the device that reported it): Home Assistant records the route the card draws
 - **Actions**: add a time bonus, revoke it, lock, unlock, ring, update the location, block / limit / always allow an app, emergency, refresh
-- **Emergency**: rings the device through Family Link and, through the Home Assistant app on the child's phone, sends a critical notification with your message — even on silent
+- **Emergency**: rings the device (every device of the child when none is given) through Family Link and, through the Home Assistant app on the child's phone, sends a critical notification with your message — even on silent
 - **Reliable**:
   - every request is signed again (the Google signature carries a timestamp: a fixed one goes stale and is refused)
   - the short-lived session cookies are rotated by the integration, as a browser does, and saved
-  - transient errors (network, timeout, rate limit, server error) are retried with backoff, honoring `Retry-After`
+  - transient errors (network, timeout, rate limit, server error) are retried with backoff, honoring `Retry-After`; an action is only retried when Google surely did not get it (no connection, rate limit), so a lost answer never gives a bonus twice
+  - the Google cookies live in the integration's own HTTP session, never in the one Home Assistant shares with other integrations
   - **cached data on transient API errors**: the last good data stays shown, flagged stale, instead of the entities going unavailable
   - **automatic session refresh**, and a **persistent notification** when Google really needs a new sign-in (with the re-authentication flow), dismissed by the next success
   - each child's sections are fetched in parallel; a failing section keeps its last value without blocking the others
@@ -167,7 +168,7 @@ response_variable: where
 action: family_link.set_app
 data:
   child: Alex
-  app: YouTube            # title or package name
+  app: YouTube            # title of an app of the child, or a package name (com.example.app)
   mode: limit
   minutes: 60
 
@@ -175,7 +176,7 @@ data:
 action: family_link.emergency
 data:
   child: Alex
-  device: Pixel 8
+  device: Pixel 8          # optional: every device of the child rings without it
   message: Call me back right now please.
   ring: true
   refresh_location: true
@@ -350,7 +351,7 @@ The integration and the cards follow the language of Home Assistant (the card's 
 | Latviešu | `lv` |
 | Ελληνικά | `el` |
 
-`pt-BR` uses the European Portuguese texts for now; corrections and other languages are welcome!
+The translations other than English and French have not been reviewed by native speakers yet, and `pt-BR` uses the European Portuguese texts for now: corrections and other languages are welcome!
 
 ## Credits
 

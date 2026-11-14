@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from typing import Any
 
 import voluptuous as vol
@@ -41,6 +42,9 @@ from .coordinator import ChildData, FamilyLinkCoordinator
 from .entity import guard_action
 
 _LOGGER = logging.getLogger(__name__)
+
+# An Android package name: what set_app accepts for an app the child has not used yet
+PACKAGE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$")
 
 CHILD = vol.Required(ATTR_CHILD)
 DEVICE = vol.Optional(ATTR_DEVICE)
@@ -132,7 +136,6 @@ def async_setup_services(hass: HomeAssistant) -> None:
             bonus_minutes=minutes,
             bonus_remaining_minutes=minutes,
             bonus_override_id=override_id or "pending",
-            locked=False,
         )
         _fire(hass, "add_bonus", child, device_id, minutes=minutes)
 
@@ -190,7 +193,14 @@ def async_setup_services(hass: HomeAssistant) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
         app = call.data[ATTR_APP]
         apps = child.usage.apps if child.usage else {}
-        package = next((p for p, a in apps.items() if app == p or app.casefold() == a.title.casefold()), app)
+        package = next((p for p, a in apps.items() if app == p or app.casefold() == a.title.casefold()), None)
+        if package is None:
+            # Not among the child's apps: accepted as a package name (an app not used yet), not as a title
+            if not PACKAGE_RE.match(app):
+                raise ServiceValidationError(
+                    translation_domain=DOMAIN, translation_key="unknown_app", translation_placeholders={"app": app}
+                )
+            package = app
         mode = call.data[ATTR_MODE]
         if mode == "limit" and ATTR_MINUTES not in call.data:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="minutes_required")
@@ -201,14 +211,18 @@ def async_setup_services(hass: HomeAssistant) -> None:
 
     async def emergency(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE)) if child.usage and child.usage.devices else None
+        devices = list(child.usage.devices) if child.usage else []
+        # No device given: every device of the child rings (no time to pick one in an emergency)
+        targets = [resolve_device(child, call.data[ATTR_DEVICE])] if call.data.get(ATTR_DEVICE) else devices
         notify = call.data.get(ATTR_NOTIFY_SERVICE) or coordinator.config_entry.options.get(
             CONF_NOTIFY_SERVICES, {}
         ).get(child.member.user_id)
         message = call.data[ATTR_MESSAGE].strip()
         tasks = []
-        if call.data[ATTR_RING] and device_id:
-            tasks.append(guard_action(coordinator.client.ring(child.member.user_id, device_id), "ring"))
+        if call.data[ATTR_RING]:
+            tasks.extend(
+                guard_action(coordinator.client.ring(child.member.user_id, device_id), "ring") for device_id in targets
+            )
         if notify and message:
             tasks.append(_notify(hass, notify, message))
         if call.data[ATTR_REFRESH_LOCATION]:
@@ -216,7 +230,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
         if not tasks:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="emergency_nothing")
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        _fire(hass, "emergency", child, device_id, message=message)
+        _fire(hass, "emergency", child, targets[0] if len(targets) == 1 else None, devices=targets, message=message)
         failures = [r for r in results if isinstance(r, Exception)]
         if failures:
             raise failures[0]

@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Serviciul de notificare {service} nu există."
     },
+    "unknown_app": {
+      "message": "Nicio aplicație a acestui copil nu corespunde cu „{app}”: indicați titlul exact sau numele pachetului (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link a refuzat acțiunea ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Dispozitiv",
-          "description": "Dispozitivul care va suna."
+          "description": "Dispozitivul care va suna; toate dispozitivele copilului dacă e gol."
         },
         "message": {
           "name": "Mesaj",

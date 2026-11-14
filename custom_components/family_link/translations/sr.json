@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Услуга обавештења {service} не постоји."
     },
+    "unknown_app": {
+      "message": "Ниједна апликација овог детета не одговара „{app}”: наведите тачан наслов или назив пакета (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link је одбио радњу ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Уређај",
-          "description": "Уређај који треба да зазвони."
+          "description": "Уређај који треба да зазвони; сви уређаји детета ако је празно."
         },
         "message": {
           "name": "Порука",

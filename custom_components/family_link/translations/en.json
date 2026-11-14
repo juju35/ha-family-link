@@ -89,6 +89,7 @@
     "minutes_required": { "message": "A limit needs a number of minutes." },
     "emergency_nothing": { "message": "Nothing to do: turn on the ring, or give a message and a notify service." },
     "unknown_notify": { "message": "The notify service {service} does not exist." },
+    "unknown_app": { "message": "No app of this child matches \"{app}\": give its exact title or its package name (com.example.app)." },
     "action_failed": { "message": "Family Link refused the action ({action}): {error}" }
   },
   "selector": {
@@ -165,7 +166,7 @@
       "description": "Rings the device through Family Link and, with a notify service, sends a critical notification with the message.",
       "fields": {
         "child": { "name": "Child", "description": "Name or user id of the child." },
-        "device": { "name": "Device", "description": "Device to ring." },
+        "device": { "name": "Device", "description": "Device to ring; every device of the child when empty." },
         "message": { "name": "Message", "description": "Text of the notification." },
         "ring": { "name": "Ring", "description": "Ring the device through Family Link." },
         "notify_service": { "name": "Notify service", "description": "Overrides the service set in the options, e.g. notify.mobile_app_pixel_8." },

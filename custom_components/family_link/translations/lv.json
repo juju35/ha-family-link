@@ -127,6 +127,9 @@
     "unknown_notify": {
       "message": "Paziņojumu pakalpojums {service} neeksistē."
     },
+    "unknown_app": {
+      "message": "Neviena šī bērna lietotne neatbilst “{app}”: norādiet tās precīzu nosaukumu vai pakotnes nosaukumu (com.example.app)."
+    },
     "action_failed": {
       "message": "Family Link noraidīja darbību ({action}): {error}"
     }
@@ -258,7 +261,7 @@
         },
         "device": {
           "name": "Ierīce",
-          "description": "Ierīce, kurai zvanīt."
+          "description": "Ierīce, kurai zvanīt; visas bērna ierīces, ja tukšs."
         },
         "message": {
           "name": "Ziņa",
