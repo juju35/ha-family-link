@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Schoolmodus"
+      },
+      "bedtime": {
+        "name": "Bedtijd"
+      },
+      "school_time": {
+        "name": "Schooltijd"
+      },
+      "daily_limit": {
+        "name": "Daglimiet"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Daglimiet bereikt"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limiet {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Begin bedtijd, {day}"
+      },
+      "bedtime_end": {
+        "name": "Einde bedtijd, {day}"
+      },
+      "school_time_start": {
+        "name": "Begin schooltijd, {day}"
+      },
+      "school_time_end": {
+        "name": "Einde schooltijd, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Bellen en sms",
+        "state": {
+          "anyone": "Iedereen",
+          "contacts": "Alleen contacten die je toevoegt",
+          "contacts_groups": "Contacten die je toevoegt en beperkte groepen"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link heeft de actie ({action}) geweigerd: {error}"
+    },
+    "no_schedule": {
+      "message": "Het schema van {child} kon nog niet uit Family Link worden gelezen."
+    },
+    "no_window_today": {
+      "message": "{child} heeft vandaag geen bedtijd: geef begin en einde op."
+    },
+    "no_slot": {
+      "message": "Geen tijdvak op {day} in het weekschema: maak het eerst aan in de Family Link-app."
+    },
+    "two_slots": {
+      "message": "{day} heeft twee schooltijdvakken (een pauze): wijzig ze in de Family Link-app."
+    },
+    "schedule_nothing": {
+      "message": "Geef een begin, een einde op, of zet de dagen aan of uit."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blokkeren",
         "always_allow": "Altijd toestaan",
         "default": "Standaard (geen app-regel)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Bedtijd",
+        "school_time": "Schooltijd"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Maandag",
+        "tue": "Dinsdag",
+        "wed": "Woensdag",
+        "thu": "Donderdag",
+        "fri": "Vrijdag",
+        "sat": "Zaterdag",
+        "sun": "Zondag"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Aan",
           "description": "Aan om de apps te blokkeren, uit om hun regels terug te zetten."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Weekschema wijzigen",
+      "description": "Wijzigt de wekelijkse tijden van bedtijd of schooltijd op sommige dagen, of zet die dagen aan of uit.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "kind": {
+          "name": "Soort",
+          "description": "Bedtijd of schooltijd."
+        },
+        "days": {
+          "name": "Dagen",
+          "description": "Te wijzigen weekdagen."
+        },
+        "start": {
+          "name": "Begin",
+          "description": "Begintijd; de huidige als leeg."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Eindtijd; de huidige als leeg."
+        },
+        "enable": {
+          "name": "Aan",
+          "description": "Zet deze dagen aan of uit; ongewijzigd als leeg."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Bedtijd of schooltijd vandaag",
+      "description": "Zet bedtijd of schooltijd alleen voor vandaag aan of uit, met de tijden van vandaag tenzij andere zijn opgegeven.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "kind": {
+          "name": "Soort",
+          "description": "Bedtijd of schooltijd."
+        },
+        "enable": {
+          "name": "Aan",
+          "description": "Aan of uit voor vandaag."
+        },
+        "start": {
+          "name": "Begin",
+          "description": "Begintijd; de huidige als leeg."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Eindtijd; de huidige als leeg."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Daglimiet instellen",
+      "description": "Stelt het schermtijdquotum in: van sommige weekdagen elke week (alle apparaten) of van vandaag (sommige of alle apparaten).",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "minutes": {
+          "name": "Minuten",
+          "description": "Quotum in minuten; 0 blokkeert de dag."
+        },
+        "days": {
+          "name": "Dagen",
+          "description": "Elke week te wijzigen weekdagen; leeg alleen voor vandaag."
+        },
+        "devices": {
+          "name": "Apparaten",
+          "description": "Apparaten voor het quotum van vandaag (namen of ids); alle als leeg."
         }
       }
     }

@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Schulmodus"
+      },
+      "bedtime": {
+        "name": "Schlafenszeit"
+      },
+      "school_time": {
+        "name": "Schulzeit"
+      },
+      "daily_limit": {
+        "name": "Tageslimit"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Tageslimit erreicht"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Beginn der Schlafenszeit, {day}"
+      },
+      "bedtime_end": {
+        "name": "Ende der Schlafenszeit, {day}"
+      },
+      "school_time_start": {
+        "name": "Beginn der Schulzeit, {day}"
+      },
+      "school_time_end": {
+        "name": "Ende der Schulzeit, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Anrufe und SMS",
+        "state": {
+          "anyone": "Alle",
+          "contacts": "Nur von dir hinzugefügte Kontakte",
+          "contacts_groups": "Hinzugefügte Kontakte und eingeschränkte Gruppen"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link hat die Aktion ({action}) abgelehnt: {error}"
+    },
+    "no_schedule": {
+      "message": "Der Zeitplan von {child} konnte noch nicht von Family Link gelesen werden."
+    },
+    "no_window_today": {
+      "message": "{child} hat heute keine Schlafenszeit: Gib Beginn und Ende an."
+    },
+    "no_slot": {
+      "message": "Kein Zeitfenster am {day} im Wochenplan: Lege es zuerst in der Family Link-App an."
+    },
+    "two_slots": {
+      "message": "{day} hat zwei Schulzeit-Fenster (eine Pause): Ändere sie in der Family Link-App."
+    },
+    "schedule_nothing": {
+      "message": "Gib einen Beginn, ein Ende an oder schalte die Tage ein oder aus."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blockieren",
         "always_allow": "Immer erlauben",
         "default": "Standard (keine App-Regel)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Schlafenszeit",
+        "school_time": "Schulzeit"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Montag",
+        "tue": "Dienstag",
+        "wed": "Mittwoch",
+        "thu": "Donnerstag",
+        "fri": "Freitag",
+        "sat": "Samstag",
+        "sun": "Sonntag"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Ein",
           "description": "Ein, um die Apps zu blockieren, aus, um ihre Regeln wiederherzustellen."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Wochenplan ändern",
+      "description": "Ändert die wöchentlichen Zeiten der Schlafens- oder Schulzeit an einigen Tagen oder schaltet diese Tage ein oder aus.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Name oder Benutzer-ID des Kindes."
+        },
+        "kind": {
+          "name": "Art",
+          "description": "Schlafenszeit oder Schulzeit."
+        },
+        "days": {
+          "name": "Tage",
+          "description": "Zu ändernde Wochentage."
+        },
+        "start": {
+          "name": "Beginn",
+          "description": "Startzeit; die aktuelle, wenn leer."
+        },
+        "end": {
+          "name": "Ende",
+          "description": "Endzeit; die aktuelle, wenn leer."
+        },
+        "enable": {
+          "name": "Ein",
+          "description": "Schaltet diese Tage ein oder aus; unverändert, wenn leer."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Schlafens- oder Schulzeit heute",
+      "description": "Schaltet Schlafens- oder Schulzeit nur für heute ein oder aus, mit den heutigen Zeiten, sofern keine anderen angegeben sind.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Name oder Benutzer-ID des Kindes."
+        },
+        "kind": {
+          "name": "Art",
+          "description": "Schlafenszeit oder Schulzeit."
+        },
+        "enable": {
+          "name": "Ein",
+          "description": "Für heute ein oder aus."
+        },
+        "start": {
+          "name": "Beginn",
+          "description": "Startzeit; die aktuelle, wenn leer."
+        },
+        "end": {
+          "name": "Ende",
+          "description": "Endzeit; die aktuelle, wenn leer."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Tageslimit festlegen",
+      "description": "Legt das Bildschirmzeit-Kontingent fest: für einige Wochentage jede Woche (alle Geräte) oder für heute (einige oder alle Geräte).",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Name oder Benutzer-ID des Kindes."
+        },
+        "minutes": {
+          "name": "Minuten",
+          "description": "Kontingent in Minuten; 0 sperrt den Tag."
+        },
+        "days": {
+          "name": "Tage",
+          "description": "Jede Woche zu ändernde Wochentage; leer nur für heute."
+        },
+        "devices": {
+          "name": "Geräte",
+          "description": "Geräte für das heutige Kontingent (Namen oder IDs); alle, wenn leer."
         }
       }
     }

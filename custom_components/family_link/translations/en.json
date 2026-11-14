@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "School mode"
+      },
+      "bedtime": {
+        "name": "Bedtime"
+      },
+      "school_time": {
+        "name": "School time"
+      },
+      "daily_limit": {
+        "name": "Daily limit"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Daily limit reached"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Bedtime start {day}"
+      },
+      "bedtime_end": {
+        "name": "Bedtime end {day}"
+      },
+      "school_time_start": {
+        "name": "School time start {day}"
+      },
+      "school_time_end": {
+        "name": "School time end {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Calls and texts",
+        "state": {
+          "anyone": "Anyone",
+          "contacts": "Only contacts you add",
+          "contacts_groups": "Contacts you add and limited groups"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link refused the action ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "The schedule of {child} could not be read from Family Link yet."
+    },
+    "no_window_today": {
+      "message": "{child} has no bedtime today: give its start and end."
+    },
+    "no_slot": {
+      "message": "No slot on {day} in the weekly schedule: create it in the Family Link app first."
+    },
+    "two_slots": {
+      "message": "{day} has two school time slots (a break): change them in the Family Link app."
+    },
+    "schedule_nothing": {
+      "message": "Give a start, an end, or turn the days on or off."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Block",
         "always_allow": "Always allow",
         "default": "Default (no app rule)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Bedtime",
+        "school_time": "School time"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "On",
           "description": "On to block the apps, off to put their rules back."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Set the weekly schedule",
+      "description": "Changes the weekly hours of bedtime or school time on some days, or turns those days on or off.",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Bedtime or school time."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Weekdays to change."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Start time; the current one when empty."
+        },
+        "end": {
+          "name": "End",
+          "description": "End time; the current one when empty."
+        },
+        "enable": {
+          "name": "On",
+          "description": "Turns these days on or off; unchanged when empty."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Bedtime or school time today",
+      "description": "Turns bedtime or school time on or off for today only, with today's hours unless others are given.",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Bedtime or school time."
+        },
+        "enable": {
+          "name": "On",
+          "description": "On or off for today."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Start time; the current one when empty."
+        },
+        "end": {
+          "name": "End",
+          "description": "End time; the current one when empty."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Set the daily limit",
+      "description": "Sets the screen time quota: of some weekdays every week (all devices), or of today (some or all devices).",
+      "fields": {
+        "child": {
+          "name": "Child",
+          "description": "Name or user id of the child."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "Quota in minutes; 0 blocks the day."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Weekdays to change every week; empty for today only."
+        },
+        "devices": {
+          "name": "Devices",
+          "description": "Devices for today's quota (names or ids); every device when empty."
         }
       }
     }

@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Školski režim"
+      },
+      "bedtime": {
+        "name": "Vreme za spavanje"
+      },
+      "school_time": {
+        "name": "Školsko vreme"
+      },
+      "daily_limit": {
+        "name": "Dnevno ograničenje"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Dnevno ograničenje dostignuto"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Ograničenje, {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Početak spavanja, {day}"
+      },
+      "bedtime_end": {
+        "name": "Kraj spavanja, {day}"
+      },
+      "school_time_start": {
+        "name": "Početak školskog vremena, {day}"
+      },
+      "school_time_end": {
+        "name": "Kraj školskog vremena, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Pozivi i poruke",
+        "state": {
+          "anyone": "Svi",
+          "contacts": "Samo kontakti koje dodate",
+          "contacts_groups": "Kontakti koje dodate i ograničene grupe"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link je odbio radnju ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Raspored za {child} još nije pročitan sa Family Link-a."
+    },
+    "no_window_today": {
+      "message": "{child} danas nema vreme za spavanje: navedite početak i kraj."
+    },
+    "no_slot": {
+      "message": "Nema termina za {day} u nedeljnom rasporedu: prvo ga napravite u aplikaciji Family Link."
+    },
+    "two_slots": {
+      "message": "{day} ima dva termina školskog vremena (pauza): promenite ih u aplikaciji Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Navedite početak, kraj ili uključite ili isključite dane."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blokiraj",
         "always_allow": "Uvek dozvoli",
         "default": "Podrazumevano (bez pravila za aplikaciju)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Vreme za spavanje",
+        "school_time": "Školsko vreme"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Ponedeljak",
+        "tue": "Utorak",
+        "wed": "Sreda",
+        "thu": "Četvrtak",
+        "fri": "Petak",
+        "sat": "Subota",
+        "sun": "Nedelja"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Uključeno",
           "description": "Uključeno da blokira aplikacije, isključeno da vrati njihova pravila."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Promeni nedeljni raspored",
+      "description": "Menja nedeljne sate spavanja ili školskog vremena nekim danima, ili uključuje ili isključuje te dane.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "kind": {
+          "name": "Vrsta",
+          "description": "Vreme za spavanje ili školsko vreme."
+        },
+        "days": {
+          "name": "Dani",
+          "description": "Dani u nedelji za promenu."
+        },
+        "start": {
+          "name": "Početak",
+          "description": "Vreme početka; trenutno ako je prazno."
+        },
+        "end": {
+          "name": "Kraj",
+          "description": "Vreme kraja; trenutno ako je prazno."
+        },
+        "enable": {
+          "name": "Uključeno",
+          "description": "Uključuje ili isključuje te dane; bez promene ako je prazno."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Spavanje ili školsko vreme danas",
+      "description": "Uključuje ili isključuje vreme za spavanje ili školsko vreme samo za danas, sa današnjim satima osim ako su navedeni drugi.",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "kind": {
+          "name": "Vrsta",
+          "description": "Vreme za spavanje ili školsko vreme."
+        },
+        "enable": {
+          "name": "Uključeno",
+          "description": "Uključeno ili isključeno za danas."
+        },
+        "start": {
+          "name": "Početak",
+          "description": "Vreme početka; trenutno ako je prazno."
+        },
+        "end": {
+          "name": "Kraj",
+          "description": "Vreme kraja; trenutno ako je prazno."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Promeni dnevno ograničenje",
+      "description": "Postavlja kvotu vremena pred ekranom: nekim danima svake nedelje (svi uređaji) ili za danas (neki ili svi uređaji).",
+      "fields": {
+        "child": {
+          "name": "Dete",
+          "description": "Ime ili ID korisnika deteta."
+        },
+        "minutes": {
+          "name": "Minuti",
+          "description": "Kvota u minutima; 0 blokira dan."
+        },
+        "days": {
+          "name": "Dani",
+          "description": "Dani za promenu svake nedelje; prazno samo za danas."
+        },
+        "devices": {
+          "name": "Uređaji",
+          "description": "Uređaji za današnju kvotu (nazivi ili ID); svi ako je prazno."
         }
       }
     }

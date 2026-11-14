@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Školský režim"
+      },
+      "bedtime": {
+        "name": "Čas na spánok"
+      },
+      "school_time": {
+        "name": "Školský čas"
+      },
+      "daily_limit": {
+        "name": "Denný limit"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Dosiahnutý denný limit"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Začiatok spánku: {day}"
+      },
+      "bedtime_end": {
+        "name": "Koniec spánku: {day}"
+      },
+      "school_time_start": {
+        "name": "Začiatok školského času: {day}"
+      },
+      "school_time_end": {
+        "name": "Koniec školského času: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Hovory a SMS",
+        "state": {
+          "anyone": "Ktokoľvek",
+          "contacts": "Iba kontakty, ktoré pridáte",
+          "contacts_groups": "Pridané kontakty a obmedzené skupiny"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link odmietol akciu ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Rozvrh pre {child} sa zatiaľ nepodarilo načítať z Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} dnes nemá čas na spánok: uveďte začiatok a koniec."
+    },
+    "no_slot": {
+      "message": "V týždennom rozvrhu nie je úsek na {day}: najprv ho vytvorte v aplikácii Family Link."
+    },
+    "two_slots": {
+      "message": "{day} má dva úseky školského času (prestávku): zmeňte ich v aplikácii Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Uveďte začiatok, koniec alebo zapnite či vypnite dni."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Zablokovať",
         "always_allow": "Vždy povoliť",
         "default": "Predvolené (bez pravidla pre aplikáciu)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Čas na spánok",
+        "school_time": "Školský čas"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Pondelok",
+        "tue": "Utorok",
+        "wed": "Streda",
+        "thu": "Štvrtok",
+        "fri": "Piatok",
+        "sat": "Sobota",
+        "sun": "Nedeľa"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Zapnuté",
           "description": "Zapnuté na zablokovanie aplikácií, vypnuté na vrátenie ich pravidiel."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Zmeniť týždenný rozvrh",
+      "description": "Zmení týždenné časy spánku alebo školského času v niektoré dni, alebo tieto dni zapne či vypne.",
+      "fields": {
+        "child": {
+          "name": "Dieťa",
+          "description": "Meno alebo ID používateľa dieťaťa."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Čas na spánok alebo školský čas."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni v týždni na zmenu."
+        },
+        "start": {
+          "name": "Začiatok",
+          "description": "Čas začiatku; súčasný, ak je prázdne."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Čas konca; súčasný, ak je prázdne."
+        },
+        "enable": {
+          "name": "Zapnuté",
+          "description": "Zapne alebo vypne tieto dni; bez zmeny, ak je prázdne."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Spánok alebo školský čas dnes",
+      "description": "Zapne alebo vypne čas na spánok alebo školský čas iba na dnes, s dnešnými časmi, ak nie sú uvedené iné.",
+      "fields": {
+        "child": {
+          "name": "Dieťa",
+          "description": "Meno alebo ID používateľa dieťaťa."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Čas na spánok alebo školský čas."
+        },
+        "enable": {
+          "name": "Zapnuté",
+          "description": "Zapnuté alebo vypnuté na dnes."
+        },
+        "start": {
+          "name": "Začiatok",
+          "description": "Čas začiatku; súčasný, ak je prázdne."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Čas konca; súčasný, ak je prázdne."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Zmeniť denný limit",
+      "description": "Nastaví limit času pred obrazovkou: v niektoré dni každý týždeň (všetky zariadenia) alebo na dnes (niektoré alebo všetky zariadenia).",
+      "fields": {
+        "child": {
+          "name": "Dieťa",
+          "description": "Meno alebo ID používateľa dieťaťa."
+        },
+        "minutes": {
+          "name": "Minúty",
+          "description": "Limit v minútach; 0 zablokuje deň."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni na zmenu každý týždeň; prázdne iba na dnes."
+        },
+        "devices": {
+          "name": "Zariadenia",
+          "description": "Zariadenia pre dnešný limit (názvy alebo ID); všetky, ak je prázdne."
         }
       }
     }

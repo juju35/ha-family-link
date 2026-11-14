@@ -116,6 +116,7 @@ async def test_unreachable_keeps_entities_until_stale_after(hass: HomeAssistant,
         "families/mine/members",
         f"people/{data.CHILD}/appsandusage",
         f"people/{data.CHILD}/appliedTimeLimits",
+        f"people/{data.CHILD}/timeLimit",
     ):
         aioclient_mock.get(f"{data.BASE}/{path}", exc=TimeoutError())
     aioclient_mock.get(f"{data.BASE}/families/mine/location/{data.CHILD}", exc=TimeoutError())

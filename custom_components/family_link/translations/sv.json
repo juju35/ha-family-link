@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Skolläge"
+      },
+      "bedtime": {
+        "name": "Läggdags"
+      },
+      "school_time": {
+        "name": "Skoltid"
+      },
+      "daily_limit": {
+        "name": "Daglig gräns"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Daglig gräns nådd"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Gräns {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Läggdags börjar, {day}"
+      },
+      "bedtime_end": {
+        "name": "Läggdags slutar, {day}"
+      },
+      "school_time_start": {
+        "name": "Skoltid börjar, {day}"
+      },
+      "school_time_end": {
+        "name": "Skoltid slutar, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Samtal och sms",
+        "state": {
+          "anyone": "Alla",
+          "contacts": "Bara kontakter du lägger till",
+          "contacts_groups": "Kontakter du lägger till och begränsade grupper"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link avvisade åtgärden ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Schemat för {child} har inte kunnat läsas från Family Link än."
+    },
+    "no_window_today": {
+      "message": "{child} har ingen läggdags i dag: ange start och slut."
+    },
+    "no_slot": {
+      "message": "Inget tidsfönster på {day} i veckoschemat: skapa det först i Family Link-appen."
+    },
+    "two_slots": {
+      "message": "{day} har två skoltidsfönster (en rast): ändra dem i Family Link-appen."
+    },
+    "schedule_nothing": {
+      "message": "Ange en start, ett slut, eller slå på eller av dagarna."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blockera",
         "always_allow": "Tillåt alltid",
         "default": "Standard (ingen appregel)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Läggdags",
+        "school_time": "Skoltid"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Måndag",
+        "tue": "Tisdag",
+        "wed": "Onsdag",
+        "thu": "Torsdag",
+        "fri": "Fredag",
+        "sat": "Lördag",
+        "sun": "Söndag"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "På",
           "description": "På för att blockera apparna, av för att återställa deras regler."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Ändra veckoschemat",
+      "description": "Ändrar veckans tider för läggdags eller skoltid vissa dagar, eller slår på eller av de dagarna.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Läggdags eller skoltid."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Veckodagar att ändra."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Starttid; den nuvarande om tomt."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Sluttid; den nuvarande om tomt."
+        },
+        "enable": {
+          "name": "På",
+          "description": "Slår på eller av dessa dagar; oförändrat om tomt."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Läggdags eller skoltid i dag",
+      "description": "Slår på eller av läggdags eller skoltid bara i dag, med dagens tider om inga andra anges.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "kind": {
+          "name": "Typ",
+          "description": "Läggdags eller skoltid."
+        },
+        "enable": {
+          "name": "På",
+          "description": "På eller av i dag."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Starttid; den nuvarande om tomt."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Sluttid; den nuvarande om tomt."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Ändra daglig gräns",
+      "description": "Anger skärmtidskvoten: för vissa veckodagar varje vecka (alla enheter) eller för i dag (vissa eller alla enheter).",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "minutes": {
+          "name": "Minuter",
+          "description": "Kvot i minuter; 0 spärrar dagen."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Veckodagar att ändra varje vecka; tomt bara för i dag."
+        },
+        "devices": {
+          "name": "Enheter",
+          "description": "Enheter för dagens kvot (namn eller id); alla om tomt."
         }
       }
     }

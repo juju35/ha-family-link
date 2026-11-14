@@ -18,14 +18,19 @@ from .const import (
     APP_MODES,
     ATTR_APP,
     ATTR_CHILD,
+    ATTR_DAYS,
     ATTR_DEVICE,
+    ATTR_DEVICES,
     ATTR_ENABLE,
+    ATTR_END,
+    ATTR_KIND,
     ATTR_MESSAGE,
     ATTR_MINUTES,
     ATTR_MODE,
     ATTR_NOTIFY_SERVICE,
     ATTR_REFRESH_LOCATION,
     ATTR_RING,
+    ATTR_START,
     CONF_NOTIFY_SERVICES,
     DOMAIN,
     EVENT_ACTION,
@@ -37,13 +42,17 @@ from .const import (
     SERVICE_REFRESH_LOCATION,
     SERVICE_REVOKE_BONUS,
     SERVICE_RING,
+    SERVICE_SCHEDULE_TODAY,
     SERVICE_SCHOOL_MODE,
     SERVICE_SET_APP,
+    SERVICE_SET_DAILY_LIMIT,
+    SERVICE_SET_SCHEDULE,
     SERVICE_UNLOCK,
 )
 from .coordinator import ChildData, FamilyLinkCoordinator
 from .entity import add_bonus as give_bonus
 from .entity import guard_action
+from .schedule import KINDS, WEEKDAYS, parse_time, set_hours, set_quota, set_today, set_today_quota
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -79,6 +88,33 @@ SCHEMAS = {
     ),
     SERVICE_REFRESH: vol.Schema({vol.Optional(ATTR_CHILD): cv.string}),
     SERVICE_SCHOOL_MODE: vol.Schema({CHILD: cv.string, vol.Required(ATTR_ENABLE): cv.boolean}),
+    SERVICE_SET_SCHEDULE: vol.Schema(
+        {
+            CHILD: cv.string,
+            vol.Required(ATTR_KIND): vol.In(KINDS),
+            vol.Required(ATTR_DAYS): vol.All(cv.ensure_list, [vol.In(WEEKDAYS)], vol.Length(min=1)),
+            vol.Optional(ATTR_START): cv.time,
+            vol.Optional(ATTR_END): cv.time,
+            vol.Optional(ATTR_ENABLE): cv.boolean,
+        }
+    ),
+    SERVICE_SCHEDULE_TODAY: vol.Schema(
+        {
+            CHILD: cv.string,
+            vol.Required(ATTR_KIND): vol.In(KINDS),
+            vol.Required(ATTR_ENABLE): cv.boolean,
+            vol.Optional(ATTR_START): cv.time,
+            vol.Optional(ATTR_END): cv.time,
+        }
+    ),
+    SERVICE_SET_DAILY_LIMIT: vol.Schema(
+        {
+            CHILD: cv.string,
+            vol.Required(ATTR_MINUTES): vol.All(vol.Coerce(int), vol.Range(min=0, max=1440)),
+            vol.Optional(ATTR_DAYS): vol.All(cv.ensure_list, [vol.In(WEEKDAYS)]),
+            vol.Optional(ATTR_DEVICES): vol.All(cv.ensure_list, [cv.string]),
+        }
+    ),
 }
 
 
@@ -249,6 +285,31 @@ def async_setup_services(hass: HomeAssistant) -> None:
         else:
             await guard_action(coordinator.school.async_disable(child.member.user_id), "school_mode")
 
+    async def set_schedule(call: ServiceCall) -> None:
+        coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
+        start, end = parse_time(call.data.get(ATTR_START)), parse_time(call.data.get(ATTR_END))
+        enable = call.data.get(ATTR_ENABLE)
+        if start is None and end is None and enable is None:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="schedule_nothing")
+        days = [WEEKDAYS.index(day) + 1 for day in call.data[ATTR_DAYS]]
+        await set_hours(coordinator, child, call.data[ATTR_KIND], days, start, end, enable)
+
+    async def schedule_today(call: ServiceCall) -> None:
+        coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
+        start, end = parse_time(call.data.get(ATTR_START)), parse_time(call.data.get(ATTR_END))
+        await set_today(coordinator, child, call.data[ATTR_KIND], call.data[ATTR_ENABLE], start, end)
+
+    async def set_daily_limit(call: ServiceCall) -> None:
+        coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
+        minutes = call.data[ATTR_MINUTES]
+        if days := call.data.get(ATTR_DAYS):
+            await set_quota(coordinator, child, [WEEKDAYS.index(day) + 1 for day in days], minutes)
+            return
+        # No day: today's quota, of the devices given or every device of the child
+        wanted = call.data.get(ATTR_DEVICES)
+        devices = [resolve_device(hass, child, value) for value in wanted] if wanted else list(child.limits)
+        await set_today_quota(coordinator, child, devices, minutes)
+
     async def refresh(call: ServiceCall) -> None:
         if ATTR_CHILD in call.data:
             coordinator, _child = resolve_child(hass, call.data[ATTR_CHILD])
@@ -267,6 +328,9 @@ def async_setup_services(hass: HomeAssistant) -> None:
         SERVICE_EMERGENCY: emergency,
         SERVICE_REFRESH: refresh,
         SERVICE_SCHOOL_MODE: school_mode,
+        SERVICE_SET_SCHEDULE: set_schedule,
+        SERVICE_SCHEDULE_TODAY: schedule_today,
+        SERVICE_SET_DAILY_LIMIT: set_daily_limit,
     }
     for name, handler in handlers.items():
         hass.services.async_register(DOMAIN, name, handler, SCHEMAS[name])

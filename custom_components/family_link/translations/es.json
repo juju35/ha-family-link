@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Modo escuela"
+      },
+      "bedtime": {
+        "name": "Hora de dormir"
+      },
+      "school_time": {
+        "name": "Horario escolar"
+      },
+      "daily_limit": {
+        "name": "Límite diario"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Límite diario alcanzado"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Límite del {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Inicio de la hora de dormir, {day}"
+      },
+      "bedtime_end": {
+        "name": "Fin de la hora de dormir, {day}"
+      },
+      "school_time_start": {
+        "name": "Inicio del horario escolar, {day}"
+      },
+      "school_time_end": {
+        "name": "Fin del horario escolar, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Llamadas y SMS",
+        "state": {
+          "anyone": "Cualquiera",
+          "contacts": "Solo los contactos que añadas",
+          "contacts_groups": "Contactos que añadas y grupos limitados"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link ha rechazado la acción ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Aún no se ha podido leer la programación de {child} en Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} no tiene hora de dormir hoy: indica su inicio y su fin."
+    },
+    "no_slot": {
+      "message": "No hay franja el {day} en la programación semanal: créala antes en la app Family Link."
+    },
+    "two_slots": {
+      "message": "El {day} tiene dos franjas de horario escolar (un descanso): cámbialas en la app Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Indica un inicio, un fin, o activa o desactiva los días."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Bloquear",
         "always_allow": "Permitir siempre",
         "default": "Predeterminado (sin regla de app)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Hora de dormir",
+        "school_time": "Horario escolar"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Lunes",
+        "tue": "Martes",
+        "wed": "Miércoles",
+        "thu": "Jueves",
+        "fri": "Viernes",
+        "sat": "Sábado",
+        "sun": "Domingo"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Activado",
           "description": "Activado para bloquear las aplicaciones, desactivado para restablecer sus reglas."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Cambiar la programación semanal",
+      "description": "Cambia el horario semanal de la hora de dormir o del horario escolar algunos días, o activa o desactiva esos días.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "kind": {
+          "name": "Tipo",
+          "description": "Hora de dormir u horario escolar."
+        },
+        "days": {
+          "name": "Días",
+          "description": "Días de la semana que cambiar."
+        },
+        "start": {
+          "name": "Inicio",
+          "description": "Hora de inicio; la actual si está vacío."
+        },
+        "end": {
+          "name": "Fin",
+          "description": "Hora de fin; la actual si está vacío."
+        },
+        "enable": {
+          "name": "Activado",
+          "description": "Activa o desactiva esos días; sin cambios si está vacío."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Hora de dormir u horario escolar hoy",
+      "description": "Activa o desactiva la hora de dormir o el horario escolar solo hoy, con el horario de hoy salvo que se indique otro.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "kind": {
+          "name": "Tipo",
+          "description": "Hora de dormir u horario escolar."
+        },
+        "enable": {
+          "name": "Activado",
+          "description": "Activado o desactivado para hoy."
+        },
+        "start": {
+          "name": "Inicio",
+          "description": "Hora de inicio; la actual si está vacío."
+        },
+        "end": {
+          "name": "Fin",
+          "description": "Hora de fin; la actual si está vacío."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Cambiar el límite diario",
+      "description": "Fija la cuota de tiempo de pantalla: de algunos días cada semana (todos los dispositivos) o de hoy (algunos o todos los dispositivos).",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "minutes": {
+          "name": "Minutos",
+          "description": "Cuota en minutos; 0 bloquea el día."
+        },
+        "days": {
+          "name": "Días",
+          "description": "Días que cambiar cada semana; vacío solo para hoy."
+        },
+        "devices": {
+          "name": "Dispositivos",
+          "description": "Dispositivos para la cuota de hoy (nombres o ids); todos si está vacío."
         }
       }
     }

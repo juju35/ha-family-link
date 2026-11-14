@@ -21,6 +21,9 @@ OVERRIDE_UNLOCK = 4
 OVERRIDE_BONUS_CHROMEOS = 6
 OVERRIDE_LOCK_ALLOWED_APPS = 7  # lock that keeps the "always allowed" apps reachable
 OVERRIDE_BONUS = 10
+OVERRIDE_DAY_LIMIT = 8  # today's quota of a device
+OVERRIDE_DAY_SCHEDULE = 9  # bedtime or school time on / off for one day
+CONTACT_LEVELS = {"anyone": 1, "contacts": 3, "contacts_groups": 4}  # who can call and text the child
 LOCK_CODES = (OVERRIDE_LOCK, OVERRIDE_LOCK_ALLOWED_APPS)
 BONUS_CODES = (OVERRIDE_BONUS, OVERRIDE_BONUS_CHROMEOS)
 
@@ -465,3 +468,150 @@ def parse_location(data: Any) -> Location | None:
         source_device_id=at(6) if isinstance(at(6), str) else None,
         battery=_int(battery),
     )
+
+
+# ── Weekly schedule (people/{id}/timeLimit) ─────────────────────────────────
+# data[0] = [state, [window rows], …]: bedtime and school time rows mixed,
+#   [slot_id, weekday 1-7, state 2 on / 1 off, [h, m] start, [h, m] end, created, updated, policy_id]
+# data[1] = [[state, …, [quota rows], …]]: daily limit, [slot_id, weekday, state, minutes, created, updated]
+# revisions, somewhere near the end: [policy_id, 1 bedtime / 2 school time, state, [sec, nanos]]
+# overrides, near the end too: [uuid, created_ms, type, …, payload]; type 9 = bedtime or school time for one
+#   day, payload [action 2 on / 1 off, start, end, bedtime slot_id] or [action, start, end, None, [weekday, policy]]
+
+BEDTIME_POLICY = "487088e7-38b4-4f18-a5fb-4aab64ba9d2f"  # the usual ids; some accounts have their own
+SCHOOL_POLICY = "579e5e01-8dfd-42f3-be6b-d77984842202"
+DAY_CODES = {1: "CAEQAQ", 2: "CAEQAg", 3: "CAEQAw", 4: "CAEQBA", 5: "CAEQBQ", 6: "CAEQBg", 7: "CAEQBw"}
+
+
+@dataclass
+class Slot:
+    slot_id: str
+    weekday: int  # 1 Monday … 7 Sunday
+    enabled: bool
+    start: tuple[int, int]
+    end: tuple[int, int]
+
+
+@dataclass
+class Schedule:
+    bedtime_policy: str = BEDTIME_POLICY
+    school_policy: str = SCHOOL_POLICY
+    bedtime_on: bool | None = None  # weekly switches
+    school_on: bool | None = None
+    bedtime: dict[int, list[Slot]] = field(default_factory=dict)  # weekday -> slots
+    school: dict[int, list[Slot]] = field(default_factory=dict)
+    limit_on: bool | None = None
+    quotas: dict[int, tuple[str, int]] = field(default_factory=dict)  # weekday -> (slot_id, minutes)
+    bedtime_today: bool | None = None  # weekly switch, the day's slot and today's override together
+    school_today: bool | None = None
+
+    def bedtime_code(self, weekday: int) -> str:
+        """Id of the weekday's bedtime slot (what a bedtime override of that day names)."""
+        slots = self.bedtime.get(weekday)
+        return slots[0].slot_id if slots else DAY_CODES[weekday]
+
+    def quota_code(self, weekday: int) -> str:
+        quota = self.quotas.get(weekday)
+        return quota[0] if quota else DAY_CODES[weekday]
+
+
+def _hm(value: Any) -> tuple[int, int] | None:
+    if isinstance(value, list) and value and all(isinstance(v, int) for v in value[:2]):
+        return int(value[0]), int(value[1]) if len(value) > 1 else 0
+    if isinstance(value, list) and len(value) == 0:
+        return 0, 0
+    return None
+
+
+def _walk(node: Any):
+    """Every list inside node, depth first."""
+    if isinstance(node, list):
+        yield node
+        for item in node:
+            yield from _walk(item)
+
+
+def _is_revision(row: list) -> bool:
+    return (
+        len(row) == 4
+        and isinstance(row[0], str)
+        and row[1] in (1, 2)
+        and row[2] in (1, 2)
+        and isinstance(row[3], list)
+        and len(row[0]) >= 32
+    )
+
+
+def _is_override(row: list) -> bool:
+    return (
+        len(row) >= 13
+        and isinstance(row[0], str)
+        and isinstance(row[1], str)
+        and row[1].isdigit()
+        and isinstance(row[2], int)
+    )
+
+
+def parse_time_limit(data: Any, today: date) -> Schedule:
+    """The weekly schedule of a child; empty fields stay unknown when Google's answer doesn't have them."""
+    schedule = Schedule()
+    body = data[1] if isinstance(data, list) and len(data) > 1 and isinstance(data[1], list) else None
+    if not body:
+        return schedule
+    for row in _walk(body):
+        if _is_revision(row):
+            if row[1] == 1:
+                schedule.bedtime_policy, schedule.bedtime_on = row[0], row[2] == 2
+            else:
+                schedule.school_policy, schedule.school_on = row[0], row[2] == 2
+    windows = body[0][1] if isinstance(body[0], list) and len(body[0]) > 1 and isinstance(body[0][1], list) else []
+    for row in windows:
+        if not (isinstance(row, list) and len(row) >= 5 and isinstance(row[0], str) and isinstance(row[1], int)):
+            continue
+        start, end = _hm(row[3]), _hm(row[4])
+        if start is None or end is None or not 1 <= row[1] <= 7:
+            continue
+        policy = row[7] if len(row) > 7 and isinstance(row[7], str) else None
+        if policy == schedule.bedtime_policy:
+            school = False
+        elif policy == schedule.school_policy:
+            school = True
+        else:
+            school = row[0].startswith("CAMQ") or (len(row[0]) == 36 and "-" in row[0])
+        slot = Slot(row[0], row[1], row[2] == 2, start, end)
+        (schedule.school if school else schedule.bedtime).setdefault(row[1], []).append(slot)
+    for slots in (*schedule.bedtime.values(), *schedule.school.values()):
+        slots.sort(key=lambda s: s.start)
+    block = body[1] if len(body) > 1 and isinstance(body[1], list) else None
+    limit = block[0] if block and isinstance(block[0], list) else None
+    if limit:
+        schedule.limit_on = limit[0] == 2 if limit[0] in (1, 2) else None
+        rows = next((part for part in limit[1:] if isinstance(part, list) and part and isinstance(part[0], list)), [])
+        for row in rows:
+            if isinstance(row, list) and len(row) >= 4 and isinstance(row[0], str) and isinstance(row[3], int):
+                schedule.quotas[row[1]] = (row[0], row[3])
+    weekday = today.isoweekday()
+    bedtime_slot = schedule.bedtime_code(weekday)
+    day_slots = schedule.bedtime.get(weekday, [])
+    bedtime_today = bool(schedule.bedtime_on) and any(s.enabled for s in day_slots)
+    day_school = schedule.school.get(weekday, [])
+    school_today = bool(schedule.school_on) and any(s.enabled for s in day_school)
+    # Today's overrides pile up: the latest one made today of each kind wins
+    midnight = int(dt_util.as_utc(dt_util.start_of_local_day(today)).timestamp() * 1000)
+    latest: dict[str, tuple[int, bool]] = {}
+    for row in _walk(body):
+        if not _is_override(row) or row[2] != 9 or not isinstance(row[-1], list) or int(row[1]) < midnight:
+            continue
+        payload = row[-1]
+        if not payload or payload[0] not in (1, 2):
+            continue
+        kind = None
+        if len(payload) >= 4 and payload[3] == bedtime_slot:
+            kind = "bedtime"
+        elif len(payload) >= 5 and isinstance(payload[4], list) and payload[4][:2] == [weekday, schedule.school_policy]:
+            kind = "school"
+        if kind and (kind not in latest or int(row[1]) > latest[kind][0]):
+            latest[kind] = (int(row[1]), payload[0] == 2)
+    schedule.bedtime_today = latest["bedtime"][1] if "bedtime" in latest else bedtime_today
+    schedule.school_today = latest["school"][1] if "school" in latest else school_today
+    return schedule

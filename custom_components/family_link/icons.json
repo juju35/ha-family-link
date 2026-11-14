@@ -50,6 +50,21 @@
         "state": {
           "on": "mdi:school"
         }
+      },
+      "bedtime": {
+        "default": "mdi:bed-clock",
+        "state": {
+          "off": "mdi:bed-outline"
+        }
+      },
+      "school_time": {
+        "default": "mdi:school-outline"
+      },
+      "daily_limit": {
+        "default": "mdi:timer-sand",
+        "state": {
+          "off": "mdi:timer-off-outline"
+        }
       }
     },
     "button": {
@@ -87,6 +102,35 @@
           "on": "mdi:timer-off"
         }
       }
+    },
+    "number": {
+      "weekly_quota": {
+        "default": "mdi:timer-cog-outline"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "default": "mdi:weather-night"
+      },
+      "bedtime_end": {
+        "default": "mdi:weather-sunset-up"
+      },
+      "school_time_start": {
+        "default": "mdi:school-outline"
+      },
+      "school_time_end": {
+        "default": "mdi:home-import-outline"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "default": "mdi:phone-message",
+        "state": {
+          "anyone": "mdi:account-multiple",
+          "contacts": "mdi:account-check",
+          "contacts_groups": "mdi:account-group"
+        }
+      }
     }
   },
   "services": {
@@ -119,6 +163,15 @@
     },
     "school_mode": {
       "service": "mdi:school"
+    },
+    "set_schedule": {
+      "service": "mdi:calendar-clock"
+    },
+    "schedule_today": {
+      "service": "mdi:calendar-today"
+    },
+    "set_daily_limit": {
+      "service": "mdi:timer-cog-outline"
     }
   }
 }

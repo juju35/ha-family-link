@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Iskolai mód"
+      },
+      "bedtime": {
+        "name": "Alvásidő"
+      },
+      "school_time": {
+        "name": "Iskolaidő"
+      },
+      "daily_limit": {
+        "name": "Napi korlát"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Napi korlát elérve"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Korlát: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Alvásidő kezdete: {day}"
+      },
+      "bedtime_end": {
+        "name": "Alvásidő vége: {day}"
+      },
+      "school_time_start": {
+        "name": "Iskolaidő kezdete: {day}"
+      },
+      "school_time_end": {
+        "name": "Iskolaidő vége: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Hívások és SMS-ek",
+        "state": {
+          "anyone": "Bárki",
+          "contacts": "Csak az Ön által hozzáadott névjegyek",
+          "contacts_groups": "Hozzáadott névjegyek és korlátozott csoportok"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "A Family Link elutasította a műveletet ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "{child} ütemezését még nem sikerült beolvasni a Family Linkből."
+    },
+    "no_window_today": {
+      "message": "{child} számára ma nincs alvásidő: adja meg a kezdetét és a végét."
+    },
+    "no_slot": {
+      "message": "A heti ütemezésben nincs idősáv erre a napra: {day}. Előbb hozza létre a Family Link alkalmazásban."
+    },
+    "two_slots": {
+      "message": "{day}: két iskolaidő-sáv van (szünettel), módosítsa őket a Family Link alkalmazásban."
+    },
+    "schedule_nothing": {
+      "message": "Adjon meg kezdetet, véget, vagy kapcsolja be vagy ki a napokat."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Letiltás",
         "always_allow": "Mindig engedélyez",
         "default": "Alapértelmezett (nincs alkalmazásszabály)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Alvásidő",
+        "school_time": "Iskolaidő"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Hétfő",
+        "tue": "Kedd",
+        "wed": "Szerda",
+        "thu": "Csütörtök",
+        "fri": "Péntek",
+        "sat": "Szombat",
+        "sun": "Vasárnap"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Be",
           "description": "Be: az alkalmazások letiltása, ki: a szabályaik visszaállítása."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Heti ütemezés módosítása",
+      "description": "Egyes napokon módosítja az alvásidő vagy az iskolaidő heti időpontjait, vagy be- illetve kikapcsolja ezeket a napokat.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "kind": {
+          "name": "Típus",
+          "description": "Alvásidő vagy iskolaidő."
+        },
+        "days": {
+          "name": "Napok",
+          "description": "Módosítandó hétköznapok."
+        },
+        "start": {
+          "name": "Kezdet",
+          "description": "Kezdési idő; üresen a jelenlegi."
+        },
+        "end": {
+          "name": "Vég",
+          "description": "Befejezési idő; üresen a jelenlegi."
+        },
+        "enable": {
+          "name": "Be",
+          "description": "Be- vagy kikapcsolja ezeket a napokat; üresen változatlan."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Alvásidő vagy iskolaidő ma",
+      "description": "Csak mára kapcsolja be vagy ki az alvásidőt vagy az iskolaidőt, a mai időpontokkal, ha nincs más megadva.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "kind": {
+          "name": "Típus",
+          "description": "Alvásidő vagy iskolaidő."
+        },
+        "enable": {
+          "name": "Be",
+          "description": "Mára be vagy ki."
+        },
+        "start": {
+          "name": "Kezdet",
+          "description": "Kezdési idő; üresen a jelenlegi."
+        },
+        "end": {
+          "name": "Vég",
+          "description": "Befejezési idő; üresen a jelenlegi."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Napi korlát módosítása",
+      "description": "Beállítja a képernyőidő-keretet: egyes napokra minden héten (minden eszköz) vagy mára (néhány vagy minden eszköz).",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "minutes": {
+          "name": "Percek",
+          "description": "Keret percben; 0 letiltja a napot."
+        },
+        "days": {
+          "name": "Napok",
+          "description": "Minden héten módosítandó napok; üresen csak mára."
+        },
+        "devices": {
+          "name": "Eszközök",
+          "description": "Eszközök a mai kerethez (nevek vagy azonosítók); üresen mind."
         }
       }
     }

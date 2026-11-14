@@ -1,4 +1,4 @@
-"""Lock switch of each supervised device (on = locked), school mode switch of each child."""
+"""Lock switch of each device (on = locked); school mode, bedtime, school time and daily limit of each child."""
 
 from __future__ import annotations
 
@@ -8,9 +8,13 @@ from homeassistant.components.switch import SwitchEntity
 
 from .coordinator import FamilyLinkCoordinator
 from .entity import ChildEntity, DeviceEntity, guard_action, platform_setup
+from .schedule import BEDTIME, SCHOOL_TIME, set_limit_enabled, set_switch
 
 async_setup_entry = platform_setup(
-    lambda c, child: [SchoolModeSwitch(c, child)],
+    lambda c, child: [
+        SchoolModeSwitch(c, child),
+        *(ScheduleSwitch(c, child, key) for key in (BEDTIME, SCHOOL_TIME, "daily_limit")),
+    ],
     lambda c, child, device: [LockSwitch(c, child, device)],
 )
 
@@ -63,3 +67,41 @@ class SchoolModeSwitch(ChildEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs: Any) -> None:
         if school := self.coordinator.school:
             await guard_action(school.async_disable(self.child_id), "school_mode")
+
+
+class ScheduleSwitch(ChildEntity, SwitchEntity):
+    """Bedtime, school time (every week, and today as in the app) or the daily limit of a child."""
+
+    def __init__(self, coordinator: FamilyLinkCoordinator, child_id: str, key: str) -> None:
+        super().__init__(coordinator, child_id, key)
+        self.key = key
+
+    @property
+    def available(self) -> bool:
+        return super().available and self.child.schedule is not None
+
+    @property
+    def is_on(self) -> bool | None:
+        schedule = self.child.schedule
+        if schedule is None:
+            return None
+        return {BEDTIME: schedule.bedtime_on, SCHOOL_TIME: schedule.school_on}.get(self.key, schedule.limit_on)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        schedule = self.child.schedule
+        if schedule is None or self.key not in (BEDTIME, SCHOOL_TIME):
+            return {}
+        return {"today": schedule.bedtime_today if self.key == BEDTIME else schedule.school_today}
+
+    async def _set(self, on: bool) -> None:
+        if self.key == "daily_limit":
+            await set_limit_enabled(self.coordinator, self.child, on)
+        else:
+            await set_switch(self.coordinator, self.child, self.key, on)
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        await self._set(False)

@@ -139,6 +139,34 @@ def location() -> list:
     ]
 
 
+BEDTIME_POLICY = "487088e7-38b4-4f18-a5fb-4aab64ba9d2f"
+SCHOOL_POLICY = "579e5e01-8dfd-42f3-be6b-d77984842202"
+DAY_CODES = {1: "CAEQAQ", 2: "CAEQAg", 3: "CAEQAw", 4: "CAEQBA", 5: "CAEQBQ", 6: "CAEQBg", 7: "CAEQBw"}
+
+
+def time_limit(overrides: list | None = None, bedtime_on: bool = True) -> list:
+    """people/{id}/timeLimit: bedtime 21:00 (22:00 at the weekend) - 07:00, school time 08:30 - 16:30 on weekdays
+    with a lunch break on Wednesday, 2 h quota on weekdays and 3 h at the weekend."""
+    windows = [
+        [DAY_CODES[d], d, 2, [21 if d < 6 else 22], [7], "1700000000000", "1700000000000", BEDTIME_POLICY]
+        for d in range(1, 8)
+    ]
+    for d in range(1, 6):
+        end = [12] if d == 3 else [16, 30]
+        windows.append([f"CAMQ{d}AAAAschool", d, 2, [8, 30], end, "1700000000000", "1700000000000", SCHOOL_POLICY])
+    windows.append(["CAMQ3BBBBschool", 3, 2, [13, 30], [16, 30], "1700000000000", "1700000000000", SCHOOL_POLICY])
+    quotas = [[DAY_CODES[d], d, 2, 120 if d < 6 else 180, "1700000000000", "1700000000000"] for d in range(1, 8)]
+    body = [
+        [2, windows, "1700000000000", "1700000000000", 1],
+        [[2, [6, 0], quotas, "1700000000000", "1700000000000"]],
+        overrides or [],
+        [[BEDTIME_POLICY, 1, 2 if bedtime_on else 1, [1700000000, 0]], [SCHOOL_POLICY, 2, 2, [1700000000, 0]]],
+        None,
+        [[1, 1], [0, 2]],
+    ]
+    return [[None, "1700000000000"], body]
+
+
 def mock_api(aioclient_mock, *, bonus: bool = False, tablet_locked: bool = True, location_status: int = 200) -> None:
     aioclient_mock.get(f"{BASE}/families/mine/members", json=members())
     aioclient_mock.get(f"{BASE}/people/{CHILD}/appsandusage", json=apps_usage())
@@ -154,3 +182,7 @@ def mock_api(aioclient_mock, *, bonus: bool = False, tablet_locked: bool = True,
     aioclient_mock.post(f"{BASE}/people/{CHILD}/devices/{PHONE}:executeRemoteAction", json=[])
     aioclient_mock.post(f"{BASE}/people/{CHILD}/apps:updateRestrictions", json=[])
     aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    aioclient_mock.get(f"{BASE}/people/{CHILD}/timeLimit", json=time_limit())
+    aioclient_mock.put(f"{BASE}/people/{CHILD}/timeLimit:update", json=time_limit())
+    aioclient_mock.get(f"{BASE}/people/{CHILD}/trustedcontacts", json=[[None, "1"], None, 3, "FR", "0"])
+    aioclient_mock.post(f"{BASE}/people/{CHILD}/trustedcontacts:update", json=[])

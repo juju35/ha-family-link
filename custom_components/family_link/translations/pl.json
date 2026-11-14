@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Tryb szkolny"
+      },
+      "bedtime": {
+        "name": "Pora snu"
+      },
+      "school_time": {
+        "name": "Czas szkolny"
+      },
+      "daily_limit": {
+        "name": "Dzienny limit"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Osiągnięto dzienny limit"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limit: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Początek pory snu: {day}"
+      },
+      "bedtime_end": {
+        "name": "Koniec pory snu: {day}"
+      },
+      "school_time_start": {
+        "name": "Początek czasu szkolnego: {day}"
+      },
+      "school_time_end": {
+        "name": "Koniec czasu szkolnego: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Połączenia i SMS-y",
+        "state": {
+          "anyone": "Wszyscy",
+          "contacts": "Tylko dodane przez Ciebie kontakty",
+          "contacts_groups": "Dodane kontakty i ograniczone grupy"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link odrzucił akcję ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Nie udało się jeszcze odczytać harmonogramu {child} z Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} nie ma dziś pory snu: podaj jej początek i koniec."
+    },
+    "no_slot": {
+      "message": "Brak przedziału w dniu {day} w harmonogramie tygodniowym: najpierw utwórz go w aplikacji Family Link."
+    },
+    "two_slots": {
+      "message": "{day} ma dwa przedziały czasu szkolnego (przerwę): zmień je w aplikacji Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Podaj początek, koniec albo włącz lub wyłącz dni."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Zablokuj",
         "always_allow": "Zawsze zezwalaj",
         "default": "Domyślnie (bez reguły aplikacji)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Pora snu",
+        "school_time": "Czas szkolny"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Poniedziałek",
+        "tue": "Wtorek",
+        "wed": "Środa",
+        "thu": "Czwartek",
+        "fri": "Piątek",
+        "sat": "Sobota",
+        "sun": "Niedziela"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Włączony",
           "description": "Włączony, aby zablokować aplikacje, wyłączony, aby przywrócić ich reguły."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Zmień harmonogram tygodniowy",
+      "description": "Zmienia tygodniowe godziny pory snu lub czasu szkolnego w niektóre dni albo włącza lub wyłącza te dni.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "kind": {
+          "name": "Rodzaj",
+          "description": "Pora snu lub czas szkolny."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni tygodnia do zmiany."
+        },
+        "start": {
+          "name": "Początek",
+          "description": "Godzina początku; obecna, jeśli puste."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Godzina końca; obecna, jeśli puste."
+        },
+        "enable": {
+          "name": "Włączone",
+          "description": "Włącza lub wyłącza te dni; bez zmian, jeśli puste."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Pora snu lub czas szkolny dziś",
+      "description": "Włącza lub wyłącza porę snu albo czas szkolny tylko na dziś, z dzisiejszymi godzinami, chyba że podano inne.",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "kind": {
+          "name": "Rodzaj",
+          "description": "Pora snu lub czas szkolny."
+        },
+        "enable": {
+          "name": "Włączone",
+          "description": "Włączone lub wyłączone na dziś."
+        },
+        "start": {
+          "name": "Początek",
+          "description": "Godzina początku; obecna, jeśli puste."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Godzina końca; obecna, jeśli puste."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Zmień dzienny limit",
+      "description": "Ustawia limit czasu przed ekranem: w niektóre dni co tydzień (wszystkie urządzenia) albo na dziś (niektóre lub wszystkie urządzenia).",
+      "fields": {
+        "child": {
+          "name": "Dziecko",
+          "description": "Imię lub ID użytkownika dziecka."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Limit w minutach; 0 blokuje dzień."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "Dni do zmiany co tydzień; puste tylko na dziś."
+        },
+        "devices": {
+          "name": "Urządzenia",
+          "description": "Urządzenia dla dzisiejszego limitu (nazwy lub identyfikatory); wszystkie, jeśli puste."
         }
       }
     }

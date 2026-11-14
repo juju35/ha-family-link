@@ -48,6 +48,9 @@ SERVICE_SET_APP: Final = "set_app"
 SERVICE_EMERGENCY: Final = "emergency"
 SERVICE_REFRESH: Final = "refresh"
 SERVICE_SCHOOL_MODE: Final = "school_mode"
+SERVICE_SET_SCHEDULE: Final = "set_schedule"
+SERVICE_SCHEDULE_TODAY: Final = "schedule_today"
+SERVICE_SET_DAILY_LIMIT: Final = "set_daily_limit"
 
 ATTR_CHILD: Final = "child"
 ATTR_DEVICE: Final = "device"
@@ -59,6 +62,11 @@ ATTR_RING: Final = "ring"
 ATTR_NOTIFY_SERVICE: Final = "notify_service"
 ATTR_REFRESH_LOCATION: Final = "refresh_location"
 ATTR_ENABLE: Final = "enable"
+ATTR_KIND: Final = "kind"
+ATTR_DAYS: Final = "days"
+ATTR_START: Final = "start"
+ATTR_END: Final = "end"
+ATTR_DEVICES: Final = "devices"
 
 APP_MODES: Final = ["limit", "block", "always_allow", "default"]
 # An Android package name (set_app with an app the child has not used yet, school mode options)
@@ -114,3 +122,35 @@ REAUTH_NOTIFICATION_ID: Final = "family_link_reauth_{entry_id}"
 
 # Events
 EVENT_ACTION: Final = "family_link_action"
+
+# Weekday names in entity names (the quota and hours of each day), by Home Assistant's language
+WEEKDAY_NAMES: Final = {
+    "en": ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+    "fr": ("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"),
+    "de": ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"),
+    "es": ("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"),
+    "sr": ("понедељак", "уторак", "среда", "четвртак", "петак", "субота", "недеља"),
+    "sr-Latn": ("ponedeljak", "utorak", "sreda", "četvrtak", "petak", "subota", "nedelja"),
+    "it": ("lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"),
+    "nl": ("maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"),
+    "pt": ("segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"),
+    "pl": ("poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"),
+    "ro": ("luni", "marți", "miercuri", "joi", "vineri", "sâmbătă", "duminică"),
+    "da": ("mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"),
+    "sv": ("måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag", "söndag"),
+    "bg": ("понеделник", "вторник", "сряда", "четвъртък", "петък", "събота", "неделя"),
+    "ru": ("понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"),
+    "uk": ("понеділок", "вівторок", "середа", "четвер", "пʼятниця", "субота", "неділя"),
+    "hu": ("hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat", "vasárnap"),
+    "sk": ("pondelok", "utorok", "streda", "štvrtok", "piatok", "sobota", "nedeľa"),
+    "cs": ("pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"),
+    "sl": ("ponedeljek", "torek", "sreda", "četrtek", "petek", "sobota", "nedelja"),
+    "lv": ("pirmdiena", "otrdiena", "trešdiena", "ceturtdiena", "piektdiena", "sestdiena", "svētdiena"),
+    "el": ("Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο", "Κυριακή"),
+}
+
+
+def weekday_name(language: str | None, day: int) -> str:
+    """Name of weekday 1 (Monday) … 7 in a Home Assistant language ("pt-BR" uses "pt")."""
+    names = WEEKDAY_NAMES.get(language or "en") or WEEKDAY_NAMES.get((language or "en").split("-")[0])
+    return (names or WEEKDAY_NAMES["en"])[day - 1]

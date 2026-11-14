@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Šolski način"
+      },
+      "bedtime": {
+        "name": "Čas za spanje"
+      },
+      "school_time": {
+        "name": "Šolski čas"
+      },
+      "daily_limit": {
+        "name": "Dnevna omejitev"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Dosežena dnevna omejitev"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Omejitev: {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Začetek spanja: {day}"
+      },
+      "bedtime_end": {
+        "name": "Konec spanja: {day}"
+      },
+      "school_time_start": {
+        "name": "Začetek šolskega časa: {day}"
+      },
+      "school_time_end": {
+        "name": "Konec šolskega časa: {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Klici in SMS-i",
+        "state": {
+          "anyone": "Kdor koli",
+          "contacts": "Samo stiki, ki jih dodate",
+          "contacts_groups": "Dodani stiki in omejene skupine"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link je zavrnil dejanje ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Urnika za {child} še ni bilo mogoče prebrati iz Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} danes nima časa za spanje: navedite začetek in konec."
+    },
+    "no_slot": {
+      "message": "V tedenskem urniku ni termina za {day}: najprej ga ustvarite v aplikaciji Family Link."
+    },
+    "two_slots": {
+      "message": "{day} ima dva termina šolskega časa (odmor): spremenite ju v aplikaciji Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Navedite začetek, konec ali vklopite oziroma izklopite dneve."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blokiraj",
         "always_allow": "Vedno dovoli",
         "default": "Privzeto (brez pravila za aplikacijo)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Čas za spanje",
+        "school_time": "Šolski čas"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Ponedeljek",
+        "tue": "Torek",
+        "wed": "Sreda",
+        "thu": "Četrtek",
+        "fri": "Petek",
+        "sat": "Sobota",
+        "sun": "Nedelja"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Vklopljeno",
           "description": "Vklopljeno za blokiranje aplikacij, izklopljeno za povrnitev njihovih pravil."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Spremeni tedenski urnik",
+      "description": "Spremeni tedenske ure spanja ali šolskega časa nekatere dni ali te dni vklopi oziroma izklopi.",
+      "fields": {
+        "child": {
+          "name": "Otrok",
+          "description": "Ime ali ID uporabnika otroka."
+        },
+        "kind": {
+          "name": "Vrsta",
+          "description": "Čas za spanje ali šolski čas."
+        },
+        "days": {
+          "name": "Dnevi",
+          "description": "Dnevi v tednu za spremembo."
+        },
+        "start": {
+          "name": "Začetek",
+          "description": "Čas začetka; trenutni, če je prazno."
+        },
+        "end": {
+          "name": "Konec",
+          "description": "Čas konca; trenutni, če je prazno."
+        },
+        "enable": {
+          "name": "Vklopljeno",
+          "description": "Vklopi ali izklopi te dni; nespremenjeno, če je prazno."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Spanje ali šolski čas danes",
+      "description": "Vklopi ali izklopi čas za spanje ali šolski čas samo za danes, z današnjimi urami, razen če so navedene druge.",
+      "fields": {
+        "child": {
+          "name": "Otrok",
+          "description": "Ime ali ID uporabnika otroka."
+        },
+        "kind": {
+          "name": "Vrsta",
+          "description": "Čas za spanje ali šolski čas."
+        },
+        "enable": {
+          "name": "Vklopljeno",
+          "description": "Vklopljeno ali izklopljeno za danes."
+        },
+        "start": {
+          "name": "Začetek",
+          "description": "Čas začetka; trenutni, če je prazno."
+        },
+        "end": {
+          "name": "Konec",
+          "description": "Čas konca; trenutni, če je prazno."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Spremeni dnevno omejitev",
+      "description": "Nastavi kvoto časa pred zaslonom: nekatere dni vsak teden (vse naprave) ali za danes (nekatere ali vse naprave).",
+      "fields": {
+        "child": {
+          "name": "Otrok",
+          "description": "Ime ali ID uporabnika otroka."
+        },
+        "minutes": {
+          "name": "Minute",
+          "description": "Kvota v minutah; 0 blokira dan."
+        },
+        "days": {
+          "name": "Dnevi",
+          "description": "Dnevi za spremembo vsak teden; prazno samo za danes."
+        },
+        "devices": {
+          "name": "Naprave",
+          "description": "Naprave za današnjo kvoto (imena ali ID); vse, če je prazno."
         }
       }
     }

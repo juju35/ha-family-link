@@ -116,6 +116,15 @@
       },
       "school_mode": {
         "name": "Mod școală"
+      },
+      "bedtime": {
+        "name": "Ora de culcare"
+      },
+      "school_time": {
+        "name": "Program școlar"
+      },
+      "daily_limit": {
+        "name": "Limită zilnică"
       }
     },
     "button": {
@@ -143,6 +152,35 @@
       },
       "limit_reached": {
         "name": "Limita zilnică atinsă"
+      }
+    },
+    "number": {
+      "weekly_quota": {
+        "name": "Limită {day}"
+      }
+    },
+    "time": {
+      "bedtime_start": {
+        "name": "Început ora de culcare, {day}"
+      },
+      "bedtime_end": {
+        "name": "Sfârșit ora de culcare, {day}"
+      },
+      "school_time_start": {
+        "name": "Început program școlar, {day}"
+      },
+      "school_time_end": {
+        "name": "Sfârșit program școlar, {day}"
+      }
+    },
+    "select": {
+      "calls_texts": {
+        "name": "Apeluri și SMS",
+        "state": {
+          "anyone": "Oricine",
+          "contacts": "Doar contactele adăugate de dvs.",
+          "contacts_groups": "Contactele adăugate și grupuri limitate"
+        }
       }
     }
   },
@@ -173,6 +211,21 @@
     },
     "action_failed": {
       "message": "Family Link a refuzat acțiunea ({action}): {error}"
+    },
+    "no_schedule": {
+      "message": "Programul lui {child} nu a putut fi citit încă din Family Link."
+    },
+    "no_window_today": {
+      "message": "{child} nu are oră de culcare azi: indicați începutul și sfârșitul."
+    },
+    "no_slot": {
+      "message": "Niciun interval {day} în programul săptămânal: creați-l mai întâi în aplicația Family Link."
+    },
+    "two_slots": {
+      "message": "{day} are două intervale de program școlar (o pauză): modificați-le în aplicația Family Link."
+    },
+    "schedule_nothing": {
+      "message": "Indicați un început, un sfârșit sau porniți ori opriți zilele."
     }
   },
   "selector": {
@@ -182,6 +235,23 @@
         "block": "Blochează",
         "always_allow": "Permite mereu",
         "default": "Implicit (fără regulă pentru aplicație)"
+      }
+    },
+    "schedule_kind": {
+      "options": {
+        "bedtime": "Ora de culcare",
+        "school_time": "Program școlar"
+      }
+    },
+    "weekday": {
+      "options": {
+        "mon": "Luni",
+        "tue": "Marți",
+        "wed": "Miercuri",
+        "thu": "Joi",
+        "fri": "Vineri",
+        "sat": "Sâmbătă",
+        "sun": "Duminică"
       }
     }
   },
@@ -343,6 +413,84 @@
         "enable": {
           "name": "Pornit",
           "description": "Pornit pentru a bloca aplicațiile, oprit pentru a le repune regulile."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Modifică programul săptămânal",
+      "description": "Schimbă orele săptămânale ale orei de culcare sau ale programului școlar în unele zile ori pornește sau oprește acele zile.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "kind": {
+          "name": "Tip",
+          "description": "Ora de culcare sau programul școlar."
+        },
+        "days": {
+          "name": "Zile",
+          "description": "Zilele săptămânii de modificat."
+        },
+        "start": {
+          "name": "Început",
+          "description": "Ora de început; cea actuală dacă e gol."
+        },
+        "end": {
+          "name": "Sfârșit",
+          "description": "Ora de sfârșit; cea actuală dacă e gol."
+        },
+        "enable": {
+          "name": "Pornit",
+          "description": "Pornește sau oprește acele zile; neschimbat dacă e gol."
+        }
+      }
+    },
+    "schedule_today": {
+      "name": "Ora de culcare sau programul școlar azi",
+      "description": "Pornește sau oprește ora de culcare ori programul școlar doar pentru azi, cu orele de azi dacă nu se indică altele.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "kind": {
+          "name": "Tip",
+          "description": "Ora de culcare sau programul școlar."
+        },
+        "enable": {
+          "name": "Pornit",
+          "description": "Pornit sau oprit pentru azi."
+        },
+        "start": {
+          "name": "Început",
+          "description": "Ora de început; cea actuală dacă e gol."
+        },
+        "end": {
+          "name": "Sfârșit",
+          "description": "Ora de sfârșit; cea actuală dacă e gol."
+        }
+      }
+    },
+    "set_daily_limit": {
+      "name": "Modifică limita zilnică",
+      "description": "Stabilește cota de timp petrecut pe ecran: a unor zile în fiecare săptămână (toate dispozitivele) sau a zilei de azi (unele sau toate dispozitivele).",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "minutes": {
+          "name": "Minute",
+          "description": "Cotă în minute; 0 blochează ziua."
+        },
+        "days": {
+          "name": "Zile",
+          "description": "Zile de modificat în fiecare săptămână; gol doar pentru azi."
+        },
+        "devices": {
+          "name": "Dispozitive",
+          "description": "Dispozitive pentru cota de azi (nume sau id-uri); toate dacă e gol."
         }
       }
     }

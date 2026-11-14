@@ -28,7 +28,16 @@ from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.DEVICE_TRACKER, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS = [
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.DEVICE_TRACKER,
+    Platform.NUMBER,
+    Platform.SELECT,
+    Platform.SENSOR,
+    Platform.SWITCH,
+    Platform.TIME,
+]
 CARD_PATH = Path(__file__).parent / "frontend" / CARD_FILENAME
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 CHILD_MODEL = "Supervised account"  # the model of the child devices (their phones and tablets have theirs)

@@ -33,6 +33,7 @@ Home Assistant integration for **Google Family Link**: your children's **screen 
 - **Status** per child — tracked, attention, locked, not tracked — which colors the cards' header icon and drives automations
 - **Screen time** today per child and per device, **time left** (daily limit, or the running bonus), **top apps** with their rules (limit, always allowed, blocked)
 - **Bedtime and school time** windows, active or coming, as binary sensors with the daily limit reached, and the next restriction as a timestamp
+- **Weekly schedule from Home Assistant**: bedtime, school time and daily limit switches; the quota of each weekday; the bedtime and school time hours of each weekday; tonight-only and today-only changes; who can call and text the child
 - **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, school apps…) and the ones you always allow, their rules put back afterwards; by hand, by action, or **driven by the Pronote timetable**: on a little before the first lesson of the day, off after the last one (see [School mode](#school-mode))
 - **Location** of each child as a `device_tracker` (place, address, accuracy, battery of the device that reported it): Home Assistant records the route the card draws
 - **Actions**: add a time bonus, revoke it, lock, unlock, ring, update the location, block / limit / always allow an app, emergency, refresh
@@ -126,6 +127,12 @@ For each **child** (device named after the child):
 | School mode | `switch.alex_school_mode` | On = every app blocked but the essential ones (see [School mode](#school-mode)). Attributes: source (`manual` or `pronote`), end of the school day, apps blocked |
 | Blocked apps | `sensor.alex_blocked_apps` | Number of blocked apps, their titles in the `apps` attribute (diagnostic) |
 | Limited apps | `sensor.alex_limited_apps` | Number of apps with a daily limit, their titles in `apps` (diagnostic) |
+| Bedtime | `switch.alex_bedtime` | Weekly bedtime switch; turning it on or off also changes tonight, as the Family Link app does. Attribute `today`: bedtime tonight, overrides included |
+| School time | `switch.alex_school_time` | Weekly school time switch, today changed too; attribute `today` |
+| Daily limit | `switch.alex_daily_limit` | Daily screen time limit on or off (every device) |
+| Limit Monday … Sunday | `number.alex_limit_monday` | Weekly quota of each weekday in minutes, every device (configuration) |
+| Bedtime / school time start and end, Monday … Sunday | `time.alex_bedtime_start_monday` | Weekly hours of each weekday — 28 entities, **disabled by default**: enable the ones you use (configuration) |
+| Calls and texts | `select.alex_calls_and_texts` | Who can call and text the child: `anyone`, `contacts` (only the contacts you add), `contacts_groups` (those and limited groups) |
 | Always allowed apps | `sensor.alex_always_allowed_apps` | Number of always allowed apps, their titles in `apps` (diagnostic) |
 
 For each **device** (phone or tablet, linked to the child):
@@ -199,6 +206,32 @@ data:
   ring: true
   refresh_location: true
   # notify_service: notify.mobile_app_pixel_8   # overrides the option
+
+# Weekly schedule: bedtime from 21:30 on Fridays and Saturdays (the end stays)
+action: family_link.set_schedule
+data:
+  child: Alex
+  kind: bedtime              # or school_time
+  days: [fri, sat]
+  start: "21:30"
+  # end: "07:30"
+  # enable: false            # turns these days off (their hours are kept)
+
+# Tonight / today only: no bedtime tonight, or school time until 18:00 today
+action: family_link.schedule_today
+data:
+  child: Alex
+  kind: bedtime
+  enable: false
+  # start / end: today's hours by default
+
+# Daily limit: 1 h 30 every Wednesday (every device), or today only (no days; devices optional)
+action: family_link.set_daily_limit
+data:
+  child: Alex
+  minutes: 90
+  days: [wed]
+  # devices: [Pixel 8]       # today only, these devices
 
 # School mode on (off with enable: false)
 action: family_link.school_mode
@@ -336,7 +369,7 @@ Each animation of the cards, in the dark and light themes.
 
 ## How it works
 
-The integration calls the API the Family Link web app uses (`kidsmanagement-pa.clients6.google.com`), with the parent's Google cookies and a `SAPISIDHASH` authorization computed for every request. One update fetches, for each child and in parallel, the apps and usage, the applied time limits (locks, bonuses, daily limits, bedtime and school time) and, at its own interval, the last known location. Members (children, names, photos) are read once an hour.
+The integration calls the API the Family Link web app uses (`kidsmanagement-pa.clients6.google.com`), with the parent's Google cookies and a `SAPISIDHASH` authorization computed for every request. One update fetches, for each child and in parallel, the apps and usage, the applied time limits (locks, bonuses, daily limits, bedtime and school time), the weekly schedule (`timeLimit`: switches, hours and quotas of each weekday, today's overrides) and, at their own intervals, who can call and text (every 15 minutes) and the last known location. A schedule that can't be read leaves the screen time data as fresh as it is: only the schedule entities wait. Members (children, names, photos) are read once an hour.
 
 Google rotates the short-lived cookies of a session: the integration takes those it sends back in its answers and asks for fresh ones every six hours (as a browser left open does), and saves them in the config entry.
 
