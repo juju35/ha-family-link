@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Final
 
 DOMAIN: Final = "family_link"
@@ -14,6 +15,8 @@ CONF_SCAN_INTERVAL: Final = "scan_interval"
 CONF_LOCATION_INTERVAL: Final = "location_interval"
 CONF_STALE_AFTER: Final = "stale_after"
 CONF_NOTIFY_SERVICES: Final = "notify_services"  # child user id -> notify service, for the emergency message
+CONF_PRONOTE: Final = "pronote_timetables"  # child user id -> Pronote "today's timetable" sensor, for the school mode
+CONF_SCHOOL_APPS: Final = "school_mode_apps"  # packages left reachable by the school mode, on top of the essentials
 
 DEFAULT_SCAN_INTERVAL: Final = 120  # seconds: screen time, locks, bonuses
 DEFAULT_LOCATION_INTERVAL: Final = 300  # seconds: last known location (no refresh asked to the device)
@@ -44,6 +47,7 @@ SERVICE_REFRESH_LOCATION: Final = "refresh_location"
 SERVICE_SET_APP: Final = "set_app"
 SERVICE_EMERGENCY: Final = "emergency"
 SERVICE_REFRESH: Final = "refresh"
+SERVICE_SCHOOL_MODE: Final = "school_mode"
 
 ATTR_CHILD: Final = "child"
 ATTR_DEVICE: Final = "device"
@@ -54,8 +58,52 @@ ATTR_MESSAGE: Final = "message"
 ATTR_RING: Final = "ring"
 ATTR_NOTIFY_SERVICE: Final = "notify_service"
 ATTR_REFRESH_LOCATION: Final = "refresh_location"
+ATTR_ENABLE: Final = "enable"
 
 APP_MODES: Final = ["limit", "block", "always_allow", "default"]
+# An Android package name (set_app with an app the child has not used yet, school mode options)
+PACKAGE_RE: Final = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$")
+BONUS_PRESETS: Final = (15, 30, 60)  # minutes of the bonus buttons of each device
+
+# School mode: every app blocked but these (and the apps the parent always allows), restored afterwards
+SCHOOL_ESSENTIAL_APPS: Final = frozenset(
+    {
+        # Phone, messages, contacts
+        "com.google.android.dialer",
+        "com.android.dialer",
+        "com.samsung.android.dialer",
+        "com.android.phone",
+        "com.google.android.apps.messaging",
+        "com.android.mms",
+        "com.samsung.android.messaging",
+        "com.google.android.contacts",
+        "com.android.contacts",
+        "com.samsung.android.app.contacts",
+        # Clock, calculator, calendar, camera, keyboard, settings
+        "com.google.android.deskclock",
+        "com.sec.android.app.clockpackage",
+        "com.google.android.calculator",
+        "com.sec.android.app.popupcalculator",
+        "com.google.android.calendar",
+        "com.samsung.android.calendar",
+        "com.google.android.GoogleCamera",
+        "com.sec.android.app.camera",
+        "com.google.android.inputmethod.latin",
+        "com.samsung.android.honeyboard",
+        "com.android.settings",
+        # Maps, Google Play services, Family Link, the Home Assistant app (emergency messages)
+        "com.google.android.apps.maps",
+        "com.google.android.gms",
+        "com.google.android.apps.kids.familylinkhelper",
+        "io.homeassistant.companion.android",
+        "io.homeassistant.companion.android.minimal",
+        # School apps
+        "com.IndexEducation.Pronote",
+        "com.google.android.apps.classroom",
+        "com.google.android.apps.docs",
+    }
+)
+PRONOTE_MARGIN_MINUTES: Final = 15  # the school mode starts this long before the first lesson of the day
 
 # Frontend
 FRONTEND_URL: Final = "/family_link_frontend"

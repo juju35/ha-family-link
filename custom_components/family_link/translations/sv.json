@@ -48,18 +48,24 @@
           "scan_interval": "Uppdateringsintervall",
           "location_interval": "Platsintervall",
           "stale_after": "Behåll cachade data i",
-          "notify_services": "Nödaviseringstjänst per barn"
+          "notify_services": "Nödaviseringstjänst per barn",
+          "pronote_timetables": "Pronote-schema per barn (skolläge)",
+          "school_mode_apps": "Appar som nås i skolläge"
         },
         "data_description": {
           "scan_interval": "Skärmtid, låsningar och bonusar.",
           "location_interval": "Senast kända plats (enheten väcks inte).",
           "stale_after": "När Family Link inte kan nås visas senaste data så länge innan entiteterna blir otillgängliga.",
-          "notify_services": "En rad per barn, för nödmeddelandet via Home Assistant-appen på barnets telefon, t.ex. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "En rad per barn, för nödmeddelandet via Home Assistant-appen på barnets telefon, t.ex. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "En rad per barn med sensorn ”dagens schema” från Pronote-integrationen, t.ex. `Alex: sensor.pronote_alex_today_s_timetable`: skolläget startar då 15 min före första lektionen och stängs av efter den sista.",
+          "school_mode_apps": "Paketnamn, ett per rad, utöver de viktiga apparna (telefon, meddelanden, kartor, Home Assistant, Pronote…) och de alltid tillåtna."
         }
       }
     },
     "error": {
-      "unknown_child": "En rad nämner inget barn i familjen."
+      "unknown_child": "En rad nämner inget barn i familjen.",
+      "invalid_sensor": "Ange en sensor (sensor.…) från Pronote-integrationen.",
+      "invalid_app": "En rad är inte ett paketnamn (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Återstående tid"
+      },
+      "blocked_apps": {
+        "name": "Blockerade appar"
+      },
+      "limited_apps": {
+        "name": "Begränsade appar"
+      },
+      "always_allowed_apps": {
+        "name": "Alltid tillåtna appar"
+      },
+      "daily_limit": {
+        "name": "Daglig gräns"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Nästa begränsning"
       }
     },
     "switch": {
       "lock": {
         "name": "Lås"
+      },
+      "school_mode": {
+        "name": "Skolläge"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Uppdatera plats"
+      },
+      "add_bonus": {
+        "name": "Lägg till {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Plats"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Läggdags"
+      },
+      "schooltime_active": {
+        "name": "Skoltid"
+      },
+      "limit_reached": {
+        "name": "Daglig gräns nådd"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Barn",
           "description": "Bara det här barnet (alla om tomt)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Skolläge",
+      "description": "Blockerar alla barnets appar utom de viktiga (telefon, meddelanden, kartor, Home Assistant, skolappar…) och de alltid tillåtna, eller återställer deras regler.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets namn eller användar-id."
+        },
+        "enable": {
+          "name": "På",
+          "description": "På för att blockera apparna, av för att återställa deras regler."
         }
       }
     }

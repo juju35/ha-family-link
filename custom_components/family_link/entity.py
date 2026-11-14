@@ -130,3 +130,16 @@ async def guard_action(coro: Awaitable[Any], action: str) -> Any:
             translation_key="action_failed",
             translation_placeholders={"action": action, "error": str(err)},
         ) from err
+
+
+async def add_bonus(coordinator: FamilyLinkCoordinator, child_id: str, device_id: str, minutes: int) -> str | None:
+    """Give a time bonus and show it at once (the action and the bonus buttons)."""
+    override_id = await guard_action(coordinator.client.add_bonus(child_id, device_id, minutes), "bonus")
+    coordinator.apply_optimistic(
+        child_id,
+        device_id,
+        bonus_minutes=minutes,
+        bonus_remaining_minutes=minutes,
+        bonus_override_id=override_id or "pending",
+    )
+    return override_id

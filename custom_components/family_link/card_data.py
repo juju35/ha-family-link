@@ -103,6 +103,7 @@ def child_payload(
         "week": [{"date": day, "minutes": round(seconds / 60)} for day, seconds in usage.week] if usage else [],
         "top_apps": _apps(usage.today_by_app, apps) if usage else [],
         "blocked_apps": sum(1 for app in apps.values() if app.blocked),
+        "school_mode": coordinator.school.payload(child.member.user_id) if coordinator.school else None,
         "devices": devices,
         "location": location_payload,
         "tracker": entity_ids.get("tracker"),

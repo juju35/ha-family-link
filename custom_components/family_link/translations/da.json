@@ -48,18 +48,24 @@
           "scan_interval": "Opdateringsinterval",
           "location_interval": "Placeringsinterval",
           "stale_after": "Behold cachelagrede data i",
-          "notify_services": "Nødnotifikationstjeneste pr. barn"
+          "notify_services": "Nødnotifikationstjeneste pr. barn",
+          "pronote_timetables": "Pronote-skema pr. barn (skoletilstand)",
+          "school_mode_apps": "Apps tilgængelige i skoletilstand"
         },
         "data_description": {
           "scan_interval": "Skærmtid, låsninger og bonusser.",
           "location_interval": "Seneste kendte placering (enheden vækkes ikke).",
           "stale_after": "Når Family Link ikke kan nås, vises de seneste data så længe, før enhederne bliver utilgængelige.",
-          "notify_services": "Én linje pr. barn til nødbeskeden via Home Assistant-appen på barnets telefon, f.eks. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Én linje pr. barn til nødbeskeden via Home Assistant-appen på barnets telefon, f.eks. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Én linje pr. barn med sensoren \"dagens skema\" fra Pronote-integrationen, f.eks. `Alex: sensor.pronote_alex_today_s_timetable`: skoletilstanden starter så 15 min før første time og stopper efter den sidste.",
+          "school_mode_apps": "Pakkenavne, ét pr. linje, ud over de vigtige apps (telefon, beskeder, kort, Home Assistant, Pronote…) og de altid tilladte."
         }
       }
     },
     "error": {
-      "unknown_child": "En linje nævner intet barn i familien."
+      "unknown_child": "En linje nævner intet barn i familien.",
+      "invalid_sensor": "Angiv en sensor (sensor.…) fra Pronote-integrationen.",
+      "invalid_app": "En linje er ikke et pakkenavn (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Resterende tid"
+      },
+      "blocked_apps": {
+        "name": "Blokerede apps"
+      },
+      "limited_apps": {
+        "name": "Begrænsede apps"
+      },
+      "always_allowed_apps": {
+        "name": "Altid tilladte apps"
+      },
+      "daily_limit": {
+        "name": "Daglig grænse"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Næste begrænsning"
       }
     },
     "switch": {
       "lock": {
         "name": "Lås"
+      },
+      "school_mode": {
+        "name": "Skoletilstand"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Opdater placering"
+      },
+      "add_bonus": {
+        "name": "Tilføj {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Placering"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Sengetid"
+      },
+      "schooltime_active": {
+        "name": "Skoletid"
+      },
+      "limit_reached": {
+        "name": "Daglig grænse nået"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Barn",
           "description": "Kun dette barn (alle, hvis tomt)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Skoletilstand",
+      "description": "Blokerer alle barnets apps undtagen de vigtige (telefon, beskeder, kort, Home Assistant, skoleapps…) og de altid tilladte, eller sætter deres regler tilbage.",
+      "fields": {
+        "child": {
+          "name": "Barn",
+          "description": "Barnets navn eller bruger-id."
+        },
+        "enable": {
+          "name": "Til",
+          "description": "Til for at blokere apps, fra for at sætte deres regler tilbage."
         }
       }
     }

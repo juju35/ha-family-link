@@ -318,21 +318,30 @@ class FamilyLinkClient:
 
     async def set_app(self, child_id: str, package: str, mode: str, minutes: int | None = None) -> None:
         """mode: block, always_allow, limit (minutes per day) or default (no app-specific rule)."""
+        await self.set_apps(child_id, [(package, mode, minutes)])
+
+    async def set_apps(self, child_id: str, rules: list[tuple[str, str, int | None]]) -> None:
+        """Several app rules in one request: (package, mode, minutes) as for set_app."""
         _check_id(child_id, "child id")
-        _check_id(package, "app")
-        if mode == "block":
-            rule: list = [[package], [1]]
-        elif mode == "always_allow":
-            rule = [[package], None, None, [1]]
-        elif mode == "limit":
-            if minutes is None or minutes < 0:
-                raise ApiError("a limit needs minutes")
-            rule = [[package], None, [int(minutes), 1]]
-        elif mode == "default":
-            rule = [[package]]
-        else:
-            raise ApiError(f"unknown mode {mode}")
-        await self._request("POST", f"people/{child_id}/apps:updateRestrictions", payload=[child_id, [rule]])
+        if not rules:
+            return
+        payload = [_app_rule(package, mode, minutes) for package, mode, minutes in rules]
+        await self._request("POST", f"people/{child_id}/apps:updateRestrictions", payload=[child_id, payload])
+
+
+def _app_rule(package: str, mode: str, minutes: int | None) -> list:
+    _check_id(package, "app")
+    if mode == "block":
+        return [[package], [1]]
+    if mode == "always_allow":
+        return [[package], None, None, [1]]
+    if mode == "limit":
+        if minutes is None or minutes < 0:
+            raise ApiError("a limit needs minutes")
+        return [[package], None, [int(minutes), 1]]
+    if mode == "default":
+        return [[package]]
+    raise ApiError(f"unknown mode {mode}")
 
 
 class _Retry(Exception):

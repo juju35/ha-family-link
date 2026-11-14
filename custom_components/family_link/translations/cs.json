@@ -48,18 +48,24 @@
           "scan_interval": "Interval aktualizace",
           "location_interval": "Interval polohy",
           "stale_after": "Uchovávat data v mezipaměti",
-          "notify_services": "Služba nouzových oznámení pro každé dítě"
+          "notify_services": "Služba nouzových oznámení pro každé dítě",
+          "pronote_timetables": "Rozvrh Pronote pro každé dítě (školní režim)",
+          "school_mode_apps": "Aplikace dostupné ve školním režimu"
         },
         "data_description": {
           "scan_interval": "Čas u obrazovky, zámky a bonusy.",
           "location_interval": "Poslední známá poloha (zařízení se neprobudí).",
           "stale_after": "Když je Family Link nedostupný, poslední data zůstanou zobrazena po tuto dobu, než se entity stanou nedostupnými.",
-          "notify_services": "Jeden řádek na dítě pro nouzovou zprávu přes aplikaci Home Assistant v telefonu dítěte, např. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Jeden řádek na dítě pro nouzovou zprávu přes aplikaci Home Assistant v telefonu dítěte, např. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Jeden řádek na dítě se senzorem „dnešní rozvrh“ integrace Pronote, např. `Alex: sensor.pronote_alex_today_s_timetable`: školní režim se pak zapne 15 min před první hodinou a vypne po poslední.",
+          "school_mode_apps": "Názvy balíčků, jeden na řádek, kromě základních aplikací (telefon, zprávy, mapy, Home Assistant, Pronote…) a vždy povolených."
         }
       }
     },
     "error": {
-      "unknown_child": "Jeden řádek neuvádí žádné dítě z rodiny."
+      "unknown_child": "Jeden řádek neuvádí žádné dítě z rodiny.",
+      "invalid_sensor": "Uveďte senzor (sensor.…) integrace Pronote.",
+      "invalid_app": "Jeden řádek není název balíčku (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Zbývající čas"
+      },
+      "blocked_apps": {
+        "name": "Zablokované aplikace"
+      },
+      "limited_apps": {
+        "name": "Omezené aplikace"
+      },
+      "always_allowed_apps": {
+        "name": "Vždy povolené aplikace"
+      },
+      "daily_limit": {
+        "name": "Denní limit"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Další omezení"
       }
     },
     "switch": {
       "lock": {
         "name": "Zámek"
+      },
+      "school_mode": {
+        "name": "Školní režim"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Aktualizovat polohu"
+      },
+      "add_bonus": {
+        "name": "Přidat {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Poloha"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Večerka"
+      },
+      "schooltime_active": {
+        "name": "Školní čas"
+      },
+      "limit_reached": {
+        "name": "Dosažen denní limit"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Dítě",
           "description": "Pouze toto dítě (všechny, pokud je prázdné)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Školní režim",
+      "description": "Zablokuje všechny aplikace dítěte kromě základních (telefon, zprávy, mapy, Home Assistant, školní aplikace…) a vždy povolených, nebo vrátí jejich pravidla.",
+      "fields": {
+        "child": {
+          "name": "Dítě",
+          "description": "Jméno nebo ID uživatele dítěte."
+        },
+        "enable": {
+          "name": "Zapnuto",
+          "description": "Zapnuto pro zablokování aplikací, vypnuto pro vrácení jejich pravidel."
         }
       }
     }

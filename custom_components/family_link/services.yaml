@@ -127,3 +127,15 @@ refresh:
     child:
       selector:
         text:
+
+school_mode:
+  fields:
+    child:
+      required: true
+      selector:
+        text:
+    enable:
+      required: true
+      default: true
+      selector:
+        boolean:

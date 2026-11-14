@@ -114,6 +114,24 @@ class DeviceLimits:
         return None
 
     @property
+    def limit_reached(self) -> bool:
+        """The daily quota is used up (a running bonus doesn't change it)."""
+        return bool(
+            self.daily_limit_enabled
+            and self.daily_limit_minutes is not None
+            and self.used_minutes >= self.daily_limit_minutes
+        )
+
+    def next_restriction(self, now: datetime) -> tuple[str, datetime] | None:
+        """The next bedtime or school time still to start today: (kind, start)."""
+        upcoming = [
+            (kind, window.start)
+            for kind, window in (("bedtime", self.bedtime), ("schooltime", self.schooltime))
+            if window and not window.active and window.start > now
+        ]
+        return min(upcoming, key=lambda item: item[1]) if upcoming else None
+
+    @property
     def restricted_now(self) -> str | None:
         """Why the device is blocked right now, if it is: locked, bedtime, schooltime or limit."""
         if self.locked:

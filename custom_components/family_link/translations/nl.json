@@ -48,18 +48,24 @@
           "scan_interval": "Update-interval",
           "location_interval": "Locatie-interval",
           "stale_after": "Gegevens in cache bewaren gedurende",
-          "notify_services": "Noodmeldingsdienst per kind"
+          "notify_services": "Noodmeldingsdienst per kind",
+          "pronote_timetables": "Pronote-rooster per kind (schoolmodus)",
+          "school_mode_apps": "Apps bereikbaar in schoolmodus"
         },
         "data_description": {
           "scan_interval": "Schermtijd, vergrendelingen en bonussen.",
           "location_interval": "Laatst bekende locatie (het apparaat wordt niet gewekt).",
           "stale_after": "Als Family Link niet bereikbaar is, blijven de laatste gegevens zo lang zichtbaar voordat de entiteiten onbeschikbaar worden.",
-          "notify_services": "Eén regel per kind, voor het noodbericht via de Home Assistant-app op de telefoon van het kind, bijv. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Eén regel per kind, voor het noodbericht via de Home Assistant-app op de telefoon van het kind, bijv. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Eén regel per kind met de sensor 'rooster van vandaag' van de Pronote-integratie, bijv. `Alex: sensor.pronote_alex_today_s_timetable`: de schoolmodus start dan 15 min voor de eerste les en stopt na de laatste.",
+          "school_mode_apps": "Pakketnamen, één per regel, naast de essentiële apps (telefoon, berichten, kaarten, Home Assistant, Pronote…) en de altijd toegestane."
         }
       }
     },
     "error": {
-      "unknown_child": "Een regel noemt geen kind van het gezin."
+      "unknown_child": "Een regel noemt geen kind van het gezin.",
+      "invalid_sensor": "Geef een sensor (sensor.…) van de Pronote-integratie op.",
+      "invalid_app": "Een regel is geen pakketnaam (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Resterende tijd"
+      },
+      "blocked_apps": {
+        "name": "Geblokkeerde apps"
+      },
+      "limited_apps": {
+        "name": "Beperkte apps"
+      },
+      "always_allowed_apps": {
+        "name": "Altijd toegestane apps"
+      },
+      "daily_limit": {
+        "name": "Daglimiet"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Volgende beperking"
       }
     },
     "switch": {
       "lock": {
         "name": "Vergrendeling"
+      },
+      "school_mode": {
+        "name": "Schoolmodus"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Locatie bijwerken"
+      },
+      "add_bonus": {
+        "name": "{minutes} min toevoegen"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Locatie"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Bedtijd"
+      },
+      "schooltime_active": {
+        "name": "Schooltijd"
+      },
+      "limit_reached": {
+        "name": "Daglimiet bereikt"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Kind",
           "description": "Alleen dit kind (alle als leeg)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Schoolmodus",
+      "description": "Blokkeert alle apps van het kind behalve de essentiële (telefoon, berichten, kaarten, Home Assistant, school-apps…) en de altijd toegestane, of zet hun regels terug.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Naam of gebruikers-ID van het kind."
+        },
+        "enable": {
+          "name": "Aan",
+          "description": "Aan om de apps te blokkeren, uit om hun regels terug te zetten."
         }
       }
     }

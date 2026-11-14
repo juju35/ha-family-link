@@ -48,18 +48,24 @@
           "scan_interval": "Interval de actualizare",
           "location_interval": "Interval de localizare",
           "stale_after": "Păstrează datele în cache timp de",
-          "notify_services": "Serviciu de notificare de urgență pentru fiecare copil"
+          "notify_services": "Serviciu de notificare de urgență pentru fiecare copil",
+          "pronote_timetables": "Orar Pronote pe copil (mod școală)",
+          "school_mode_apps": "Aplicații accesibile în modul școală"
         },
         "data_description": {
           "scan_interval": "Timp pe ecran, blocări și bonusuri.",
           "location_interval": "Ultima locație cunoscută (dispozitivul nu este trezit).",
           "stale_after": "Când Family Link nu poate fi contactat, ultimele date rămân afișate atât timp înainte ca entitățile să devină indisponibile.",
-          "notify_services": "O linie pentru fiecare copil, pentru mesajul de urgență prin aplicația Home Assistant de pe telefonul copilului, de ex. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "O linie pentru fiecare copil, pentru mesajul de urgență prin aplicația Home Assistant de pe telefonul copilului, de ex. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "O linie pe copil cu senzorul „orarul de azi” al integrării Pronote, de ex. `Alex: sensor.pronote_alex_today_s_timetable`: modul școală pornește cu 15 min înainte de prima oră și se oprește după ultima.",
+          "school_mode_apps": "Nume de pachete, câte unul pe linie, pe lângă aplicațiile esențiale (telefon, mesaje, hărți, Home Assistant, Pronote…) și cele mereu permise."
         }
       }
     },
     "error": {
-      "unknown_child": "O linie nu numește niciun copil din familie."
+      "unknown_child": "O linie nu numește niciun copil din familie.",
+      "invalid_sensor": "Indicați un senzor (sensor.…) al integrării Pronote.",
+      "invalid_app": "O linie nu este un nume de pachet (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Timp rămas"
+      },
+      "blocked_apps": {
+        "name": "Aplicații blocate"
+      },
+      "limited_apps": {
+        "name": "Aplicații limitate"
+      },
+      "always_allowed_apps": {
+        "name": "Aplicații mereu permise"
+      },
+      "daily_limit": {
+        "name": "Limită zilnică"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Următoarea restricție"
       }
     },
     "switch": {
       "lock": {
         "name": "Blocare"
+      },
+      "school_mode": {
+        "name": "Mod școală"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Actualizează locația"
+      },
+      "add_bonus": {
+        "name": "Adaugă {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Locație"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Ora de culcare"
+      },
+      "schooltime_active": {
+        "name": "Program școlar"
+      },
+      "limit_reached": {
+        "name": "Limita zilnică atinsă"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Copil",
           "description": "Doar acest copil (toți dacă e gol)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Mod școală",
+      "description": "Blochează toate aplicațiile copilului, cu excepția celor esențiale (telefon, mesaje, hărți, Home Assistant, aplicații școlare…) și a celor mereu permise, sau le repune regulile.",
+      "fields": {
+        "child": {
+          "name": "Copil",
+          "description": "Numele sau ID-ul de utilizator al copilului."
+        },
+        "enable": {
+          "name": "Pornit",
+          "description": "Pornit pentru a bloca aplicațiile, oprit pentru a le repune regulile."
         }
       }
     }

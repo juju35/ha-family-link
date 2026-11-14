@@ -48,18 +48,24 @@
           "scan_interval": "Frissítési időköz",
           "location_interval": "Helyfrissítési időköz",
           "stale_after": "Gyorsítótárazott adatok megőrzése",
-          "notify_services": "Vészhelyzeti értesítési szolgáltatás gyermekenként"
+          "notify_services": "Vészhelyzeti értesítési szolgáltatás gyermekenként",
+          "pronote_timetables": "Pronote órarend gyermekenként (iskolai mód)",
+          "school_mode_apps": "Iskolai módban elérhető alkalmazások"
         },
         "data_description": {
           "scan_interval": "Képernyőidő, zárolások és bónuszok.",
           "location_interval": "Utolsó ismert hely (az eszköz nem ébred fel).",
           "stale_after": "Ha a Family Link nem érhető el, a legutóbbi adatok ennyi ideig láthatók maradnak, mielőtt az entitások elérhetetlenné válnak.",
-          "notify_services": "Gyermekenként egy sor a gyermek telefonján lévő Home Assistant alkalmazáson keresztüli vészüzenethez, pl. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Gyermekenként egy sor a gyermek telefonján lévő Home Assistant alkalmazáson keresztüli vészüzenethez, pl. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Gyermekenként egy sor a Pronote integráció „mai órarend” érzékelőjével, pl. `Alex: sensor.pronote_alex_today_s_timetable`: az iskolai mód ekkor 15 perccel az első óra előtt bekapcsol, és az utolsó után kikapcsol.",
+          "school_mode_apps": "Csomagnevek, soronként egy, az alapvető alkalmazásokon (telefon, üzenetek, térkép, Home Assistant, Pronote…) és a mindig engedélyezetteken felül."
         }
       }
     },
     "error": {
-      "unknown_child": "Az egyik sor nem a család egyik gyermekét nevezi meg."
+      "unknown_child": "Az egyik sor nem a család egyik gyermekét nevezi meg.",
+      "invalid_sensor": "Adja meg a Pronote integráció egyik érzékelőjét (sensor.…).",
+      "invalid_app": "Az egyik sor nem csomagnév (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Hátralévő idő"
+      },
+      "blocked_apps": {
+        "name": "Letiltott alkalmazások"
+      },
+      "limited_apps": {
+        "name": "Korlátozott alkalmazások"
+      },
+      "always_allowed_apps": {
+        "name": "Mindig engedélyezett alkalmazások"
+      },
+      "daily_limit": {
+        "name": "Napi korlát"
+      },
+      "bonus": {
+        "name": "Bónusz"
+      },
+      "next_restriction": {
+        "name": "Következő korlátozás"
       }
     },
     "switch": {
       "lock": {
         "name": "Zárolás"
+      },
+      "school_mode": {
+        "name": "Iskolai mód"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Hely frissítése"
+      },
+      "add_bonus": {
+        "name": "{minutes} perc hozzáadása"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Hely"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Alvásidő"
+      },
+      "schooltime_active": {
+        "name": "Iskolaidő"
+      },
+      "limit_reached": {
+        "name": "Napi korlát elérve"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Gyermek",
           "description": "Csak ez a gyermek (üresen hagyva mind)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Iskolai mód",
+      "description": "Letiltja a gyermek összes alkalmazását az alapvetők (telefon, üzenetek, térkép, Home Assistant, iskolai alkalmazások…) és a mindig engedélyezettek kivételével, vagy visszaállítja a szabályaikat.",
+      "fields": {
+        "child": {
+          "name": "Gyermek",
+          "description": "A gyermek neve vagy felhasználói azonosítója."
+        },
+        "enable": {
+          "name": "Be",
+          "description": "Be: az alkalmazások letiltása, ki: a szabályaik visszaállítása."
         }
       }
     }

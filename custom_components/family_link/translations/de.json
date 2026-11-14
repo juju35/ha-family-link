@@ -48,18 +48,24 @@
           "scan_interval": "Aktualisierungsintervall",
           "location_interval": "Standortintervall",
           "stale_after": "Zwischengespeicherte Daten behalten für",
-          "notify_services": "Notfall-Benachrichtigungsdienst pro Kind"
+          "notify_services": "Notfall-Benachrichtigungsdienst pro Kind",
+          "pronote_timetables": "Pronote-Stundenplan pro Kind (Schulmodus)",
+          "school_mode_apps": "Im Schulmodus erreichbare Apps"
         },
         "data_description": {
           "scan_interval": "Bildschirmzeit, Sperren und Boni.",
           "location_interval": "Zuletzt bekannter Standort (das Gerät wird nicht aufgeweckt).",
           "stale_after": "Wenn Family Link nicht erreichbar ist, bleiben die letzten Daten so lange sichtbar, bevor die Entitäten nicht verfügbar werden.",
-          "notify_services": "Eine Zeile pro Kind, für die Notfallnachricht über die Home-Assistant-App auf dem Telefon des Kindes, z. B. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Eine Zeile pro Kind, für die Notfallnachricht über die Home-Assistant-App auf dem Telefon des Kindes, z. B. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Eine Zeile pro Kind mit dem Sensor „Stundenplan von heute“ der Pronote-Integration, z. B. `Alex: sensor.pronote_alex_today_s_timetable`: Der Schulmodus startet dann 15 Min vor der ersten Stunde und endet nach der letzten.",
+          "school_mode_apps": "Paketnamen, einer pro Zeile, zusätzlich zu den wichtigen Apps (Telefon, Nachrichten, Karten, Home Assistant, Pronote…) und den immer erlaubten."
         }
       }
     },
     "error": {
-      "unknown_child": "Eine Zeile nennt kein Kind der Familie."
+      "unknown_child": "Eine Zeile nennt kein Kind der Familie.",
+      "invalid_sensor": "Gib einen Sensor (sensor.…) der Pronote-Integration an.",
+      "invalid_app": "Eine Zeile ist kein Paketname (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Verbleibende Zeit"
+      },
+      "blocked_apps": {
+        "name": "Blockierte Apps"
+      },
+      "limited_apps": {
+        "name": "Begrenzte Apps"
+      },
+      "always_allowed_apps": {
+        "name": "Immer erlaubte Apps"
+      },
+      "daily_limit": {
+        "name": "Tageslimit"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Nächste Einschränkung"
       }
     },
     "switch": {
       "lock": {
         "name": "Sperre"
+      },
+      "school_mode": {
+        "name": "Schulmodus"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Standort aktualisieren"
+      },
+      "add_bonus": {
+        "name": "{minutes} Min hinzufügen"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Standort"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Schlafenszeit"
+      },
+      "schooltime_active": {
+        "name": "Schulzeit"
+      },
+      "limit_reached": {
+        "name": "Tageslimit erreicht"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Kind",
           "description": "Nur dieses Kind (alle, wenn leer)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Schulmodus",
+      "description": "Blockiert alle Apps des Kindes außer den wichtigen (Telefon, Nachrichten, Karten, Home Assistant, Schul-Apps…) und den immer erlaubten, oder stellt ihre Regeln wieder her.",
+      "fields": {
+        "child": {
+          "name": "Kind",
+          "description": "Name oder Benutzer-ID des Kindes."
+        },
+        "enable": {
+          "name": "Ein",
+          "description": "Ein, um die Apps zu blockieren, aus, um ihre Regeln wiederherzustellen."
         }
       }
     }

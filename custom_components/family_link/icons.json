@@ -10,30 +10,115 @@
           "not_tracked": "mdi:shield-off-outline"
         }
       },
-      "screen_time": { "default": "mdi:cellphone-clock" },
-      "device_screen_time": { "default": "mdi:cellphone-clock" },
-      "remaining_time": { "default": "mdi:timer-sand" }
+      "screen_time": {
+        "default": "mdi:cellphone-clock"
+      },
+      "device_screen_time": {
+        "default": "mdi:cellphone-clock"
+      },
+      "remaining_time": {
+        "default": "mdi:timer-sand"
+      },
+      "blocked_apps": {
+        "default": "mdi:application-off"
+      },
+      "limited_apps": {
+        "default": "mdi:application-cog"
+      },
+      "always_allowed_apps": {
+        "default": "mdi:application-check"
+      },
+      "daily_limit": {
+        "default": "mdi:timer-outline"
+      },
+      "bonus": {
+        "default": "mdi:timer-plus"
+      },
+      "next_restriction": {
+        "default": "mdi:clock-alert-outline"
+      }
     },
     "switch": {
-      "lock": { "default": "mdi:cellphone", "state": { "on": "mdi:cellphone-lock" } }
+      "lock": {
+        "default": "mdi:cellphone",
+        "state": {
+          "on": "mdi:cellphone-lock"
+        }
+      },
+      "school_mode": {
+        "default": "mdi:school-outline",
+        "state": {
+          "on": "mdi:school"
+        }
+      }
     },
     "button": {
-      "ring": { "default": "mdi:bell-ring" },
-      "refresh_location": { "default": "mdi:crosshairs-gps" }
+      "ring": {
+        "default": "mdi:bell-ring"
+      },
+      "refresh_location": {
+        "default": "mdi:crosshairs-gps"
+      },
+      "add_bonus": {
+        "default": "mdi:timer-plus"
+      }
     },
     "device_tracker": {
-      "location": { "default": "mdi:map-marker-account" }
+      "location": {
+        "default": "mdi:map-marker-account"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "default": "mdi:bed-clock",
+        "state": {
+          "on": "mdi:bed"
+        }
+      },
+      "schooltime_active": {
+        "default": "mdi:school-outline",
+        "state": {
+          "on": "mdi:school"
+        }
+      },
+      "limit_reached": {
+        "default": "mdi:timer-check-outline",
+        "state": {
+          "on": "mdi:timer-off"
+        }
+      }
     }
   },
   "services": {
-    "add_bonus": { "service": "mdi:timer-plus" },
-    "revoke_bonus": { "service": "mdi:timer-remove" },
-    "lock": { "service": "mdi:cellphone-lock" },
-    "unlock": { "service": "mdi:cellphone-check" },
-    "ring": { "service": "mdi:bell-ring" },
-    "refresh_location": { "service": "mdi:crosshairs-gps" },
-    "set_app": { "service": "mdi:application-cog" },
-    "emergency": { "service": "mdi:alert" },
-    "refresh": { "service": "mdi:refresh" }
+    "add_bonus": {
+      "service": "mdi:timer-plus"
+    },
+    "revoke_bonus": {
+      "service": "mdi:timer-remove"
+    },
+    "lock": {
+      "service": "mdi:cellphone-lock"
+    },
+    "unlock": {
+      "service": "mdi:cellphone-check"
+    },
+    "ring": {
+      "service": "mdi:bell-ring"
+    },
+    "refresh_location": {
+      "service": "mdi:crosshairs-gps"
+    },
+    "set_app": {
+      "service": "mdi:application-cog"
+    },
+    "emergency": {
+      "service": "mdi:alert"
+    },
+    "refresh": {
+      "service": "mdi:refresh"
+    },
+    "school_mode": {
+      "service": "mdi:school"
+    }
   }
 }

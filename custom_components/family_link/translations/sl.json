@@ -48,18 +48,24 @@
           "scan_interval": "Interval posodabljanja",
           "location_interval": "Interval lokacije",
           "stale_after": "Ohrani predpomnjene podatke",
-          "notify_services": "Storitev nujnih obvestil za vsakega otroka"
+          "notify_services": "Storitev nujnih obvestil za vsakega otroka",
+          "pronote_timetables": "Urnik Pronote za vsakega otroka (šolski način)",
+          "school_mode_apps": "Aplikacije, dosegljive v šolskem načinu"
         },
         "data_description": {
           "scan_interval": "Čas pred zaslonom, zaklepanja in bonusi.",
           "location_interval": "Zadnja znana lokacija (naprava se ne zbudi).",
           "stale_after": "Ko Family Link ni dosegljiv, zadnji podatki ostanejo prikazani tako dolgo, preden entitete postanejo nedosegljive.",
-          "notify_services": "Ena vrstica na otroka za nujno sporočilo prek aplikacije Home Assistant na otrokovem telefonu, npr. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Ena vrstica na otroka za nujno sporočilo prek aplikacije Home Assistant na otrokovem telefonu, npr. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Ena vrstica na otroka s senzorjem »današnji urnik« integracije Pronote, npr. `Alex: sensor.pronote_alex_today_s_timetable`: šolski način se tedaj vklopi 15 min pred prvo uro in izklopi po zadnji.",
+          "school_mode_apps": "Imena paketov, eno na vrstico, poleg osnovnih aplikacij (telefon, sporočila, zemljevidi, Home Assistant, Pronote…) in vedno dovoljenih."
         }
       }
     },
     "error": {
-      "unknown_child": "Ena vrstica ne navaja nobenega otroka iz družine."
+      "unknown_child": "Ena vrstica ne navaja nobenega otroka iz družine.",
+      "invalid_sensor": "Navedite senzor (sensor.…) integracije Pronote.",
+      "invalid_app": "Ena vrstica ni ime paketa (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Preostali čas"
+      },
+      "blocked_apps": {
+        "name": "Blokirane aplikacije"
+      },
+      "limited_apps": {
+        "name": "Omejene aplikacije"
+      },
+      "always_allowed_apps": {
+        "name": "Vedno dovoljene aplikacije"
+      },
+      "daily_limit": {
+        "name": "Dnevna omejitev"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Naslednja omejitev"
       }
     },
     "switch": {
       "lock": {
         "name": "Zaklepanje"
+      },
+      "school_mode": {
+        "name": "Šolski način"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Posodobi lokacijo"
+      },
+      "add_bonus": {
+        "name": "Dodaj {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Lokacija"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Čas za spanje"
+      },
+      "schooltime_active": {
+        "name": "Šolski čas"
+      },
+      "limit_reached": {
+        "name": "Dosežena dnevna omejitev"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Otrok",
           "description": "Samo ta otrok (vsi, če je prazno)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Šolski način",
+      "description": "Blokira vse otrokove aplikacije razen osnovnih (telefon, sporočila, zemljevidi, Home Assistant, šolske aplikacije…) in vedno dovoljenih ali povrne njihova pravila.",
+      "fields": {
+        "child": {
+          "name": "Otrok",
+          "description": "Ime ali ID uporabnika otroka."
+        },
+        "enable": {
+          "name": "Vklopljeno",
+          "description": "Vklopljeno za blokiranje aplikacij, izklopljeno za povrnitev njihovih pravil."
         }
       }
     }

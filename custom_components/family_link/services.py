@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 from typing import Any
 
 import voluptuous as vol
@@ -12,6 +11,7 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 from .const import (
@@ -19,6 +19,7 @@ from .const import (
     ATTR_APP,
     ATTR_CHILD,
     ATTR_DEVICE,
+    ATTR_ENABLE,
     ATTR_MESSAGE,
     ATTR_MINUTES,
     ATTR_MODE,
@@ -28,6 +29,7 @@ from .const import (
     CONF_NOTIFY_SERVICES,
     DOMAIN,
     EVENT_ACTION,
+    PACKAGE_RE,
     SERVICE_ADD_BONUS,
     SERVICE_EMERGENCY,
     SERVICE_LOCK,
@@ -35,16 +37,15 @@ from .const import (
     SERVICE_REFRESH_LOCATION,
     SERVICE_REVOKE_BONUS,
     SERVICE_RING,
+    SERVICE_SCHOOL_MODE,
     SERVICE_SET_APP,
     SERVICE_UNLOCK,
 )
 from .coordinator import ChildData, FamilyLinkCoordinator
+from .entity import add_bonus as give_bonus
 from .entity import guard_action
 
 _LOGGER = logging.getLogger(__name__)
-
-# An Android package name: what set_app accepts for an app the child has not used yet
-PACKAGE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$")
 
 CHILD = vol.Required(ATTR_CHILD)
 DEVICE = vol.Optional(ATTR_DEVICE)
@@ -77,6 +78,7 @@ SCHEMAS = {
         }
     ),
     SERVICE_REFRESH: vol.Schema({vol.Optional(ATTR_CHILD): cv.string}),
+    SERVICE_SCHOOL_MODE: vol.Schema({CHILD: cv.string, vol.Required(ATTR_ENABLE): cv.boolean}),
 }
 
 
@@ -88,24 +90,34 @@ def _coordinators(hass: HomeAssistant) -> list[FamilyLinkCoordinator]:
     ]
 
 
+def _registry_key(hass: HomeAssistant, value: str) -> str | None:
+    """The Family Link id (child or phone / tablet) of a Home Assistant device id, else None."""
+    device = dr.async_get(hass).async_get(value)
+    return next((key for domain, key in device.identifiers if domain == DOMAIN), None) if device else None
+
+
 def resolve_child(hass: HomeAssistant, value: str) -> tuple[FamilyLinkCoordinator, ChildData]:
-    """A child by user id, name, or any of its entities."""
+    """A child by user id, name, any of its entities, or its Home Assistant device (or one of its phones')."""
     wanted = value.strip()
     if wanted.count(".") == 1 and (entity := er.async_get(hass).async_get(wanted)) and entity.unique_id:
         wanted = entity.unique_id.split("_")[0]
+    elif key := _registry_key(hass, wanted):
+        wanted = key
     for coordinator in _coordinators(hass):
         for child in coordinator.data.children.values():
             member = child.member
             names = (member.name.casefold(), member.given_name.casefold())
             if wanted == member.user_id or wanted.casefold() in names:
                 return coordinator, child
+            if child.usage and wanted in child.usage.devices:
+                return coordinator, child
     raise ServiceValidationError(
         translation_domain=DOMAIN, translation_key="unknown_child", translation_placeholders={"child": value}
     )
 
 
-def resolve_device(child: ChildData, value: str | None) -> str:
-    """A device of the child by id or name; the only device when none is given."""
+def resolve_device(hass: HomeAssistant, child: ChildData, value: str | None) -> str:
+    """A device of the child by id, name or Home Assistant device id; the only device when none is given."""
     devices = child.usage.devices if child.usage else {}
     if not value:
         if len(devices) == 1:
@@ -113,6 +125,8 @@ def resolve_device(child: ChildData, value: str | None) -> str:
         raise ServiceValidationError(translation_domain=DOMAIN, translation_key="device_required")
     if value in devices:
         return value
+    if (key := _registry_key(hass, value)) and key in devices:
+        return key
     for device_id, device in devices.items():
         if value.casefold() in (device.name.casefold(), device.model.casefold()):
             return device_id
@@ -125,23 +139,14 @@ def resolve_device(child: ChildData, value: str | None) -> str:
 def async_setup_services(hass: HomeAssistant) -> None:
     async def add_bonus(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE))
+        device_id = resolve_device(hass, child, call.data.get(ATTR_DEVICE))
         minutes = call.data[ATTR_MINUTES]
-        override_id = await guard_action(
-            coordinator.client.add_bonus(child.member.user_id, device_id, minutes), "bonus"
-        )
-        coordinator.apply_optimistic(
-            child.member.user_id,
-            device_id,
-            bonus_minutes=minutes,
-            bonus_remaining_minutes=minutes,
-            bonus_override_id=override_id or "pending",
-        )
+        await give_bonus(coordinator, child.member.user_id, device_id, minutes)
         _fire(hass, "add_bonus", child, device_id, minutes=minutes)
 
     async def revoke_bonus(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE))
+        device_id = resolve_device(hass, child, call.data.get(ATTR_DEVICE))
         limits = child.limits.get(device_id)
         override_id = limits.bonus_override_id if limits else None
         if not override_id or override_id == "pending":
@@ -158,21 +163,21 @@ def async_setup_services(hass: HomeAssistant) -> None:
 
     async def lock(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE))
+        device_id = resolve_device(hass, child, call.data.get(ATTR_DEVICE))
         await guard_action(coordinator.client.lock(child.member.user_id, device_id), "lock")
         coordinator.apply_optimistic(child.member.user_id, device_id, locked=True, override=7)
         _fire(hass, "lock", child, device_id)
 
     async def unlock(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE))
+        device_id = resolve_device(hass, child, call.data.get(ATTR_DEVICE))
         await guard_action(coordinator.client.unlock(child.member.user_id, device_id), "unlock")
         coordinator.apply_optimistic(child.member.user_id, device_id, locked=False, override=4)
         _fire(hass, "unlock", child, device_id)
 
     async def ring(call: ServiceCall) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
-        device_id = resolve_device(child, call.data.get(ATTR_DEVICE))
+        device_id = resolve_device(hass, child, call.data.get(ATTR_DEVICE))
         await guard_action(coordinator.client.ring(child.member.user_id, device_id), "ring")
         _fire(hass, "ring", child, device_id)
 
@@ -213,7 +218,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
         coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
         devices = list(child.usage.devices) if child.usage else []
         # No device given: every device of the child rings (no time to pick one in an emergency)
-        targets = [resolve_device(child, call.data[ATTR_DEVICE])] if call.data.get(ATTR_DEVICE) else devices
+        targets = [resolve_device(hass, child, call.data[ATTR_DEVICE])] if call.data.get(ATTR_DEVICE) else devices
         notify = call.data.get(ATTR_NOTIFY_SERVICE) or coordinator.config_entry.options.get(
             CONF_NOTIFY_SERVICES, {}
         ).get(child.member.user_id)
@@ -235,6 +240,15 @@ def async_setup_services(hass: HomeAssistant) -> None:
         if failures:
             raise failures[0]
 
+    async def school_mode(call: ServiceCall) -> None:
+        coordinator, child = resolve_child(hass, call.data[ATTR_CHILD])
+        if coordinator.school is None:
+            return
+        if call.data[ATTR_ENABLE]:
+            await guard_action(coordinator.school.async_enable(child.member.user_id), "school_mode")
+        else:
+            await guard_action(coordinator.school.async_disable(child.member.user_id), "school_mode")
+
     async def refresh(call: ServiceCall) -> None:
         if ATTR_CHILD in call.data:
             coordinator, _child = resolve_child(hass, call.data[ATTR_CHILD])
@@ -252,6 +266,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
         SERVICE_SET_APP: set_app,
         SERVICE_EMERGENCY: emergency,
         SERVICE_REFRESH: refresh,
+        SERVICE_SCHOOL_MODE: school_mode,
     }
     for name, handler in handlers.items():
         hass.services.async_register(DOMAIN, name, handler, SCHEMAS[name])

@@ -32,7 +32,8 @@ Home Assistant integration for **Google Family Link**: your children's **screen 
 - **Every supervised child, every device**: one Home Assistant device per child, one per phone or tablet, linked to the child
 - **Status** per child — tracked, attention, locked, not tracked — which colors the cards' header icon and drives automations
 - **Screen time** today per child and per device, **time left** (daily limit, or the running bonus), **top apps** with their rules (limit, always allowed, blocked)
-- **Bedtime and school time** windows, active or coming
+- **Bedtime and school time** windows, active or coming, as binary sensors with the daily limit reached, and the next restriction as a timestamp
+- **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, school apps…) and the ones you always allow, their rules put back afterwards; by hand, by action, or **driven by the Pronote timetable**: on a little before the first lesson of the day, off after the last one (see [School mode](#school-mode))
 - **Location** of each child as a `device_tracker` (place, address, accuracy, battery of the device that reported it): Home Assistant records the route the card draws
 - **Actions**: add a time bonus, revoke it, lock, unlock, ring, update the location, block / limit / always allow an app, emergency, refresh
 - **Emergency**: rings the device (every device of the child when none is given) through Family Link and, through the Home Assistant app on the child's phone, sends a critical notification with your message — even on silent
@@ -104,6 +105,8 @@ Tip: export the cookies from a browser profile you keep signed in, and don't sig
 | Location interval | 300 s | Last known location (the device is not woken up) |
 | Keep cached data for | 3600 s | When Family Link can't be reached, the last data stays shown this long before the entities become unavailable |
 | Emergency notification service per child | — | One line per child: `Alex: notify.mobile_app_pixel_8` |
+| Pronote timetable per child (school mode) | suggested | One line per child: `Alex: sensor.pronote_alex_today_s_timetable` — see [School mode](#school-mode) |
+| Apps left reachable by the school mode | — | Package names, one per line, on top of the essential and always allowed apps |
 
 ### When Google asks for a new sign-in
 
@@ -120,6 +123,10 @@ For each **child** (device named after the child):
 | Screen time | `sensor.alex_screen_time` | Minutes today, all devices |
 | Battery | `sensor.alex_battery` | Battery of the device that reported the location |
 | Update location | `button.alex_update_location` | Asks the device for a fresh location (uses its battery) |
+| School mode | `switch.alex_school_mode` | On = every app blocked but the essential ones (see [School mode](#school-mode)). Attributes: source (`manual` or `pronote`), end of the school day, apps blocked |
+| Blocked apps | `sensor.alex_blocked_apps` | Number of blocked apps, their titles in the `apps` attribute (diagnostic) |
+| Limited apps | `sensor.alex_limited_apps` | Number of apps with a daily limit, their titles in `apps` (diagnostic) |
+| Always allowed apps | `sensor.alex_always_allowed_apps` | Number of always allowed apps, their titles in `apps` (diagnostic) |
 
 For each **device** (phone or tablet, linked to the child):
 
@@ -129,6 +136,13 @@ For each **device** (phone or tablet, linked to the child):
 | Screen time | `sensor.pixel_8_screen_time` | Minutes today on this device |
 | Time left | `sensor.pixel_8_time_left` | Minutes left today (daily limit, or the running bonus); unknown without a limit. Attributes: daily limit, bonus, restriction in force, bedtime and school time active |
 | Ring | `button.pixel_8_ring` | Rings the device, even on silent |
+| Add 15 / 30 / 60 min | `button.pixel_8_add_30_min` | Adds a time bonus (handy for voice assistants and dashboards without the card) |
+| Daily limit | `sensor.pixel_8_daily_limit` | Today's quota in minutes; unknown without a daily limit |
+| Bonus | `sensor.pixel_8_bonus` | Minutes of the running bonus, 0 without one |
+| Next restriction | `sensor.pixel_8_next_restriction` | Start of the next bedtime or school time of the day; its kind in the `kind` attribute |
+| Bedtime | `binary_sensor.pixel_8_bedtime` | On while bedtime is going on |
+| School time | `binary_sensor.pixel_8_school_time` | On while school time is going on |
+| Daily limit reached | `binary_sensor.pixel_8_daily_limit_reached` | On once the daily quota is used up (a bonus doesn't change it) |
 
 The status is **locked** while a device is locked, in bedtime or school time, or out of time; **attention** when 15 minutes or less are left or the location is older than an hour; **not tracked** when the devices have been silent for a day or the session is refused.
 
@@ -186,11 +200,31 @@ data:
   refresh_location: true
   # notify_service: notify.mobile_app_pixel_8   # overrides the option
 
+# School mode on (off with enable: false)
+action: family_link.school_mode
+data:
+  child: Alex
+  enable: true
+
 # Fetch now
 action: family_link.refresh
 ```
 
-Each action fires a `family_link_action` event (`action`, `child`, `child_name`, `device`, …) for your automations.
+`child` takes the child's name or user id, one of its entities, or its Home Assistant device id (or the device id of one of its phones, which then also works as `device`).
+
+Each action fires a `family_link_action` event (`action`, `child`, `child_name`, `device`, …) for your automations; the school mode fires `school_mode_on` and `school_mode_off`, with its `source` (`manual` or `pronote`).
+
+### School mode
+
+The school mode blocks every app of the child, in one request, but:
+
+- the essential apps: phone, messages, contacts, clock, calculator, calendar, camera, keyboard, settings, maps, Google Play services, the Home Assistant app (so the emergency message still gets through), Pronote, Google Classroom and Google Docs;
+- the apps you list in the **Apps left reachable by the school mode** option (package names, e.g. `com.duolingo`);
+- the apps you always allow in Family Link.
+
+The rule each app had before (none, or a daily limit) is saved in Home Assistant and put back when the school mode stops, also after a restart. An app installed while it is on is blocked at the next update.
+
+**With Pronote**: set the "today's timetable" sensor of the [Pronote integration](https://github.com/delphiki/hass-pronote) for the child in the **Pronote timetable per child** option (`Alex: sensor.pronote_alex_today_s_timetable`; the options suggest the sensor of the Pronote student carrying the child's first name). The school mode then turns on 15 minutes before the first lesson of the day and off after the last one; canceled lessons don't count, so a day whose last lessons are canceled ends earlier, and a day without lessons (weekend, holidays, every lesson canceled) leaves it off. Turned off by hand during the school day, it stays off until the end of that day; turned on by hand, Pronote doesn't turn it off.
 
 ## Cards
 
@@ -240,7 +274,7 @@ language: fr
 | `device_type` | `auto` / `phone` / `tablet` | `auto` | both | Drawing of the device; `auto` follows the model |
 | `show_scene` | boolean | `true` | both | Animated phone or tablet |
 | `show_top_apps` | boolean | `true` | both | Most used apps today |
-| `show_actions` | boolean | `true` | both | Bonus, lock, ring, locate, emergency |
+| `show_actions` | boolean | `true` | both | School mode, bonus, lock, ring, locate, emergency |
 | `show_location` | boolean | `true` | both | Location tile and popup |
 | `trace_hours` | number | `24` | both | Period of the route when the popup opens (Today, 24 h, 7 days can be picked there) |
 | `bonus_presets` | list | `[15, 30, 60]` | both | Add-time buttons, in minutes — **YAML only** |
@@ -294,6 +328,7 @@ Each animation of the cards, in the dark and light themes.
 | Locked tablet | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked.png" alt="locked tablet" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked-light.png" alt="locked tablet, light" width="320"> |
 | Bonus running | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus.png" alt="bonus" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus-light.png" alt="bonus, light" width="320"> |
 | Location popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location.png" alt="location popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location-light.png" alt="location popup, light" width="320"> |
+| School mode (Pronote) | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school.png" alt="school mode" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school-light.png" alt="school mode, light" width="320"> |
 | Emergency popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency.png" alt="emergency popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency-light.png" alt="emergency popup, light" width="320"> |
 | Mini, one device | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-light.png" alt="mini card, light" width="300"> |
 | Mini, two devices | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices.png" alt="mini card, devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices-light.png" alt="mini card, devices, light" width="300"> |

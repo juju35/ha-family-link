@@ -48,18 +48,24 @@
           "scan_interval": "Intervallo di aggiornamento",
           "location_interval": "Intervallo di posizione",
           "stale_after": "Mantieni i dati in cache per",
-          "notify_services": "Servizio di notifica di emergenza per figlio"
+          "notify_services": "Servizio di notifica di emergenza per figlio",
+          "pronote_timetables": "Orario Pronote per bambino (modalità scuola)",
+          "school_mode_apps": "App accessibili in modalità scuola"
         },
         "data_description": {
           "scan_interval": "Tempo di utilizzo, blocchi e bonus.",
           "location_interval": "Ultima posizione nota (il dispositivo non viene risvegliato).",
           "stale_after": "Quando Family Link non è raggiungibile, gli ultimi dati restano visibili per questo tempo prima che le entità diventino non disponibili.",
-          "notify_services": "Una riga per figlio, per il messaggio di emergenza tramite l’app Home Assistant sul telefono del figlio, ad es. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Una riga per figlio, per il messaggio di emergenza tramite l’app Home Assistant sul telefono del figlio, ad es. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Una riga per bambino con il sensore «orario di oggi» dell'integrazione Pronote, ad es. `Alex: sensor.pronote_alex_today_s_timetable`: la modalità scuola si attiva 15 min prima della prima lezione e si disattiva dopo l'ultima.",
+          "school_mode_apps": "Nomi dei pacchetti, uno per riga, oltre alle app essenziali (telefono, messaggi, mappe, Home Assistant, Pronote…) e a quelle sempre consentite."
         }
       }
     },
     "error": {
-      "unknown_child": "Una riga non indica nessun figlio della famiglia."
+      "unknown_child": "Una riga non indica nessun figlio della famiglia.",
+      "invalid_sensor": "Indica un sensore (sensor.…) dell'integrazione Pronote.",
+      "invalid_app": "Una riga non è un nome di pacchetto (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Tempo rimanente"
+      },
+      "blocked_apps": {
+        "name": "App bloccate"
+      },
+      "limited_apps": {
+        "name": "App limitate"
+      },
+      "always_allowed_apps": {
+        "name": "App sempre consentite"
+      },
+      "daily_limit": {
+        "name": "Limite giornaliero"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Prossima restrizione"
       }
     },
     "switch": {
       "lock": {
         "name": "Blocco"
+      },
+      "school_mode": {
+        "name": "Modalità scuola"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Aggiorna posizione"
+      },
+      "add_bonus": {
+        "name": "Aggiungi {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Posizione"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Ora di dormire"
+      },
+      "schooltime_active": {
+        "name": "Orario scolastico"
+      },
+      "limit_reached": {
+        "name": "Limite giornaliero raggiunto"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Figlio",
           "description": "Solo questo figlio (tutti se vuoto)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Modalità scuola",
+      "description": "Blocca tutte le app del bambino tranne quelle essenziali (telefono, messaggi, mappe, Home Assistant, app scolastiche…) e quelle sempre consentite, o ripristina le loro regole.",
+      "fields": {
+        "child": {
+          "name": "Figlio",
+          "description": "Nome o ID utente del figlio."
+        },
+        "enable": {
+          "name": "Attiva",
+          "description": "Attiva per bloccare le app, disattiva per ripristinare le loro regole."
         }
       }
     }

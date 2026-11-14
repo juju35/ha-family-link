@@ -48,18 +48,24 @@
           "scan_interval": "Intervalo de actualización",
           "location_interval": "Intervalo de ubicación",
           "stale_after": "Conservar los datos en caché durante",
-          "notify_services": "Servicio de notificación de emergencia por niño"
+          "notify_services": "Servicio de notificación de emergencia por niño",
+          "pronote_timetables": "Horario de Pronote por niño (modo escuela)",
+          "school_mode_apps": "Aplicaciones accesibles en modo escuela"
         },
         "data_description": {
           "scan_interval": "Tiempo de pantalla, bloqueos y bonificaciones.",
           "location_interval": "Última ubicación conocida (el dispositivo no se despierta).",
           "stale_after": "Cuando no se puede contactar con Family Link, los últimos datos se siguen mostrando durante este tiempo antes de que las entidades dejen de estar disponibles.",
-          "notify_services": "Una línea por niño, para el mensaje de emergencia a través de la app de Home Assistant del teléfono del niño, p. ej. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Una línea por niño, para el mensaje de emergencia a través de la app de Home Assistant del teléfono del niño, p. ej. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Una línea por niño con el sensor «horario de hoy» de la integración Pronote, p. ej. `Alex: sensor.pronote_alex_today_s_timetable`: el modo escuela se activa 15 min antes de la primera clase y se desactiva tras la última.",
+          "school_mode_apps": "Nombres de paquete, uno por línea, además de las aplicaciones esenciales (teléfono, mensajes, mapas, Home Assistant, Pronote…) y las siempre permitidas."
         }
       }
     },
     "error": {
-      "unknown_child": "Una línea no corresponde a ningún niño de la familia."
+      "unknown_child": "Una línea no corresponde a ningún niño de la familia.",
+      "invalid_sensor": "Indica un sensor (sensor.…) de la integración Pronote.",
+      "invalid_app": "Una línea no es un nombre de paquete (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Tiempo restante"
+      },
+      "blocked_apps": {
+        "name": "Aplicaciones bloqueadas"
+      },
+      "limited_apps": {
+        "name": "Aplicaciones limitadas"
+      },
+      "always_allowed_apps": {
+        "name": "Aplicaciones siempre permitidas"
+      },
+      "daily_limit": {
+        "name": "Límite diario"
+      },
+      "bonus": {
+        "name": "Bonus"
+      },
+      "next_restriction": {
+        "name": "Próxima restricción"
       }
     },
     "switch": {
       "lock": {
         "name": "Bloqueo"
+      },
+      "school_mode": {
+        "name": "Modo escuela"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Actualizar ubicación"
+      },
+      "add_bonus": {
+        "name": "Añadir {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Ubicación"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Hora de dormir"
+      },
+      "schooltime_active": {
+        "name": "Horario escolar"
+      },
+      "limit_reached": {
+        "name": "Límite diario alcanzado"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Niño",
           "description": "Solo este niño (todos si está vacío)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Modo escuela",
+      "description": "Bloquea todas las aplicaciones del niño salvo las esenciales (teléfono, mensajes, mapas, Home Assistant, apps escolares…) y las siempre permitidas, o restablece sus reglas.",
+      "fields": {
+        "child": {
+          "name": "Niño",
+          "description": "Nombre o ID de usuario del niño."
+        },
+        "enable": {
+          "name": "Activado",
+          "description": "Activado para bloquear las aplicaciones, desactivado para restablecer sus reglas."
         }
       }
     }

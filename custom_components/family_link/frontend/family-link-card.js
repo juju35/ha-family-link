@@ -1,4 +1,4 @@
-var FAMILY_LINK_CARD_VERSION = '1.0.0';
+var FAMILY_LINK_CARD_VERSION = '1.1.0';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var FamilyLinkI18n = {
@@ -90,6 +90,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · uses battery',
     send_emergency: 'Send emergency',
     emergency_sent: 'Emergency sent',
+    school_mode: 'School mode',
+    school_blocked: '{n} apps blocked',
     editor: {
       entity: 'Child (status sensor)',
       title: 'Title',
@@ -195,6 +197,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · consomme la batterie',
     send_emergency: 'Envoyer l’urgence',
     emergency_sent: 'Urgence envoyée',
+    school_mode: 'Mode école',
+    school_blocked: '{n} applis bloquées',
     editor: {
       entity: 'Enfant (capteur de statut)',
       title: 'Titre',
@@ -300,6 +304,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · verbraucht Akku',
     send_emergency: 'Notfall senden',
     emergency_sent: 'Notfall gesendet',
+    school_mode: 'Schulmodus',
+    school_blocked: '{n} Apps blockiert',
     editor: {
       entity: 'Kind (Statussensor)',
       title: 'Titel',
@@ -405,6 +411,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · consume batería',
     send_emergency: 'Enviar emergencia',
     emergency_sent: 'Emergencia enviada',
+    school_mode: 'Modo escuela',
+    school_blocked: '{n} apps bloqueadas',
     editor: {
       entity: 'Niño (sensor de estado)',
       title: 'Título',
@@ -510,6 +518,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · троши батерију',
     send_emergency: 'Пошаљи хитно',
     emergency_sent: 'Хитно послато',
+    school_mode: 'Школски режим',
+    school_blocked: 'Блокираних апликација: {n}',
     editor: {
       entity: 'Дете (сензор статуса)',
       title: 'Наслов',
@@ -615,6 +625,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · troši bateriju',
     send_emergency: 'Pošalji hitno',
     emergency_sent: 'Hitno poslato',
+    school_mode: 'Školski režim',
+    school_blocked: 'Blokiranih aplikacija: {n}',
     editor: {
       entity: 'Dete (senzor statusa)',
       title: 'Naslov',
@@ -720,6 +732,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · consuma batteria',
     send_emergency: 'Invia emergenza',
     emergency_sent: 'Emergenza inviata',
+    school_mode: 'Modalità scuola',
+    school_blocked: '{n} app bloccate',
     editor: {
       entity: 'Figlio (sensore di stato)',
       title: 'Titolo',
@@ -825,6 +839,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · verbruikt batterij',
     send_emergency: 'Noodgeval versturen',
     emergency_sent: 'Noodgeval verstuurd',
+    school_mode: 'Schoolmodus',
+    school_blocked: '{n} apps geblokkeerd',
     editor: {
       entity: 'Kind (statussensor)',
       title: 'Titel',
@@ -930,6 +946,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · gasta bateria',
     send_emergency: 'Enviar emergência',
     emergency_sent: 'Emergência enviada',
+    school_mode: 'Modo escola',
+    school_blocked: '{n} apps bloqueadas',
     editor: {
       entity: 'Criança (sensor de estado)',
       title: 'Título',
@@ -1035,6 +1053,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · zużywa baterię',
     send_emergency: 'Wyślij alarm',
     emergency_sent: 'Alarm wysłany',
+    school_mode: 'Tryb szkolny',
+    school_blocked: 'Zablokowane aplikacje: {n}',
     editor: {
       entity: 'Dziecko (czujnik stanu)',
       title: 'Tytuł',
@@ -1140,6 +1160,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · consumă bateria',
     send_emergency: 'Trimite urgența',
     emergency_sent: 'Urgență trimisă',
+    school_mode: 'Mod școală',
+    school_blocked: '{n} aplicații blocate',
     editor: {
       entity: 'Copil (senzor de stare)',
       title: 'Titlu',
@@ -1245,6 +1267,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · bruger batteri',
     send_emergency: 'Send nødsituation',
     emergency_sent: 'Nødsituation sendt',
+    school_mode: 'Skoletilstand',
+    school_blocked: '{n} apps blokeret',
     editor: {
       entity: 'Barn (statussensor)',
       title: 'Titel',
@@ -1350,6 +1374,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · drar batteri',
     send_emergency: 'Skicka nödläge',
     emergency_sent: 'Nödläge skickat',
+    school_mode: 'Skolläge',
+    school_blocked: '{n} appar blockerade',
     editor: {
       entity: 'Barn (statussensor)',
       title: 'Rubrik',
@@ -1455,6 +1481,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · изразходва батерия',
     send_emergency: 'Изпрати спешно',
     emergency_sent: 'Спешното е изпратено',
+    school_mode: 'Училищен режим',
+    school_blocked: 'Блокирани приложения: {n}',
     editor: {
       entity: 'Дете (сензор за състояние)',
       title: 'Заглавие',
@@ -1560,6 +1588,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · расходует батарею',
     send_emergency: 'Отправить тревогу',
     emergency_sent: 'Тревога отправлена',
+    school_mode: 'Школьный режим',
+    school_blocked: 'Заблокировано приложений: {n}',
     editor: {
       entity: 'Ребёнок (датчик статуса)',
       title: 'Заголовок',
@@ -1665,6 +1695,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · витрачає батарею',
     send_emergency: 'Надіслати тривогу',
     emergency_sent: 'Тривогу надіслано',
+    school_mode: 'Шкільний режим',
+    school_blocked: 'Заблоковано застосунків: {n}',
     editor: {
       entity: 'Дитина (датчик статусу)',
       title: 'Заголовок',
@@ -1770,6 +1802,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · akkumulátort használ',
     send_emergency: 'Vészjelzés küldése',
     emergency_sent: 'Vészjelzés elküldve',
+    school_mode: 'Iskolai mód',
+    school_blocked: '{n} alkalmazás letiltva',
     editor: {
       entity: 'Gyermek (állapotérzékelő)',
       title: 'Cím',
@@ -1875,6 +1909,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · spotrebúva batériu',
     send_emergency: 'Odoslať núdzu',
     emergency_sent: 'Núdza odoslaná',
+    school_mode: 'Školský režim',
+    school_blocked: 'Zablokované aplikácie: {n}',
     editor: {
       entity: 'Dieťa (senzor stavu)',
       title: 'Názov',
@@ -1980,6 +2016,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · spotřebovává baterii',
     send_emergency: 'Odeslat nouzi',
     emergency_sent: 'Nouze odeslána',
+    school_mode: 'Školní režim',
+    school_blocked: 'Zablokované aplikace: {n}',
     editor: {
       entity: 'Dítě (senzor stavu)',
       title: 'Název',
@@ -2085,6 +2123,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · porablja baterijo',
     send_emergency: 'Pošlji nujno',
     emergency_sent: 'Nujno poslano',
+    school_mode: 'Šolski način',
+    school_blocked: 'Blokirane aplikacije: {n}',
     editor: {
       entity: 'Otrok (senzor stanja)',
       title: 'Naslov',
@@ -2190,6 +2230,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · patērē akumulatoru',
     send_emergency: 'Sūtīt ārkārtas',
     emergency_sent: 'Ārkārtas nosūtīts',
+    school_mode: 'Skolas režīms',
+    school_blocked: 'Bloķētas lietotnes: {n}',
     editor: {
       entity: 'Bērns (statusa sensors)',
       title: 'Virsraksts',
@@ -2295,6 +2337,8 @@ var FamilyLinkI18n = {
     opt_locate_hint: 'Family Link · καταναλώνει μπαταρία',
     send_emergency: 'Αποστολή έκτακτου',
     emergency_sent: 'Το έκτακτο στάλθηκε',
+    school_mode: 'Λειτουργία σχολείου',
+    school_blocked: 'Αποκλεισμένες εφαρμογές: {n}',
     editor: {
       entity: 'Παιδί (αισθητήρας κατάστασης)',
       title: 'Τίτλος',
@@ -2426,6 +2470,11 @@ var FL_ICON_PATHS = {
   offline: '<path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.2-2.8M19 13a10 10 0 0 0-2.4-1.8M2 8.8a15 15 0 0 1 4.2-2.7M22 8.8A15 15 0 0 0 11 5"/>',
   history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
 };
+
+// Small school cap after the child's name while the school mode is on
+function flSchoolTag(a, t) {
+  return a?.school_mode?.active ? `<span class="school-tag" title="${flEsc(t.school_mode)}" aria-label="${flEsc(t.school_mode)}">${flIcon('school')}</span>` : '';
+}
 
 function flIcon(name, cls) {
   return `<svg class="ic ${cls || ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FL_ICON_PATHS[name] || ''}</svg>`;
@@ -2603,7 +2652,7 @@ class FamilyLinkCard extends HTMLElement {
     var title = this._config.title || a.child_name || t.none;
     return `<div class="header">
       <div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div>
-      <div class="titles"><div class="title">${flEsc(title)}</div><div class="sub">${flEsc(sub)}</div></div>
+      <div class="titles"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>
       <div class="pill" style="--c:${s.color};--tint:${s.tint}">${flEsc(t[`status_${status}`] || status)}</div>
       ${extra || ''}
     </div>`;
@@ -2773,6 +2822,7 @@ class FamilyLinkCard extends HTMLElement {
         <div class="bonus-txt"><b>${flEsc(flTr(t, 'bonus_running', { n: device.bonus }))}</b><small>${flEsc(flTr(t, 'bonus_left', { n: left }))} · ${flEsc(flTr(t, 'bonus_until', { t: flClock(until, this._hass) }))}</small></div>
         <button class="btn red" data-action="revoke" ${this._busy.revoke ? 'disabled' : ''}>${flEsc(t.revoke)}</button></div>`;
     }
+    html += this._schoolRow(a, t);
     html += `<div class="addrow"><span class="label inline">${flEsc(t.add)}</span>
       ${presets.map((m) => `<button class="pchip" data-action="bonus" data-minutes="${Number(m)}" aria-label="${flEsc(flTr(t, 'add_minutes', { n: m }))}" ${this._busy.bonus ? 'disabled' : ''}>+${Number(m)}</button>`).join('')}
       <span class="stepper"><button data-action="step" data-step="-15" aria-label="${flEsc(t.less)}">−</button><button class="stepval" data-action="bonus" data-minutes="custom" aria-label="${flEsc(flTr(t, 'add_minutes', { n: this._custom }))}">${this._custom}'</button><button data-action="step" data-step="15" aria-label="${flEsc(t.more)}">+</button></span></div>`;
@@ -2786,6 +2836,27 @@ class FamilyLinkCard extends HTMLElement {
     </div>`;
     if ((a.devices || []).length > 1) html += `<div class="foot">${flEsc(flTr(t, 'actions_for', { device: device.name }))}</div>`;
     return `<div class="section actions">${html}</div>`;
+  }
+
+  // School mode of the child: every app blocked but the essential ones, by hand or by the Pronote timetable
+  _schoolRow(a, t) {
+    var sm = a.school_mode;
+    if (!sm) return '';
+    var on = !!sm.active;
+    var sub = on
+      ? [
+          sm.source === 'pronote' ? 'Pronote' : null,
+          sm.until ? flTr(t, 'until', { t: flClock(sm.until, this._hass) }) : null,
+          sm.blocked ? flTr(t, 'school_blocked', { n: sm.blocked }) : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      : sm.pronote
+        ? 'Pronote'
+        : '';
+    return `<div class="school ${on ? 'on' : ''}"><span class="school-ic">${flIcon('school', on ? 'bob' : '')}</span>
+      <div class="school-txt"><b>${flEsc(t.school_mode)}</b>${sub ? `<small>${flEsc(sub)}</small>` : ''}</div>
+      <button class="switch ${on ? 'on' : ''}" role="switch" aria-checked="${on}" aria-label="${flEsc(t.school_mode)}" data-action="school" ${this._busy.school ? 'disabled' : ''}><i></i></button></div>`;
   }
 
   // ── Events ────────────────────────────────────────────────────────────────
@@ -2835,6 +2906,9 @@ class FamilyLinkCard extends HTMLElement {
         break;
       case 'location':
         this._openPopup({ type: 'location', hours: Number(this._config.trace_hours) || 24 });
+        break;
+      case 'school':
+        this._call('school_mode', { child: a.child_id, enable: !a.school_mode?.active }, 'school');
         break;
       case 'emergency':
         this._openPopup({ type: 'emergency', device: device?.id, message: '', ring: true, notify: !!a.notify_service, locate: false });
@@ -3255,6 +3329,19 @@ class FamilyLinkCard extends HTMLElement {
       .tag.red { color: #ea4335; background: rgba(234,67,53,.12); }
 
       /* Actions */
+      .school-tag { display: inline-flex; vertical-align: -3px; margin-left: 6px; color: #4285f4; }
+      .school-tag .ic { width: 16px; height: 16px; }
+      .school { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--divider-color, rgba(127,127,127,.25)); transition: border-color .3s, background .3s; }
+      .school.on { border-color: rgba(66,133,244,.5); background: rgba(66,133,244,.08); }
+      .school-ic { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #4285f4; background: rgba(66,133,244,.12); }
+      .school-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+      .school-txt small { color: var(--secondary-text-color); font-size: 12px; }
+      .switch { position: relative; width: 42px; height: 24px; flex: none; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; padding: 0; transition: border-color .2s, color .2s; }
+      .switch i { position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; border-radius: 50%; background: currentColor; transition: transform .25s cubic-bezier(.3,1.4,.6,1); }
+      .switch.on { color: #4285f4; border-color: #4285f4; }
+      .switch.on i { transform: translateX(18px); }
+      .ic.bob { animation: fl-bob 2.4s ease-in-out infinite; }
+      @keyframes fl-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px) rotate(-4deg); } }
       .bonus { position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(52,168,83,.4); background: rgba(52,168,83,.08); }
       .shine { position: absolute; top: 0; bottom: 0; left: 0; width: 30%; background: linear-gradient(90deg, transparent, rgba(52,168,83,.12), transparent); animation: fl-shine 2.6s ease-in-out infinite; pointer-events: none; }
       .bonus-ring { position: relative; width: 36px; height: 36px; flex: none; color: #34a853; }
@@ -3450,7 +3537,7 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
         })
         .join('');
       var sub = [flDuration(a.total_minutes, t), place].filter(Boolean).join(' · ');
-      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt"><div class="title">${flEsc(title)}</div><div class="sub">${flEsc(sub)}</div></div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
+      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
     }
     var line;
     if (!device) line = t.unavailable;
@@ -3459,7 +3546,7 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
     else line = `${flDuration(device.used, t)} ${t.used_today}`;
     var parts = [line, place].filter(Boolean).join(' · ');
     var unlock = device?.locked ? `<button class="btn green" data-action="unlock">${flEsc(t.unlock)}</button>` : '';
-    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt"><div class="title">${flEsc(title)}</div><div class="sub" style="${device?.restricted ? `color:${s.color}` : ''}">${flEsc(parts)}</div></div>${unlock}${this._detailButton(t)}</div>${stale}`;
+    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub" style="${device?.restricted ? `color:${s.color}` : ''}">${flEsc(parts)}</div></div>${unlock}${this._detailButton(t)}</div>${stale}`;
   }
 
   _onClick(ev) {

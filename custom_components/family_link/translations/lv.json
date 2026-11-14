@@ -48,18 +48,24 @@
           "scan_interval": "Atjaunināšanas intervāls",
           "location_interval": "Atrašanās vietas intervāls",
           "stale_after": "Saglabāt kešotos datus",
-          "notify_services": "Ārkārtas paziņojumu pakalpojums katram bērnam"
+          "notify_services": "Ārkārtas paziņojumu pakalpojums katram bērnam",
+          "pronote_timetables": "Pronote stundu saraksts katram bērnam (skolas režīms)",
+          "school_mode_apps": "Lietotnes, kas pieejamas skolas režīmā"
         },
         "data_description": {
           "scan_interval": "Ekrāna laiks, bloķēšanas un bonusi.",
           "location_interval": "Pēdējā zināmā atrašanās vieta (ierīce netiek pamodināta).",
           "stale_after": "Kad Family Link nav sasniedzams, pēdējie dati paliek redzami tik ilgi, pirms entītijas kļūst nepieejamas.",
-          "notify_services": "Viena rinda katram bērnam ārkārtas ziņai caur Home Assistant lietotni bērna tālrunī, piem., `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Viena rinda katram bērnam ārkārtas ziņai caur Home Assistant lietotni bērna tālrunī, piem., `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Viena rinda katram bērnam ar Pronote integrācijas sensoru “šodienas stundu saraksts”, piem., `Alex: sensor.pronote_alex_today_s_timetable`: skolas režīms tad ieslēdzas 15 min pirms pirmās stundas un izslēdzas pēc pēdējās.",
+          "school_mode_apps": "Pakotņu nosaukumi, pa vienam rindā, papildus pamata lietotnēm (tālrunis, ziņas, kartes, Home Assistant, Pronote…) un vienmēr atļautajām."
         }
       }
     },
     "error": {
-      "unknown_child": "Kāda rinda nenorāda nevienu ģimenes bērnu."
+      "unknown_child": "Kāda rinda nenorāda nevienu ģimenes bērnu.",
+      "invalid_sensor": "Norādiet Pronote integrācijas sensoru (sensor.…).",
+      "invalid_app": "Kāda rinda nav pakotnes nosaukums (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Atlikušais laiks"
+      },
+      "blocked_apps": {
+        "name": "Bloķētās lietotnes"
+      },
+      "limited_apps": {
+        "name": "Ierobežotās lietotnes"
+      },
+      "always_allowed_apps": {
+        "name": "Vienmēr atļautās lietotnes"
+      },
+      "daily_limit": {
+        "name": "Dienas limits"
+      },
+      "bonus": {
+        "name": "Bonuss"
+      },
+      "next_restriction": {
+        "name": "Nākamais ierobežojums"
       }
     },
     "switch": {
       "lock": {
         "name": "Bloķēšana"
+      },
+      "school_mode": {
+        "name": "Skolas režīms"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Atjaunināt atrašanās vietu"
+      },
+      "add_bonus": {
+        "name": "Pievienot {minutes} min"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Atrašanās vieta"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Gulētiešanas laiks"
+      },
+      "schooltime_active": {
+        "name": "Skolas laiks"
+      },
+      "limit_reached": {
+        "name": "Sasniegts dienas limits"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Bērns",
           "description": "Tikai šis bērns (visi, ja tukšs)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Skolas režīms",
+      "description": "Bloķē visas bērna lietotnes, izņemot pamata (tālrunis, ziņas, kartes, Home Assistant, skolas lietotnes…) un vienmēr atļautās, vai atjauno to noteikumus.",
+      "fields": {
+        "child": {
+          "name": "Bērns",
+          "description": "Bērna vārds vai lietotāja ID."
+        },
+        "enable": {
+          "name": "Ieslēgts",
+          "description": "Ieslēgts, lai bloķētu lietotnes, izslēgts, lai atjaunotu to noteikumus."
         }
       }
     }

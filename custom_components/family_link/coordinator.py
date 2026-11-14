@@ -16,7 +16,7 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
@@ -50,6 +50,9 @@ from .const import (
     STATUS_TRACKED,
 )
 from .models import AppsUsage, DeviceLimits, Location, Member
+
+if TYPE_CHECKING:
+    from .school_mode import SchoolMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,6 +101,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         client.set_cookie_listener(self.cookies_changed)
         self.options_snapshot = dict(entry.options)
         self.child_device_ids: dict[str, str] = {}  # child user id -> device registry id
+        self.school: SchoolMode | None = None  # set by the setup (school_mode.py)
         self.location_interval = timedelta(
             seconds=int(entry.options.get(CONF_LOCATION_INTERVAL, DEFAULT_LOCATION_INTERVAL))
         )

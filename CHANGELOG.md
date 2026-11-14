@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 (2026-11-14)
+
+- **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, Pronote, Classroom…), the ones listed in the options and the always allowed ones, in one request; their rules are saved (also across restarts) and put back afterwards. `switch.<child>_school_mode`, `family_link.school_mode` action, `school_mode_on` / `school_mode_off` events, and a school mode row with a switch in the card (a school cap after the child's name while it is on).
+- **Driven by Pronote**: with the "today's timetable" sensor of the Pronote integration set for a child (suggested in the options), the school mode turns on 15 minutes before the first lesson of the day and off after the last one; canceled lessons don't count; turned off by hand, it waits for the next school day.
+- **New entities**: bedtime, school time and daily limit reached binary sensors; daily limit, bonus and next restriction sensors per device; add 15 / 30 / 60 min buttons per device; blocked, limited and always allowed app counts per child, with the titles in an attribute.
+- **Actions** take the Home Assistant device id of a child or of one of its phones as `child` and `device`.
 ## 1.0.0 (2026-11-14)
 
 First release.

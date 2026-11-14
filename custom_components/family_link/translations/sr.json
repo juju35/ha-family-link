@@ -48,18 +48,24 @@
           "scan_interval": "Интервал ажурирања",
           "location_interval": "Интервал локације",
           "stale_after": "Чувај кеширане податке",
-          "notify_services": "Услуга хитних обавештења по детету"
+          "notify_services": "Услуга хитних обавештења по детету",
+          "pronote_timetables": "Pronote распоред по детету (школски режим)",
+          "school_mode_apps": "Апликације доступне у школском режиму"
         },
         "data_description": {
           "scan_interval": "Време пред екраном, закључавања и бонуси.",
           "location_interval": "Последња позната локација (уређај се не буди).",
           "stale_after": "Када Family Link није доступан, последњи подаци остају приказани оволико дуго пре него што ентитети постану недоступни.",
-          "notify_services": "Један ред по детету, за хитну поруку преко апликације Home Assistant на телефону детета, нпр. `Alex: notify.mobile_app_pixel_8`."
+          "notify_services": "Један ред по детету, за хитну поруку преко апликације Home Assistant на телефону детета, нпр. `Alex: notify.mobile_app_pixel_8`.",
+          "pronote_timetables": "Један ред по детету са сензором „данашњи распоред” интеграције Pronote, нпр. `Alex: sensor.pronote_alex_today_s_timetable`: школски режим се тада укључује 15 мин пре првог часа и искључује после последњег.",
+          "school_mode_apps": "Називи пакета, један по реду, поред основних апликација (телефон, поруке, мапе, Home Assistant, Pronote…) и увек дозвољених."
         }
       }
     },
     "error": {
-      "unknown_child": "Један ред не наводи ниједно дете из породице."
+      "unknown_child": "Један ред не наводи ниједно дете из породице.",
+      "invalid_sensor": "Наведите сензор (sensor.…) интеграције Pronote.",
+      "invalid_app": "Један ред није назив пакета (com.example.app)."
     }
   },
   "entity": {
@@ -84,11 +90,32 @@
       },
       "remaining_time": {
         "name": "Преостало време"
+      },
+      "blocked_apps": {
+        "name": "Блокиране апликације"
+      },
+      "limited_apps": {
+        "name": "Ограничене апликације"
+      },
+      "always_allowed_apps": {
+        "name": "Увек дозвољене апликације"
+      },
+      "daily_limit": {
+        "name": "Дневно ограничење"
+      },
+      "bonus": {
+        "name": "Бонус"
+      },
+      "next_restriction": {
+        "name": "Следеће ограничење"
       }
     },
     "switch": {
       "lock": {
         "name": "Закључавање"
+      },
+      "school_mode": {
+        "name": "Школски режим"
       }
     },
     "button": {
@@ -97,11 +124,25 @@
       },
       "refresh_location": {
         "name": "Ажурирај локацију"
+      },
+      "add_bonus": {
+        "name": "Додај {minutes} мин"
       }
     },
     "device_tracker": {
       "location": {
         "name": "Локација"
+      }
+    },
+    "binary_sensor": {
+      "bedtime_active": {
+        "name": "Време за спавање"
+      },
+      "schooltime_active": {
+        "name": "Школско време"
+      },
+      "limit_reached": {
+        "name": "Дневно ограничење достигнуто"
       }
     }
   },
@@ -288,6 +329,20 @@
         "child": {
           "name": "Дете",
           "description": "Само ово дете (сва ако је празно)."
+        }
+      }
+    },
+    "school_mode": {
+      "name": "Школски режим",
+      "description": "Блокира све апликације детета осим основних (телефон, поруке, мапе, Home Assistant, школске апликације…) и увек дозвољених, или враћа њихова правила.",
+      "fields": {
+        "child": {
+          "name": "Дете",
+          "description": "Име или ID корисника детета."
+        },
+        "enable": {
+          "name": "Укључено",
+          "description": "Укључено да блокира апликације, искључено да врати њихова правила."
         }
       }
     }

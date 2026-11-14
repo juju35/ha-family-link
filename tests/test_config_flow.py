@@ -8,10 +8,18 @@ import pytest
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 
 from custom_components.family_link.config_flow import parse_notify_lines
-from custom_components.family_link.const import CONF_COOKIES, CONF_NOTIFY_SERVICES, CONF_SCAN_INTERVAL, DOMAIN
+from custom_components.family_link.const import (
+    CONF_COOKIES,
+    CONF_NOTIFY_SERVICES,
+    CONF_PRONOTE,
+    CONF_SCAN_INTERVAL,
+    CONF_SCHOOL_APPS,
+    DOMAIN,
+)
 from custom_components.family_link.models import Member
 
 from . import data
@@ -123,3 +131,28 @@ def test_parse_notify_lines() -> None:
     services, unknown = parse_notify_lines("Alex: notify.a\nsam: mobile_b\n\nbad line\nZoe: x", children)
     assert services == {"1": "notify.a", "2": "notify.mobile_b"}
     assert unknown == ["Zoe"]
+
+
+async def test_options_school_mode(hass: HomeAssistant, aioclient_mock) -> None:
+    entry = await setup(hass, aioclient_mock)
+    # The Pronote student whose name holds the child's first name is suggested
+    pronote = er.async_get(hass).async_get_or_create(
+        "sensor", "pronote", "alex_lessons_today", suggested_object_id="pronote_alex_today_s_timetable"
+    )
+    er.async_get(hass).async_update_entity(pronote.entity_id, translation_key="lessons_today")
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    schema = {str(key): key for key in result["data_schema"].schema}
+    assert "Alex: sensor.pronote_alex_today_s_timetable" in schema[CONF_PRONOTE].description["suggested_value"]
+    base = {CONF_SCAN_INTERVAL: 60, "location_interval": 300, "stale_after": 3600}
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {**base, CONF_PRONOTE: "Alex: light.x", CONF_SCHOOL_APPS: "not a package"}
+    )
+    assert result["errors"] == {CONF_PRONOTE: "invalid_sensor", CONF_SCHOOL_APPS: "invalid_app"}
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {**base, CONF_PRONOTE: f"Alex: {pronote.entity_id}", CONF_SCHOOL_APPS: "com.example.one, com.example.two"},
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_PRONOTE] == {data.CHILD: pronote.entity_id}
+    assert entry.options[CONF_SCHOOL_APPS] == ["com.example.one", "com.example.two"]
+    await hass.async_block_till_done()
