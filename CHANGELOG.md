@@ -5,8 +5,9 @@
 ### Features
 
 - **Illustrated header** on both cards (90 px, also on the mini card): the child's name and status line (time left, daily limit reached, bedtime, school time…) on the left, a shelf in the child's room on the right with the phone or tablet (apps while it runs, a lock, moon or school cap on a dark screen while it is restricted, a dimmed screen when it is not tracked) and an hourglass emptying with the time left, over a parquet strip. The round icon is coloured by the status (green tracked, amber attention, red locked, grey not tracked).
-- **Night picture** following `sun.sun` (else the dark theme), forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options in the visual editor, in every language. Animations stop with `prefers-reduced-motion`.
+- **Night picture** after sunset (`sun.sun`) or with the dark theme, forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options in the visual editor, in every language. Animations stop with `prefers-reduced-motion`.
 - **Status pill on every header** (Tracked, Attention, Locked, Not tracked): a dot and the status right after the child's name, in the round icon's colour, on both cards and both headers; the subtitle no longer repeats it. It takes a line of its own under the subtitle when the title block is narrow, and only its dot stays when very narrow. The mini card's detail button is a 24 px round glass button in the top right corner.
+- Night picture with the dark theme even while the sun is up (it used to wait for sunset when `sun.sun` exists).
 
 ### Documentation
 - README: screenshots of the mini card expanded to the full card, dark and light.
