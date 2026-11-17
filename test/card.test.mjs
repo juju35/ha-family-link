@@ -190,3 +190,23 @@ test('the banner turns to night when the sun is down or the theme is dark, even 
   assert.equal(night(hass('below_horizon', true), { illustration_theme: 'day' }), false);
   assert.equal(night(hass('above_horizon', false), { illustration_theme: 'night' }), true);
 });
+
+test('the status pill is placed by measure: beside the whole title, else under the subtitle, else its dot alone', () => {
+  const css = FamilyLinkCard._styles();
+  // No fixed width or share of the title block decides where the pill goes
+  assert.doesNotMatch(css, /@container fl-titles|\.title-row > \.pill \{[^}]*max-width/);
+  assert.match(css, /\.titles\.below \.title-row > \.pill \{ display: none; \}/);
+  assert.match(css, /\.titles\.below \.pill-line \{ display: flex;/);
+  assert.match(css, /\.titles\.dot-only \.pill \.pt \{ display: none; \}/);
+  // Its dot alone on a card of 200 px or less
+  assert.match(css, /@container fl-card \(max-width: 200px\) \{ \.pill \{ padding: 4px; \} \.pill \.pt \{ display: none; \} \}/);
+  // Measured: the whole title, the room on its row, the line under the subtitle and the banner's floor
+  const fit = FamilyLinkCard.prototype._fitPill.toString();
+  for (const part of ['flTextWidth(name)', "classList.add('below')", "classList.add('dot-only')", "querySelector('.ground')", 'tx.scrollWidth <= tx.clientWidth'])
+    assert.ok(fit.includes(part), `_fitPill measures ${part}`);
+  // The subtitle keeps one line, its whole text in its tooltip
+  const card = Object.create(FamilyLinkCard.prototype);
+  const html = card._titles({}, en, 'tracked', 'Alex', 'Pixel 8 · 42 min left', '');
+  assert.match(html, /<div class="sub" title="Pixel 8 · 42 min left">Pixel 8 · 42 min left<\/div>/);
+  assert.match(html, /<div class="pill-line"><span class="pill"/);
+});

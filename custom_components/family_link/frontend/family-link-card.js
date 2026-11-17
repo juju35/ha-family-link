@@ -2584,6 +2584,17 @@ var FL_ICON_PATHS = {
 };
 
 // Small school cap after the child's name while the school mode is on
+// The width of an element's whole text in its own font, in fractional pixels (scrollWidth is rounded).
+let flTextCtx;
+const flTextWidth = (el) => {
+  const cs = getComputedStyle(el);
+  flTextCtx ??= document.createElement('canvas').getContext?.('2d');
+  if (!flTextCtx) return el.scrollWidth;
+  flTextCtx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+  return Math.max(el.scrollWidth, flTextCtx.measureText(el.textContent.trim()).width + pad);
+};
+
 function flSchoolTag(a, t) {
   return a?.school_mode?.active ? `<span class="school-tag" title="${flEsc(t.school_mode)}" aria-label="${flEsc(t.school_mode)}">${flIcon('school')}</span>` : '';
 }
@@ -2735,10 +2746,14 @@ class FamilyLinkCard extends HTMLElement {
       });
     document.addEventListener('click', this._onOutside, true);
     if (!this._timer) this._timer = setInterval(() => this._tick(), 30000);
+    if (!this._fitObserver && typeof ResizeObserver === 'function') this._fitObserver = new ResizeObserver(() => this._fitPill());
+    this._fitObserver?.observe(this);
+    document.fonts?.ready?.then(() => this._fitPill());
   }
 
   disconnectedCallback() {
     document.removeEventListener('click', this._onOutside, true);
+    this._fitObserver?.disconnect();
     clearInterval(this._timer);
     this._timer = null;
     // Leaving the page closes a popup without running it
@@ -2814,6 +2829,38 @@ class FamilyLinkCard extends HTMLElement {
     }
     main.innerHTML = this._compact() ? this._renderCompact(a, t, state) : this._renderFull(a, t, state);
     if (this._popup) this._renderPopup();
+    this._fitPill();
+  }
+
+  // The status pill, measured after each render and on a new width (in every language): it sits on the title's row,
+  // right after the title, only when the whole title and the pill's whole label fit there; otherwise it takes a line
+  // of its own under the subtitle (.below), the title whole on its row (cut only when it does not fit alone). When the
+  // lines do not fit in the banner above the floor, or the label does not fit its line, the pill shows its dot alone
+  // (.dot-only): beside the title when the whole title leaves it room, else under the subtitle.
+  _fitPill() {
+    for (const t of this._root?.querySelectorAll?.('.titles') || []) {
+      const row = t.querySelector('.title-row');
+      const pill = row?.querySelector(':scope > .pill');
+      if (!pill?.getBoundingClientRect) continue;
+      t.classList.remove('below', 'dot-only');
+      const name = row.querySelector('.title');
+      const tag = name.querySelector('.school-tag');
+      const tagW = tag ? tag.getBoundingClientRect().width + (parseFloat(getComputedStyle(tag).marginLeft) || 0) : 0;
+      const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+      const room = row.getBoundingClientRect().width;
+      const title = Math.max(name.scrollWidth, flTextWidth(name) + tagW) + gap;
+      if (title + pill.getBoundingClientRect().width <= room) continue;
+      t.classList.add('below');
+      const line = t.querySelector('.pill-line > .pill');
+      const banner = t.closest('.banner');
+      const floor = banner ? banner.querySelector('.ground').getBoundingClientRect().top : Infinity;
+      const box = t.getBoundingClientRect();
+      const tx = line?.querySelector('.pt');
+      const whole = !tx || (tx.scrollWidth <= tx.clientWidth + 0.5 && line.getBoundingClientRect().right <= box.right + 0.5);
+      if (whole && box.bottom <= floor + 0.5 && (!banner || box.top >= banner.getBoundingClientRect().top - 0.5)) continue;
+      t.classList.add('dot-only');
+      if (title + (line || pill).getBoundingClientRect().width <= room) t.classList.remove('below');
+    }
   }
 
   _compact() {
@@ -2866,9 +2913,9 @@ class FamilyLinkCard extends HTMLElement {
     return `<span class="pill" style="--c:${s.color};--tint:${s.tint}" title="${label}" aria-label="${label}"><span class="dot"></span><span class="pt">${label}</span></span>`;
   }
 
-  // The title, then the status pill right after it; `sub` under them (left out when it only repeats the status). When
-  // the title block is narrow the pill takes a line of its own under the subtitle (the copy in .pill-line), and when it
-  // is very narrow only its dot stays (its text stays in its title and aria-label).
+  // The title, then the status pill right after it; `sub` under them (left out when it only repeats the status). Where
+  // the pill goes is measured (_fitPill): beside the whole title, else on a line of its own under the subtitle (the
+  // copy in .pill-line), else its dot alone (its text stays in its title and aria-label).
   _titles(a, t, status, title, sub, subStyle) {
     var pill = this._pill(status, t);
     var label = t[`status_${status}`] || status;
@@ -2876,7 +2923,7 @@ class FamilyLinkCard extends HTMLElement {
       .split(' · ')
       .filter((part) => part && part !== label)
       .join(' · ');
-    var line = text ? `<div class="sub"${subStyle ? ` style="${subStyle}"` : ''}>${flEsc(text)}</div>` : '';
+    var line = text ? `<div class="sub" title="${flEsc(text)}"${subStyle ? ` style="${subStyle}"` : ''}>${flEsc(text)}</div>` : '';
     return `<div class="titles"><div class="title-row"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div>${pill}</div>${line}<div class="pill-line">${pill}</div></div>`;
   }
 
@@ -3477,27 +3524,26 @@ class FamilyLinkCard extends HTMLElement {
   static _styles() {
     return `
       :host { display: block; }
-      ha-card { position: relative; padding: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; color: var(--primary-text-color); }
+      ha-card { container: fl-card / inline-size; position: relative; padding: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; color: var(--primary-text-color); }
       .main { display: flex; flex-direction: column; gap: 14px; }
       .ic { width: 20px; height: 20px; flex: none; }
       .header { display: flex; align-items: center; gap: 12px; }
       .badge { width: 40px; height: 40px; border-radius: 50%; background: var(--tint); color: var(--c); display: flex; align-items: center; justify-content: center; flex: none; transition: background .4s, color .4s; }
       .badge .ic { width: 24px; height: 24px; }
-      .titles { flex: 1; min-width: 0; container: fl-titles / inline-size; }
-      /* The title line: the title, then the status pill, which keeps its whole label (the title gives way first). */
+      .titles { flex: 1; min-width: 0; }
+      /* The title line: the title, then the status pill when the whole title and the pill's whole label fit there
+         (measured, see _fitPill). Otherwise the pill takes a line of its own under the subtitle (its copy in
+         .pill-line), the subtitle on one line; when that does not fit in the banner above the floor, or on a card of
+         200 px or less, only its dot stays (its text in its title and aria-label). */
       .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-      .title-row > .title { flex: 0 1 auto; min-width: 4ch; }
-      .title-row > .pill { flex: none; max-width: 51%; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; }
       .pill-line { display: none; }
-      @container fl-titles (max-width: 190px) {
-        .title-row > .pill { display: none; }
-        .pill-line { display: flex; min-width: 0; margin-top: 3px; }
-        .pill-line > .pill { max-width: 100%; }
-      }
-      @container fl-titles (max-width: 100px) {
-        .title-row > .pill { display: inline-flex; padding: 4px; }
-        .title-row .pt, .pill-line { display: none; }
-      }
+      .titles.below .title-row > .pill { display: none; }
+      .titles.below .pill-line { display: flex; min-width: 0; margin-top: 3px; }
+      .pill-line > .pill { max-width: 100%; }
+      .titles.dot-only .pill { padding: 4px; } .titles.dot-only .pill .pt { display: none; }
+      @container fl-card (max-width: 200px) { .pill { padding: 4px; } .pill .pt { display: none; } }
       .title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .pill { display: inline-flex; align-items: center; gap: 4px; min-width: 0; box-sizing: border-box; overflow: hidden; padding: 1px 8px; border-radius: 12px;
