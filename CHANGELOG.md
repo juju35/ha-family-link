@@ -8,6 +8,9 @@
 - **Night picture** following `sun.sun` (else the dark theme), forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options in the visual editor, in every language. Animations stop with `prefers-reduced-motion`.
 - **Status pill on every header** (Tracked, Attention, Locked, Not tracked): a dot and the status right after the child's name, in the round icon's colour, on both cards and both headers; the subtitle no longer repeats it. It takes a line of its own under the subtitle when the title block is narrow, and only its dot stays when very narrow. The mini card's detail button is a 24 px round glass button in the top right corner.
 
+### Documentation
+- README: screenshots of the mini card expanded to the full card, dark and light.
+
 ## 1.1.0 (2026-11-14)
 
 - **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, Pronote, Classroom…), the ones listed in the options and the always allowed ones, in one request; their rules are saved (also across restarts) and put back afterwards. `switch.<child>_school_mode`, `family_link.school_mode` action, `school_mode_on` / `school_mode_off` events, and a school mode row with a switch in the card (a school cap after the child's name while it is on).

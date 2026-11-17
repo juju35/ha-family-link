@@ -370,6 +370,7 @@ Each animation of the cards, in the dark and light themes.
 | Mini, one device | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-light.png" alt="mini card, light" width="300"> |
 | Mini, two devices | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices.png" alt="mini card, devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices-light.png" alt="mini card, devices, light" width="300"> |
 | Mini, bedtime | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked.png" alt="mini card, bedtime" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked-light.png" alt="mini card, bedtime, light" width="300"> |
+| Mini, expanded | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom.png" alt="mini card expanded to the full card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom-light.png" alt="mini card expanded to the full card, light" width="320"> |
 
 ## How it works
 
