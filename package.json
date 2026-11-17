@@ -1,6 +1,6 @@
 {
   "name": "ha-family-link",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Home Assistant integration and animated Lovelace cards for Google Family Link: screen time, device lock, time bonus, apps, location route and emergency.",
   "private": true,
   "type": "module",

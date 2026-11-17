@@ -292,6 +292,8 @@ show_scene: true
 show_top_apps: true
 show_actions: true
 show_location: true
+illustration: true           # illustrated header (false: classic header)
+illustration_theme: auto     # auto (sun or dark theme), day or night
 trace_hours: 24              # route shown when the location popup opens
 bonus_presets: [15, 30, 60]  # YAML only
 language: fr
@@ -309,6 +311,8 @@ language: fr
 | `show_top_apps` | boolean | `true` | both | Most used apps today |
 | `show_actions` | boolean | `true` | both | School mode, bonus, lock, ring, locate, emergency |
 | `show_location` | boolean | `true` | both | Location tile and popup |
+| `illustration` | boolean | `true` | both | Illustrated header (the child's device on a shelf, hourglass of the time left); `false` keeps the classic header |
+| `illustration_theme` | `auto` / `day` / `night` | `auto` | both | Day or night picture; `auto`: night when `sun.sun` is below the horizon or the theme is dark, even with the sun up |
 | `trace_hours` | number | `24` | both | Period of the route when the popup opens (Today, 24 h, 7 days can be picked there) |
 | `bonus_presets` | list | `[15, 30, 60]` | both | Add-time buttons, in minutes — **YAML only** |
 | `language` | string | Home Assistant's | both | Force a language |
@@ -366,6 +370,7 @@ Each animation of the cards, in the dark and light themes.
 | Mini, one device | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-light.png" alt="mini card, light" width="300"> |
 | Mini, two devices | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices.png" alt="mini card, devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices-light.png" alt="mini card, devices, light" width="300"> |
 | Mini, bedtime | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked.png" alt="mini card, bedtime" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked-light.png" alt="mini card, bedtime, light" width="300"> |
+| Mini, expanded | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom.png" alt="mini card expanded to the full card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom-light.png" alt="mini card expanded to the full card, light" width="320"> |
 
 ## How it works
 

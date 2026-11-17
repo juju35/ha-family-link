@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 - 2026-11-17
+
+### Features
+
+- **Illustrated header** on both cards (90 px, also on the mini card): the child's name and status line (time left, daily limit reached, bedtime, school time…) on the left, a shelf in the child's room on the right with the phone or tablet (apps while it runs, a lock, moon or school cap on a dark screen while it is restricted, a dimmed screen when it is not tracked) and an hourglass emptying with the time left, over a parquet strip. The round icon is coloured by the status (green tracked, amber attention, red locked, grey not tracked).
+- **Night picture** after sunset (`sun.sun`) or with the dark theme, forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options in the visual editor, in every language. Animations stop with `prefers-reduced-motion`.
+- **Status pill on every header** (Tracked, Attention, Locked, Not tracked): a dot and the status right after the child's name, in the round icon's colour, on both cards and both headers; the subtitle no longer repeats it. It stays beside the name only when the whole name and its whole label fit there (measured, in every language), else it takes a line of its own under the subtitle (the subtitle then on one line); only its dot stays when its label does not fit there or above the floor, and on cards of 200 px or less. The mini card's detail button is a 24 px round glass button in the top right corner.
+- Night picture with the dark theme even while the sun is up (it used to wait for sunset when `sun.sun` exists).
+
+### Documentation
+- README: screenshots of the mini card expanded to the full card, dark and light.
+
 ## 1.1.0 (2026-11-14)
 
 - **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, Pronote, Classroom…), the ones listed in the options and the always allowed ones, in one request; their rules are saved (also across restarts) and put back afterwards. `switch.<child>_school_mode`, `family_link.school_mode` action, `school_mode_on` / `school_mode_off` events, and a school mode row with a switch in the card (a school cap after the child's name while it is on).

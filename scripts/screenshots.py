@@ -160,6 +160,8 @@ SCENES = {
         None,
     ),
     "mini-card-devices": ("family-link-mini-card", {"entity": "sensor.alex_status"}, child([PHONE, TABLET]), None),
+    # The mini card expanded by its detail button: the full card, at the full card's width.
+    "mini-card-zoom": ("family-link-mini-card", {"entity": "sensor.alex_status"}, child([PHONE, TABLET]), "zoom"),
     "mini-card-locked": (
         "family-link-mini-card",
         {"entity": "sensor.alex_status"},
@@ -277,7 +279,7 @@ async def main() -> None:
             if args.only and args.only != name:
                 continue
             for theme, colors in THEMES.items():
-                width = 440 if tag == "family-link-card" else 380
+                width = 440 if tag == "family-link-card" or popup == "zoom" else 380
                 html = PAGE % {
                     **colors,
                     "width": width,
@@ -297,6 +299,9 @@ async def main() -> None:
                     )
                 elif popup == "location":
                     await page.evaluate("window.__card._openPopup({type:'location', hours:24})")
+                elif popup == "zoom":
+                    await page.locator("#wrap .zoom").click()
+                    await page.mouse.move(0, 0)
                 card = await page.query_selector("#wrap")
                 suffix = "" if theme == "dark" else "-light"
                 if name in GIFS:

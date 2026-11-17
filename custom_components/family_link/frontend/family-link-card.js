@@ -1,4 +1,4 @@
-var FAMILY_LINK_CARD_VERSION = '1.1.0';
+var FAMILY_LINK_CARD_VERSION = '1.2.0';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var FamilyLinkI18n = {
@@ -107,6 +107,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Route shown by default (hours)',
       language: 'Language',
       lang_auto: 'Automatic',
+      illustration: 'Illustrated header',
+      illustration_theme: 'Illustration theme',
+      theme_auto: 'Automatic (sun or dark theme)',
+      theme_day: 'Day',
+      theme_night: 'Night',
     },
   },
   fr: {
@@ -214,6 +219,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Trajet affiché par défaut (heures)',
       language: 'Langue',
       lang_auto: 'Automatique',
+      illustration: 'En-tête illustré',
+      illustration_theme: 'Thème de l’illustration',
+      theme_auto: 'Automatique (soleil ou thème sombre)',
+      theme_day: 'Jour',
+      theme_night: 'Nuit',
     },
   },
   de: {
@@ -321,6 +331,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Standardmäßig angezeigte Route (Stunden)',
       language: 'Sprache',
       lang_auto: 'Automatisch',
+      illustration: 'Illustrierte Kopfzeile',
+      illustration_theme: 'Thema der Illustration',
+      theme_auto: 'Automatisch (Sonne oder dunkles Design)',
+      theme_day: 'Tag',
+      theme_night: 'Nacht',
     },
   },
   es: {
@@ -428,6 +443,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Recorrido mostrado por defecto (horas)',
       language: 'Idioma',
       lang_auto: 'Automático',
+      illustration: 'Encabezado ilustrado',
+      illustration_theme: 'Tema de la ilustración',
+      theme_auto: 'Automático (sol o tema oscuro)',
+      theme_day: 'Día',
+      theme_night: 'Noche',
     },
   },
   sr: {
@@ -535,6 +555,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Подразумевано приказана рута (сати)',
       language: 'Језик',
       lang_auto: 'Аутоматски',
+      illustration: 'Илустровано заглавље',
+      illustration_theme: 'Тема илустрације',
+      theme_auto: 'Аутоматски (сунце или тамна тема)',
+      theme_day: 'Дан',
+      theme_night: 'Ноћ',
     },
   },
   'sr-Latn': {
@@ -642,6 +667,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Podrazumevano prikazana ruta (sati)',
       language: 'Jezik',
       lang_auto: 'Automatski',
+      illustration: 'Ilustrovano zaglavlje',
+      illustration_theme: 'Tema ilustracije',
+      theme_auto: 'Automatski (sunce ili tamna tema)',
+      theme_day: 'Dan',
+      theme_night: 'Noć',
     },
   },
   it: {
@@ -749,6 +779,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Percorso mostrato di default (ore)',
       language: 'Lingua',
       lang_auto: 'Automatica',
+      illustration: 'Intestazione illustrata',
+      illustration_theme: 'Tema dell’illustrazione',
+      theme_auto: 'Automatico (sole o tema scuro)',
+      theme_day: 'Giorno',
+      theme_night: 'Notte',
     },
   },
   nl: {
@@ -856,6 +891,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Standaard getoonde route (uren)',
       language: 'Taal',
       lang_auto: 'Automatisch',
+      illustration: 'Geïllustreerde koptekst',
+      illustration_theme: 'Thema van de illustratie',
+      theme_auto: 'Automatisch (zon of donker thema)',
+      theme_day: 'Dag',
+      theme_night: 'Nacht',
     },
   },
   pt: {
@@ -963,6 +1003,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Percurso mostrado por omissão (horas)',
       language: 'Idioma',
       lang_auto: 'Automático',
+      illustration: 'Cabeçalho ilustrado',
+      illustration_theme: 'Tema da ilustração',
+      theme_auto: 'Automático (sol ou tema escuro)',
+      theme_day: 'Dia',
+      theme_night: 'Noite',
     },
   },
   pl: {
@@ -1070,6 +1115,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Trasa pokazywana domyślnie (godziny)',
       language: 'Język',
       lang_auto: 'Automatycznie',
+      illustration: 'Ilustrowany nagłówek',
+      illustration_theme: 'Motyw ilustracji',
+      theme_auto: 'Automatycznie (słońce lub ciemny motyw)',
+      theme_day: 'Dzień',
+      theme_night: 'Noc',
     },
   },
   ro: {
@@ -1177,6 +1227,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Traseu afișat implicit (ore)',
       language: 'Limbă',
       lang_auto: 'Automat',
+      illustration: 'Antet ilustrat',
+      illustration_theme: 'Tema ilustrației',
+      theme_auto: 'Automat (soare sau temă întunecată)',
+      theme_day: 'Zi',
+      theme_night: 'Noapte',
     },
   },
   da: {
@@ -1284,6 +1339,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Rute vist som standard (timer)',
       language: 'Sprog',
       lang_auto: 'Automatisk',
+      illustration: 'Illustreret overskrift',
+      illustration_theme: 'Illustrationens tema',
+      theme_auto: 'Automatisk (sol eller mørkt tema)',
+      theme_day: 'Dag',
+      theme_night: 'Nat',
     },
   },
   sv: {
@@ -1391,6 +1451,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Rutt som visas som standard (timmar)',
       language: 'Språk',
       lang_auto: 'Automatiskt',
+      illustration: 'Illustrerad rubrik',
+      illustration_theme: 'Illustrationens tema',
+      theme_auto: 'Automatiskt (sol eller mörkt tema)',
+      theme_day: 'Dag',
+      theme_night: 'Natt',
     },
   },
   bg: {
@@ -1498,6 +1563,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Маршрут по подразбиране (часове)',
       language: 'Език',
       lang_auto: 'Автоматично',
+      illustration: 'Илюстрирана заглавка',
+      illustration_theme: 'Тема на илюстрацията',
+      theme_auto: 'Автоматично (слънце или тъмна тема)',
+      theme_day: 'Ден',
+      theme_night: 'Нощ',
     },
   },
   ru: {
@@ -1605,6 +1675,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Маршрут по умолчанию (часы)',
       language: 'Язык',
       lang_auto: 'Автоматически',
+      illustration: 'Иллюстрированный заголовок',
+      illustration_theme: 'Тема иллюстрации',
+      theme_auto: 'Автоматически (солнце или тёмная тема)',
+      theme_day: 'День',
+      theme_night: 'Ночь',
     },
   },
   uk: {
@@ -1712,6 +1787,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Маршрут за замовчуванням (години)',
       language: 'Мова',
       lang_auto: 'Автоматично',
+      illustration: 'Ілюстрований заголовок',
+      illustration_theme: 'Тема ілюстрації',
+      theme_auto: 'Автоматично (сонце або темна тема)',
+      theme_day: 'День',
+      theme_night: 'Ніч',
     },
   },
   hu: {
@@ -1819,6 +1899,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Alapértelmezett útvonal (óra)',
       language: 'Nyelv',
       lang_auto: 'Automatikus',
+      illustration: 'Illusztrált fejléc',
+      illustration_theme: 'Az illusztráció témája',
+      theme_auto: 'Automatikus (nap vagy sötét téma)',
+      theme_day: 'Nappal',
+      theme_night: 'Éjszaka',
     },
   },
   sk: {
@@ -1926,6 +2011,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Predvolená zobrazená trasa (hodiny)',
       language: 'Jazyk',
       lang_auto: 'Automaticky',
+      illustration: 'Ilustrovaná hlavička',
+      illustration_theme: 'Téma ilustrácie',
+      theme_auto: 'Automaticky (slnko alebo tmavá téma)',
+      theme_day: 'Deň',
+      theme_night: 'Noc',
     },
   },
   cs: {
@@ -2033,6 +2123,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Výchozí zobrazená trasa (hodiny)',
       language: 'Jazyk',
       lang_auto: 'Automaticky',
+      illustration: 'Ilustrované záhlaví',
+      illustration_theme: 'Motiv ilustrace',
+      theme_auto: 'Automaticky (slunce nebo tmavý motiv)',
+      theme_day: 'Den',
+      theme_night: 'Noc',
     },
   },
   sl: {
@@ -2140,6 +2235,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Privzeto prikazana pot (ure)',
       language: 'Jezik',
       lang_auto: 'Samodejno',
+      illustration: 'Ilustrirana glava',
+      illustration_theme: 'Tema ilustracije',
+      theme_auto: 'Samodejno (sonce ali temna tema)',
+      theme_day: 'Dan',
+      theme_night: 'Noč',
     },
   },
   lv: {
@@ -2247,6 +2347,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Noklusējuma maršruts (stundas)',
       language: 'Valoda',
       lang_auto: 'Automātiski',
+      illustration: 'Ilustrēta galvene',
+      illustration_theme: 'Ilustrācijas tēma',
+      theme_auto: 'Automātiski (saule vai tumšā tēma)',
+      theme_day: 'Diena',
+      theme_night: 'Nakts',
     },
   },
   el: {
@@ -2354,6 +2459,11 @@ var FamilyLinkI18n = {
       trace_hours: 'Προεπιλεγμένη διαδρομή (ώρες)',
       language: 'Γλώσσα',
       lang_auto: 'Αυτόματα',
+      illustration: 'Εικονογραφημένη κεφαλίδα',
+      illustration_theme: 'Θέμα εικονογράφησης',
+      theme_auto: 'Αυτόματα (ήλιος ή σκοτεινό θέμα)',
+      theme_day: 'Ημέρα',
+      theme_night: 'Νύχτα',
     },
   },
 };
@@ -2366,6 +2476,8 @@ var FL_DEFAULTS = {
   device_type: 'auto',
   trace_hours: 24,
   bonus_presets: [15, 30, 60],
+  illustration: true,
+  illustration_theme: 'auto',
 };
 
 var FL_STATUS = {
@@ -2472,12 +2584,101 @@ var FL_ICON_PATHS = {
 };
 
 // Small school cap after the child's name while the school mode is on
+// The width of an element's whole text in its own font, in fractional pixels (scrollWidth is rounded).
+let flTextCtx;
+const flTextWidth = (el) => {
+  const cs = getComputedStyle(el);
+  flTextCtx ??= document.createElement('canvas').getContext?.('2d');
+  if (!flTextCtx) return el.scrollWidth;
+  flTextCtx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+  return Math.max(el.scrollWidth, flTextCtx.measureText(el.textContent.trim()).width + pad);
+};
+
 function flSchoolTag(a, t) {
   return a?.school_mode?.active ? `<span class="school-tag" title="${flEsc(t.school_mode)}" aria-label="${flEsc(t.school_mode)}">${flIcon('school')}</span>` : '';
 }
 
 function flIcon(name, cls) {
   return `<svg class="ic ${cls || ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FL_ICON_PATHS[name] || ''}</svg>`;
+}
+
+// ── Illustrated header ────────────────────────────────────────────────────────
+var flUid = 0;
+
+// Night picture: forced by illustration_theme, else the sun below the horizon or Home Assistant's dark theme (dark mode alone without a valid sun.sun)
+function flIsNight(hass, config) {
+  var theme = config?.illustration_theme;
+  if (theme === 'night') return true;
+  if (theme === 'day') return false;
+  var sun = hass?.states?.['sun.sun'];
+  if (sun && sun.state !== 'unavailable' && sun.state !== 'unknown') return sun.state === 'below_horizon' || !!hass?.themes?.darkMode;
+  return !!hass?.themes?.darkMode;
+}
+
+// The header picture, 200 × 80, drawn from the right of the banner: a shelf in the child's room with a toy box,
+// the child's phone or tablet (apps, or the lock / bedtime / school screen) and an hourglass for the time left.
+// `st`: { kind: 'phone' | 'tablet', status, restricted, ratio (share of the day's time left, or null) }.
+// `uid` keeps each card's clip-path apart when several cards share a page.
+function flSceneSvg(uid, st) {
+  var tablet = st.kind === 'tablet';
+  var active = !st.restricted && (st.status === 'tracked' || st.status === 'attention');
+  var off = !st.restricted && !active;
+  // Screen box in the device's local frame (device stands on the shelf at y 0)
+  var sw = tablet ? 38 : 20;
+  var sh = tablet ? 24 : 31;
+  var sx = -sw / 2;
+  var sy = tablet ? -28.5 : -36;
+  var body = tablet
+    ? '<rect class="fl-dev" x="-22" y="-31" width="44" height="29" rx="3.5"/><rect class="fl-dev" x="-7" y="-2.5" width="14" height="2.5" rx="1"/>'
+    : '<rect class="fl-dev" x="-12.5" y="-39.5" width="25" height="39.5" rx="4.5"/><rect class="fl-notch" x="-3" y="-38.2" width="6" height="1.1" rx=".55"/>';
+  var screen;
+  if (active) {
+    var cols = tablet ? 4 : 2;
+    var tiles = [];
+    for (var i = 0; i < cols * 2; i++) {
+      var tx = sx + (tablet ? 4 : 3) + (i % cols) * (tablet ? 8 : 8);
+      var ty = sy + 4 + Math.floor(i / cols) * 8;
+      tiles.push(`<rect class="fl-tile" x="${tx}" y="${ty}" width="6" height="6" rx="1.5" style="fill:${FL_APP_COLORS[i % FL_APP_COLORS.length]};animation-delay:${(i * 0.3).toFixed(1)}s"/>`);
+    }
+    var ratio = st.ratio === null || st.ratio === undefined ? null : Math.max(0, Math.min(1, st.ratio));
+    var bar =
+      ratio === null
+        ? ''
+        : `<rect class="fl-track" x="${sx + 3}" y="${sy + sh - 4.5}" width="${sw - 6}" height="2" rx="1"/><rect class="fl-bar" x="${sx + 3}" y="${sy + sh - 4.5}" width="${Math.max(1.5, (sw - 6) * ratio).toFixed(1)}" height="2" rx="1"/>`;
+    screen = `<rect class="fl-screen" x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="1.5"/><g clip-path="url(#fl-clip-${uid})">${tiles.join('')}${bar}<rect class="fl-scan" x="${sx}" y="${sy - 8}" width="${sw}" height="8"/></g>`;
+  } else if (st.restricted) {
+    var cx = 0;
+    var cy = sy + sh / 2;
+    var sign;
+    if (st.restricted === 'bedtime') sign = `<path class="fl-moon" d="M${cx + 1.5} ${cy - 5}a5 5 0 1 0 3.6 8.4 4 4 0 1 1-3.6-8.4z"/>`;
+    else if (st.restricted === 'schooltime')
+      sign = `<g class="fl-cap" transform="translate(${cx} ${cy})"><path d="M-6 -1.5 0 -4.5 6 -1.5 0 1.5z"/><path d="M-3.5 0v2.6c2 1.4 5 1.4 7 0V0" fill="none" stroke-width="1.2"/></g>`;
+    else
+      sign = `<g transform="translate(${cx} ${cy})"><rect class="fl-lock" x="-4" y="-1" width="8" height="7" rx="1"/><path class="fl-shackle" d="M-2.6 -1v-2a2.6 2.6 0 0 1 5.2 0v2"/></g>`;
+    screen = `<rect class="fl-screen off" x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="1.5"/>${sign}`;
+  } else {
+    var oy = sy + sh / 2;
+    screen = `<rect class="fl-screen dead" x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="1.5"/><g class="fl-offline" transform="translate(0 ${oy})"><circle r="4.5"/><path d="M-3.2 -3.2 3.2 3.2"/></g>`;
+  }
+  // Hourglass: sand on top for the time left, all down once it is spent
+  var top = active ? (st.ratio === null || st.ratio === undefined ? 0.6 : Math.max(0, Math.min(1, st.ratio))) : 0;
+  var th = (9 * top).toFixed(1);
+  var bh = (8 * (1 - top) + 1.5).toFixed(1);
+  var hourglass = `<g transform="translate(176 47.5)">
+      <path class="fl-glass" d="M-6 -12h12M-6 12h12M-5 -12q0 8 5 12q-5 4-5 12M5 -12q0 8-5 12q5 4 5 12"/>
+      ${top > 0 ? `<path class="fl-sand" d="M${-(4 * top).toFixed(2)} ${(-1 - 9 * top).toFixed(2)}h${(8 * top).toFixed(2)}l${-(4 * top).toFixed(2)} ${th}z"/>` : ''}
+      <path class="fl-sand" d="M-${(bh * 0.55).toFixed(2)} 10.5h${(bh * 1.1).toFixed(2)}l-${(bh * 0.55).toFixed(2)} -${bh}z"/>
+      ${active ? '<path class="fl-grain" d="M0 0v10"/>' : ''}
+    </g>`;
+  var x = tablet ? 146 : 142;
+  return `<svg class="fl-scene" viewBox="0 0 200 80" preserveAspectRatio="xMaxYMax meet" aria-hidden="true" focusable="false">
+    <defs><clipPath id="fl-clip-${uid}"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="1.5"/></clipPath></defs>
+    <rect class="fl-shelf" x="96" y="60" width="104" height="3"/>
+    <g class="fl-box"><rect x="102" y="46" width="16" height="14" rx="2"/><rect class="fl-box-lid" x="104" y="48" width="12" height="3"/></g>
+    <g class="fl-device${off ? ' dim' : ''}" transform="translate(${x} 60)">${body}${screen}</g>
+    ${hourglass}
+  </svg>`;
 }
 
 // ── family-link-card ─────────────────────────────────────────────────────────
@@ -2509,6 +2710,7 @@ class FamilyLinkCard extends HTMLElement {
     this._ringing = {};
     this._custom = 45;
     this._toast = null;
+    this._uid = ++flUid;
   }
 
   setConfig(config) {
@@ -2522,8 +2724,11 @@ class FamilyLinkCard extends HTMLElement {
     var first = !this._hass;
     this._hass = hass;
     var state = hass.states[this._entityId()];
-    if (state !== this._lastState) {
+    // The night picture follows the sun and the dark theme
+    var night = this._config && this._config.illustration !== false ? flIsNight(hass, this._config) : null;
+    if (state !== this._lastState || night !== this._lastNight) {
       this._lastState = state;
+      this._lastNight = night;
       this._render();
     } else if (first) {
       this._render();
@@ -2541,10 +2746,14 @@ class FamilyLinkCard extends HTMLElement {
       });
     document.addEventListener('click', this._onOutside, true);
     if (!this._timer) this._timer = setInterval(() => this._tick(), 30000);
+    if (!this._fitObserver && typeof ResizeObserver === 'function') this._fitObserver = new ResizeObserver(() => this._fitPill());
+    this._fitObserver?.observe(this);
+    document.fonts?.ready?.then(() => this._fitPill());
   }
 
   disconnectedCallback() {
     document.removeEventListener('click', this._onOutside, true);
+    this._fitObserver?.disconnect();
     clearInterval(this._timer);
     this._timer = null;
     // Leaving the page closes a popup without running it
@@ -2620,6 +2829,38 @@ class FamilyLinkCard extends HTMLElement {
     }
     main.innerHTML = this._compact() ? this._renderCompact(a, t, state) : this._renderFull(a, t, state);
     if (this._popup) this._renderPopup();
+    this._fitPill();
+  }
+
+  // The status pill, measured after each render and on a new width (in every language): it sits on the title's row,
+  // right after the title, only when the whole title and the pill's whole label fit there; otherwise it takes a line
+  // of its own under the subtitle (.below), the title whole on its row (cut only when it does not fit alone). When the
+  // lines do not fit in the banner above the floor, or the label does not fit its line, the pill shows its dot alone
+  // (.dot-only): beside the title when the whole title leaves it room, else under the subtitle.
+  _fitPill() {
+    for (const t of this._root?.querySelectorAll?.('.titles') || []) {
+      const row = t.querySelector('.title-row');
+      const pill = row?.querySelector(':scope > .pill');
+      if (!pill?.getBoundingClientRect) continue;
+      t.classList.remove('below', 'dot-only');
+      const name = row.querySelector('.title');
+      const tag = name.querySelector('.school-tag');
+      const tagW = tag ? tag.getBoundingClientRect().width + (parseFloat(getComputedStyle(tag).marginLeft) || 0) : 0;
+      const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+      const room = row.getBoundingClientRect().width;
+      const title = Math.max(name.scrollWidth, flTextWidth(name) + tagW) + gap;
+      if (title + pill.getBoundingClientRect().width <= room) continue;
+      t.classList.add('below');
+      const line = t.querySelector('.pill-line > .pill');
+      const banner = t.closest('.banner');
+      const floor = banner ? banner.querySelector('.ground').getBoundingClientRect().top : Infinity;
+      const box = t.getBoundingClientRect();
+      const tx = line?.querySelector('.pt');
+      const whole = !tx || (tx.scrollWidth <= tx.clientWidth + 0.5 && line.getBoundingClientRect().right <= box.right + 0.5);
+      if (whole && box.bottom <= floor + 0.5 && (!banner || box.top >= banner.getBoundingClientRect().top - 0.5)) continue;
+      t.classList.add('dot-only');
+      if (title + (line || pill).getBoundingClientRect().width <= room) t.classList.remove('below');
+    }
   }
 
   _compact() {
@@ -2642,18 +2883,80 @@ class FamilyLinkCard extends HTMLElement {
     return state?.state in FL_STATUS ? state.state : 'not_tracked';
   }
 
+  // The status line on the banner's sky: what the shown device is at (time left, lock, bedtime…)
+  _statusLine(a, device, t, status) {
+    var devices = a.devices || [];
+    if (!device) return devices.length > 1 ? `${flDuration(a.total_minutes, t)} ${t.used_today} · ${flTr(t, 'devices', { n: devices.length })}` : t[`status_${status}`] || status;
+    var line;
+    if (device.restricted) line = this._restrictedShort(device, t);
+    else if (status === 'not_tracked') line = t.status_not_tracked;
+    else if (device.remaining !== null && device.remaining !== undefined) line = `${flDuration(device.remaining, t)} ${t.left}`;
+    else line = `${flDuration(device.used, t)} ${t.used_today}`;
+    return devices.length > 1 ? `${device.name} · ${line}` : line;
+  }
+
+  // The banner's picture state for a device (or the worst one when all devices are shown)
+  _sceneState(a, device, status) {
+    var d = device || (a.devices || []).slice().sort((x, y) => (FL_SEVERITY[y.status] || 0) - (FL_SEVERITY[x.status] || 0))[0];
+    var ratio = null;
+    if (d && d.remaining !== null && d.remaining !== undefined) {
+      var cap = d.limit ? d.limit + (d.bonus || 0) : (d.used || 0) + d.remaining;
+      ratio = cap > 0 ? d.remaining / cap : 0;
+    }
+    return { kind: this._kind(d), status: status, restricted: d ? d.restricted : null, ratio: ratio };
+  }
+
+  // The status pill: a dot and the status, in the round icon's colour.
+  _pill(status, t) {
+    var s = FL_STATUS[status] || FL_STATUS.not_tracked;
+    var label = flEsc(t[`status_${status}`] || status);
+    return `<span class="pill" style="--c:${s.color};--tint:${s.tint}" title="${label}" aria-label="${label}"><span class="dot"></span><span class="pt">${label}</span></span>`;
+  }
+
+  // The title, then the status pill right after it; `sub` under them (left out when it only repeats the status). Where
+  // the pill goes is measured (_fitPill): beside the whole title, else on a line of its own under the subtitle (the
+  // copy in .pill-line), else its dot alone (its text stays in its title and aria-label).
+  _titles(a, t, status, title, sub, subStyle) {
+    var pill = this._pill(status, t);
+    var label = t[`status_${status}`] || status;
+    var text = String(sub || '')
+      .split(' · ')
+      .filter((part) => part && part !== label)
+      .join(' · ');
+    var line = text ? `<div class="sub" title="${flEsc(text)}"${subStyle ? ` style="${subStyle}"` : ''}>${flEsc(text)}</div>` : '';
+    return `<div class="titles"><div class="title-row"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div>${pill}</div>${line}<div class="pill-line">${pill}</div></div>`;
+  }
+
+  // The illustrated header: the round status icon, the title and `sub` on the left, the picture on the right
+  _banner(a, device, t, state, title, sub, extra) {
+    var status = this._status(a, device, state);
+    var s = FL_STATUS[status] || FL_STATUS.not_tracked;
+    var label = t[`status_${status}`] || status;
+    var night = flIsNight(this._hass, this._config);
+    return `<div class="banner${night ? ' night' : ''}">
+      ${flSceneSvg(this._uid, this._sceneState(a, device, status))}<div class="ground" aria-hidden="true"></div>
+      <div class="htext"><div class="badge" style="--c:${s.color}" title="${flEsc(label)}" role="img" aria-label="${flEsc(label)}">${flIcon('kite')}</div>
+      ${this._titles(a, t, status, title, sub)}</div>
+      ${extra || ''}
+    </div>`;
+  }
+
   _header(a, device, t, state, extra) {
     var status = this._status(a, device, state);
     var s = FL_STATUS[status] || FL_STATUS.not_tracked;
     var devices = a.devices || [];
+    if (this._config.illustration !== false) {
+      var name = this._config.title || a.child_name || t.none;
+      var line = state && state.state !== 'unavailable' && a.family_link ? this._statusLine(a, device, t, status) : t[`status_${status}`] || status;
+      return this._banner(a, device, t, state, name, line, extra);
+    }
     var sub = devices.length === 1 ? t.device_one : flTr(t, 'devices', { n: devices.length });
     if (device && devices.length > 1) sub = `${device.name} · ${sub}`;
     else if (device) sub = device.name;
     var title = this._config.title || a.child_name || t.none;
     return `<div class="header">
       <div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div>
-      <div class="titles"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>
-      <div class="pill" style="--c:${s.color};--tint:${s.tint}">${flEsc(t[`status_${status}`] || status)}</div>
+      ${this._titles(a, t, status, title, sub)}
       ${extra || ''}
     </div>`;
   }
@@ -3221,18 +3524,87 @@ class FamilyLinkCard extends HTMLElement {
   static _styles() {
     return `
       :host { display: block; }
-      ha-card { position: relative; padding: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; color: var(--primary-text-color); }
+      ha-card { container: fl-card / inline-size; position: relative; padding: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; color: var(--primary-text-color); }
       .main { display: flex; flex-direction: column; gap: 14px; }
       .ic { width: 20px; height: 20px; flex: none; }
       .header { display: flex; align-items: center; gap: 12px; }
       .badge { width: 40px; height: 40px; border-radius: 50%; background: var(--tint); color: var(--c); display: flex; align-items: center; justify-content: center; flex: none; transition: background .4s, color .4s; }
       .badge .ic { width: 24px; height: 24px; }
       .titles { flex: 1; min-width: 0; }
+      /* The title line: the title, then the status pill when the whole title and the pill's whole label fit there
+         (measured, see _fitPill). Otherwise the pill takes a line of its own under the subtitle (its copy in
+         .pill-line), the subtitle on one line; when that does not fit in the banner above the floor, or on a card of
+         200 px or less, only its dot stays (its text in its title and aria-label). */
+      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; }
+      .pill-line { display: none; }
+      .titles.below .title-row > .pill { display: none; }
+      .titles.below .pill-line { display: flex; min-width: 0; margin-top: 3px; }
+      .pill-line > .pill { max-width: 100%; }
+      .titles.dot-only .pill { padding: 4px; } .titles.dot-only .pill .pt { display: none; }
+      @container fl-card (max-width: 200px) { .pill { padding: 4px; } .pill .pt { display: none; } }
       .title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .pill { padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--c); font-size: 12px; font-weight: 500; white-space: nowrap; }
-      .zoom, .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; color: var(--secondary-text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; align-self: flex-start; }
-      .zoom .ic, .icon-btn .ic { width: 18px; height: 18px; }
+      .pill { display: inline-flex; align-items: center; gap: 4px; min-width: 0; box-sizing: border-box; overflow: hidden; padding: 1px 8px; border-radius: 12px;
+              background: var(--tint); color: color-mix(in srgb, var(--c) 55%, var(--primary-text-color)); font-size: 11px; font-weight: 500; line-height: 16px; white-space: nowrap; }
+      .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c); flex: none; }
+      .pill .pt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .banner .pill { background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color: color-mix(in srgb, var(--c) 45%, #0d2a45); }
+      .banner.night .pill { background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color: color-mix(in srgb, var(--c) 35%, #ffffff); }
+      /* Illustrated header: 90 px, edge to edge, the text on the wall at left, the picture at right, a 10 px parquet strip */
+      .banner { position: relative; height: 90px; margin: -16px -16px 0; overflow: hidden; flex: none; container-type: inline-size; background: #fdf3e7; color: #0d2a45; --muted: #3b5b78; }
+      .banner.night { background: #2a2a36; color: #fff; --muted: rgba(255,255,255,.78); }
+      .banner .fl-scene { position: absolute; right: 0; bottom: 10px; height: 80px; width: min(200px, 66%); }
+      .banner .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(90deg, #c99a6b 0 38px, #b98a5c 38px 40px); box-shadow: inset 0 2px 0 #a97c50; }
+      .banner.night .ground { background: repeating-linear-gradient(90deg, #4a3a2c 0 38px, #3e3024 38px 40px); box-shadow: inset 0 2px 0 #5c4836; }
+      .banner .htext { position: absolute; left: 0; top: 0; bottom: 10px; right: calc(min(200px, 66%) * .5 + 4px); display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; min-width: 0; }
+      .banner .badge { position: relative; background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent); }
+      .banner.night .badge { background: rgba(255,255,255,.12); }
+      .banner .title { font-size: 16px; }
+      .banner .sub { font-size: 13px; color: var(--muted); }
+      .banner .zoom { color: #33506b; background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+      .banner.night .zoom { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+      .banner .zoom:hover { background: rgba(255,255,255,.75); }
+      .banner.night .zoom:hover { background: rgba(255,255,255,.22); }
+      .banner .school-tag { color: inherit; }
+      @container (max-width: 260px) { .fl-scene { display: none; } .htext { right: 36px !important; } }
+      .fl-shelf { fill: #e5484d; opacity: .7; }
+      .night .fl-shelf { fill: #3c4558; opacity: 1; }
+      .fl-box rect { fill: #2f80ed; }
+      .fl-box .fl-box-lid { fill: #fff; opacity: .6; }
+      .night .fl-box rect { fill: #3a6fc4; }
+      .night .fl-box .fl-box-lid { opacity: .35; }
+      .fl-dev { fill: #22262b; }
+      .night .fl-dev { fill: #15171c; stroke: #4a5266; stroke-width: .6; }
+      .fl-notch { fill: #3a3f47; }
+      .fl-screen { fill: #86b9de; }
+      .night .fl-screen { fill: #3d5a8a; }
+      .fl-screen.off { fill: #1a1d22; }
+      .fl-screen.dead { fill: #4a4f57; }
+      .fl-device.dim { opacity: .8; }
+      .fl-tile { opacity: .95; animation: fl-bob 2.2s ease-in-out infinite; }
+      .fl-track { fill: rgba(255,255,255,.45); }
+      .fl-bar { fill: #fff; }
+      .fl-scan { fill: rgba(255,255,255,.22); animation: fl-sscan 3.2s linear infinite; }
+      .fl-lock { fill: #f5b400; }
+      .fl-shackle { fill: none; stroke: #f5b400; stroke-width: 1.2; animation: fl-shackle 2.6s ease-in-out infinite; }
+      .fl-moon { fill: #c9d4ff; animation: fl-glow 3s ease-in-out infinite; }
+      .fl-cap path { fill: #f5b400; stroke: #f5b400; }
+      .fl-offline { fill: none; stroke: #9aa0a6; stroke-width: 1.2; }
+      .fl-glass { fill: none; stroke: #5f6b7a; stroke-width: 1.2; }
+      .night .fl-glass { stroke: #9aa3ae; }
+      .fl-sand { fill: #f5b400; }
+      .fl-grain { stroke: #f5b400; stroke-width: .9; stroke-dasharray: 1.2 1.6; animation: fl-grain .6s linear infinite; }
+      .mini-actions { display: flex; justify-content: flex-end; }
+      ha-card:has(.main > .banner:only-child) { padding-bottom: 0; }
+      .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; color: var(--secondary-text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; align-self: flex-start; }
+      .icon-btn .ic { width: 18px; height: 18px; }
+      /* The mini card's detail button: 24 px round, in the top right corner of the card (of the banner). */
+      .zoom { position: absolute; z-index: 2; top: 5px; right: 5px; width: 24px; height: 24px; padding: 0; border-radius: 50%; border: none; cursor: pointer;
+              display: grid; place-items: center; color: var(--secondary-text-color); background: transparent; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }
+      .zoom .ic { width: 16px; height: 16px; }
+      .header:has(> .zoom), .compact-row:has(> .zoom) { padding-right: 14px; }
       .empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; text-align: center; color: var(--secondary-text-color); font-size: 13px; }
       .empty .ic { width: 32px; height: 32px; }
       .note { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 10px; background: rgba(249,171,0,.12); color: var(--warning-color, #f9ab00); font-size: 12px; }
@@ -3449,6 +3821,9 @@ class FamilyLinkCard extends HTMLElement {
       @keyframes fl-sos { 0%,100% { box-shadow: 0 0 0 0 rgba(234,67,53,.4); } 50% { box-shadow: 0 0 0 6px rgba(234,67,53,0); } }
       @keyframes fl-in { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
       @keyframes fl-spin { to { transform: rotate(360deg); } }
+      @keyframes fl-sscan { from { transform: translateY(0); } to { transform: translateY(48px); } }
+      @keyframes fl-grain { to { stroke-dashoffset: -2.8; } }
+      @keyframes fl-glow { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
     `;
   }
@@ -3537,7 +3912,8 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
         })
         .join('');
       var sub = [flDuration(a.total_minutes, t), place].filter(Boolean).join(' · ');
-      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
+      if (this._config.illustration !== false) return `${this._banner(a, null, t, state, title, sub, this._detailButton(t))}${stale}<div class="mini-tiles">${tiles}</div>`;
+      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt">${this._titles(a, t, status, title, sub)}</div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
     }
     var line;
     if (!device) line = t.unavailable;
@@ -3546,7 +3922,8 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
     else line = `${flDuration(device.used, t)} ${t.used_today}`;
     var parts = [line, place].filter(Boolean).join(' · ');
     var unlock = device?.locked ? `<button class="btn green" data-action="unlock">${flEsc(t.unlock)}</button>` : '';
-    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub" style="${device?.restricted ? `color:${s.color}` : ''}">${flEsc(parts)}</div></div>${unlock}${this._detailButton(t)}</div>${stale}`;
+    if (this._config.illustration !== false) return `${this._banner(a, device, t, state, title, parts, this._detailButton(t))}${stale}${unlock ? `<div class="mini-actions">${unlock}</div>` : ''}`;
+    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt">${this._titles(a, t, status, title, parts, device?.restricted ? `color:${s.color}` : '')}</div>${unlock}${this._detailButton(t)}</div>${stale}`;
   }
 
   _onClick(ev) {
@@ -3622,6 +3999,20 @@ function flEditorSchema(t, devices) {
         { name: 'show_top_apps', selector: { boolean: {} } },
         { name: 'show_actions', selector: { boolean: {} } },
         { name: 'show_location', selector: { boolean: {} } },
+        { name: 'illustration', selector: { boolean: {} } },
+        {
+          name: 'illustration_theme',
+          selector: {
+            select: {
+              mode: 'dropdown',
+              options: [
+                { value: 'auto', label: t.theme_auto },
+                { value: 'day', label: t.theme_day },
+                { value: 'night', label: t.theme_night },
+              ],
+            },
+          },
+        },
       ],
     },
     { name: 'trace_hours', selector: { number: { min: 1, max: 168, mode: 'box' } } },
