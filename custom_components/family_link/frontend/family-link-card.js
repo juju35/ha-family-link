@@ -2859,6 +2859,27 @@ class FamilyLinkCard extends HTMLElement {
     return { kind: this._kind(d), status: status, restricted: d ? d.restricted : null, ratio: ratio };
   }
 
+  // The status pill: a dot and the status, in the round icon's colour.
+  _pill(status, t) {
+    var s = FL_STATUS[status] || FL_STATUS.not_tracked;
+    var label = flEsc(t[`status_${status}`] || status);
+    return `<span class="pill" style="--c:${s.color};--tint:${s.tint}" title="${label}" aria-label="${label}"><span class="dot"></span><span class="pt">${label}</span></span>`;
+  }
+
+  // The title, then the status pill right after it; `sub` under them (left out when it only repeats the status). When
+  // the title block is narrow the pill takes a line of its own under the subtitle (the copy in .pill-line), and when it
+  // is very narrow only its dot stays (its text stays in its title and aria-label).
+  _titles(a, t, status, title, sub, subStyle) {
+    var pill = this._pill(status, t);
+    var label = t[`status_${status}`] || status;
+    var text = String(sub || '')
+      .split(' · ')
+      .filter((part) => part && part !== label)
+      .join(' · ');
+    var line = text ? `<div class="sub"${subStyle ? ` style="${subStyle}"` : ''}>${flEsc(text)}</div>` : '';
+    return `<div class="titles"><div class="title-row"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div>${pill}</div>${line}<div class="pill-line">${pill}</div></div>`;
+  }
+
   // The illustrated header: the round status icon, the title and `sub` on the left, the picture on the right
   _banner(a, device, t, state, title, sub, extra) {
     var status = this._status(a, device, state);
@@ -2868,7 +2889,7 @@ class FamilyLinkCard extends HTMLElement {
     return `<div class="banner${night ? ' night' : ''}">
       ${flSceneSvg(this._uid, this._sceneState(a, device, status))}<div class="ground" aria-hidden="true"></div>
       <div class="htext"><div class="badge" style="--c:${s.color}" title="${flEsc(label)}" role="img" aria-label="${flEsc(label)}">${flIcon('kite')}</div>
-      <div class="titles"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div></div>
+      ${this._titles(a, t, status, title, sub)}</div>
       ${extra || ''}
     </div>`;
   }
@@ -2888,8 +2909,7 @@ class FamilyLinkCard extends HTMLElement {
     var title = this._config.title || a.child_name || t.none;
     return `<div class="header">
       <div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div>
-      <div class="titles"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>
-      <div class="pill" style="--c:${s.color};--tint:${s.tint}">${flEsc(t[`status_${status}`] || status)}</div>
+      ${this._titles(a, t, status, title, sub)}
       ${extra || ''}
     </div>`;
   }
@@ -3463,10 +3483,29 @@ class FamilyLinkCard extends HTMLElement {
       .header { display: flex; align-items: center; gap: 12px; }
       .badge { width: 40px; height: 40px; border-radius: 50%; background: var(--tint); color: var(--c); display: flex; align-items: center; justify-content: center; flex: none; transition: background .4s, color .4s; }
       .badge .ic { width: 24px; height: 24px; }
-      .titles { flex: 1; min-width: 0; }
+      .titles { flex: 1; min-width: 0; container: fl-titles / inline-size; }
+      /* The title line: the title, then the status pill, which keeps its whole label (the title gives way first). */
+      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 4ch; }
+      .title-row > .pill { flex: none; max-width: 51%; }
+      .pill-line { display: none; }
+      @container fl-titles (max-width: 190px) {
+        .title-row > .pill { display: none; }
+        .pill-line { display: flex; min-width: 0; margin-top: 3px; }
+        .pill-line > .pill { max-width: 100%; }
+      }
+      @container fl-titles (max-width: 100px) {
+        .title-row > .pill { display: inline-flex; padding: 4px; }
+        .title-row .pt, .pill-line { display: none; }
+      }
       .title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .pill { padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--c); font-size: 12px; font-weight: 500; white-space: nowrap; }
+      .pill { display: inline-flex; align-items: center; gap: 4px; min-width: 0; box-sizing: border-box; overflow: hidden; padding: 1px 8px; border-radius: 12px;
+              background: var(--tint); color: color-mix(in srgb, var(--c) 55%, var(--primary-text-color)); font-size: 11px; font-weight: 500; line-height: 16px; white-space: nowrap; }
+      .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c); flex: none; }
+      .pill .pt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .banner .pill { background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color: color-mix(in srgb, var(--c) 45%, #0d2a45); }
+      .banner.night .pill { background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color: color-mix(in srgb, var(--c) 35%, #ffffff); }
       /* Illustrated header: 90 px, edge to edge, the text on the wall at left, the picture at right, a 10 px parquet strip */
       .banner { position: relative; height: 90px; margin: -16px -16px 0; overflow: hidden; flex: none; container-type: inline-size; background: #fdf3e7; color: #0d2a45; --muted: #3b5b78; }
       .banner.night { background: #2a2a36; color: #fff; --muted: rgba(255,255,255,.78); }
@@ -3478,8 +3517,10 @@ class FamilyLinkCard extends HTMLElement {
       .banner.night .badge { background: rgba(255,255,255,.12); }
       .banner .title { font-size: 16px; }
       .banner .sub { font-size: 13px; color: var(--muted); }
-      .banner .zoom { position: absolute; top: 3px; right: 3px; width: 28px; height: 28px; color: #0d2a45; background: rgba(255,255,255,.55); }
-      .banner.night .zoom { color: #fff; background: rgba(10,10,20,.45); }
+      .banner .zoom { color: #33506b; background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+      .banner.night .zoom { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+      .banner .zoom:hover { background: rgba(255,255,255,.75); }
+      .banner.night .zoom:hover { background: rgba(255,255,255,.22); }
       .banner .school-tag { color: inherit; }
       @container (max-width: 260px) { .fl-scene { display: none; } .htext { right: 36px !important; } }
       .fl-shelf { fill: #e5484d; opacity: .7; }
@@ -3511,8 +3552,13 @@ class FamilyLinkCard extends HTMLElement {
       .fl-grain { stroke: #f5b400; stroke-width: .9; stroke-dasharray: 1.2 1.6; animation: fl-grain .6s linear infinite; }
       .mini-actions { display: flex; justify-content: flex-end; }
       ha-card:has(.main > .banner:only-child) { padding-bottom: 0; }
-      .zoom, .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; color: var(--secondary-text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; align-self: flex-start; }
-      .zoom .ic, .icon-btn .ic { width: 18px; height: 18px; }
+      .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; color: var(--secondary-text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; align-self: flex-start; }
+      .icon-btn .ic { width: 18px; height: 18px; }
+      /* The mini card's detail button: 24 px round, in the top right corner of the card (of the banner). */
+      .zoom { position: absolute; z-index: 2; top: 5px; right: 5px; width: 24px; height: 24px; padding: 0; border-radius: 50%; border: none; cursor: pointer;
+              display: grid; place-items: center; color: var(--secondary-text-color); background: transparent; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }
+      .zoom .ic { width: 16px; height: 16px; }
+      .header:has(> .zoom), .compact-row:has(> .zoom) { padding-right: 14px; }
       .empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; text-align: center; color: var(--secondary-text-color); font-size: 13px; }
       .empty .ic { width: 32px; height: 32px; }
       .note { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 10px; background: rgba(249,171,0,.12); color: var(--warning-color, #f9ab00); font-size: 12px; }
@@ -3821,7 +3867,7 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
         .join('');
       var sub = [flDuration(a.total_minutes, t), place].filter(Boolean).join(' · ');
       if (this._config.illustration !== false) return `${this._banner(a, null, t, state, title, sub, this._detailButton(t))}${stale}<div class="mini-tiles">${tiles}</div>`;
-      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub">${flEsc(sub)}</div></div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
+      return `<div class="compact-row"><div class="badge" style="--c:${s.color};--tint:${s.tint}">${flIcon('kite')}</div><div class="mini-txt">${this._titles(a, t, status, title, sub)}</div>${this._detailButton(t)}</div>${stale}<div class="mini-tiles">${tiles}</div>`;
     }
     var line;
     if (!device) line = t.unavailable;
@@ -3831,7 +3877,7 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
     var parts = [line, place].filter(Boolean).join(' · ');
     var unlock = device?.locked ? `<button class="btn green" data-action="unlock">${flEsc(t.unlock)}</button>` : '';
     if (this._config.illustration !== false) return `${this._banner(a, device, t, state, title, parts, this._detailButton(t))}${stale}${unlock ? `<div class="mini-actions">${unlock}</div>` : ''}`;
-    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt"><div class="title">${flEsc(title)}${flSchoolTag(a, t)}</div><div class="sub" style="${device?.restricted ? `color:${s.color}` : ''}">${flEsc(parts)}</div></div>${unlock}${this._detailButton(t)}</div>${stale}`;
+    return `<div class="compact-row">${this._miniDevice(device, t, true)}<div class="mini-txt">${this._titles(a, t, status, title, parts, device?.restricted ? `color:${s.color}` : '')}</div>${unlock}${this._detailButton(t)}</div>${stale}`;
   }
 
   _onClick(ev) {
