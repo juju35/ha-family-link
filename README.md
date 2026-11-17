@@ -292,6 +292,8 @@ show_scene: true
 show_top_apps: true
 show_actions: true
 show_location: true
+illustration: true           # illustrated header (false: classic header)
+illustration_theme: auto     # auto (sun / dark theme), day or night
 trace_hours: 24              # route shown when the location popup opens
 bonus_presets: [15, 30, 60]  # YAML only
 language: fr
@@ -309,6 +311,8 @@ language: fr
 | `show_top_apps` | boolean | `true` | both | Most used apps today |
 | `show_actions` | boolean | `true` | both | School mode, bonus, lock, ring, locate, emergency |
 | `show_location` | boolean | `true` | both | Location tile and popup |
+| `illustration` | boolean | `true` | both | Illustrated header (the child's device on a shelf, hourglass of the time left); `false` keeps the classic header |
+| `illustration_theme` | `auto` / `day` / `night` | `auto` | both | Day or night picture; `auto` follows `sun.sun`, else the dark theme |
 | `trace_hours` | number | `24` | both | Period of the route when the popup opens (Today, 24 h, 7 days can be picked there) |
 | `bonus_presets` | list | `[15, 30, 60]` | both | Add-time buttons, in minutes — **YAML only** |
 | `language` | string | Home Assistant's | both | Force a language |

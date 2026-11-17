@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 - 2026-11-17
+
+### Features
+
+- **Illustrated header** on both cards (90 px, also on the mini card): the child's name and status line (time left, daily limit reached, bedtime, school time…) on the left, a shelf in the child's room on the right with the phone or tablet (apps while it runs, a lock, moon or school cap on a dark screen while it is restricted, a dimmed screen when it is not tracked) and an hourglass emptying with the time left, over a parquet strip. The round icon is coloured by the status (green tracked, amber attention, red locked, grey not tracked).
+- **Night picture** following `sun.sun` (else the dark theme), forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options in the visual editor, in every language. Animations stop with `prefers-reduced-motion`.
+
 ## 1.1.0 (2026-11-14)
 
 - **School mode**: every app of a child blocked but the essential ones (phone, messages, maps, the Home Assistant app, Pronote, Classroom…), the ones listed in the options and the always allowed ones, in one request; their rules are saved (also across restarts) and put back afterwards. `switch.<child>_school_mode`, `family_link.school_mode` action, `school_mode_on` / `school_mode_off` events, and a school mode row with a switch in the card (a school cap after the child's name while it is on).
