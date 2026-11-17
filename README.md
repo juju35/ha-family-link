@@ -293,7 +293,7 @@ show_top_apps: true
 show_actions: true
 show_location: true
 illustration: true           # illustrated header (false: classic header)
-illustration_theme: auto     # auto (sun / dark theme), day or night
+illustration_theme: auto     # auto (sun or dark theme), day or night
 trace_hours: 24              # route shown when the location popup opens
 bonus_presets: [15, 30, 60]  # YAML only
 language: fr
