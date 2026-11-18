@@ -178,10 +178,11 @@ test('school mode row: off, on by Pronote with the end of the school day and the
   assert.ok(on.includes('class="switch on"') && on.includes('12 apps blocked') && on.includes('Pronote'));
 });
 
-test('the banner turns to night when the sun is down or the theme is dark, even with the sun up', () => {
+test('the banner turns to night with the dark theme alone, the sun left aside', () => {
   const night = vm.runInContext('flIsNight', context);
   const hass = (sun, darkMode) => ({ states: sun ? { 'sun.sun': { state: sun } } : {}, themes: { darkMode } });
-  assert.equal(night(hass('below_horizon', false), {}), true);
+  assert.equal(night(hass('below_horizon', false), {}), false);
+  assert.equal(night(hass('below_horizon', true), {}), true);
   assert.equal(night(hass('above_horizon', true), {}), true);
   assert.equal(night(hass('above_horizon', false), {}), false);
   assert.equal(night(hass('unavailable', true), {}), true);
