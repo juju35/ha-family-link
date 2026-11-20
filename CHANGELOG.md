@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.2 - 2026-11-20
+
+### Fixes
+- Entity icons: the screen time, blocked apps and always allowed apps sensors used icons that do not exist in Material Design Icons (`mdi:cellphone-clock`, `mdi:application-off`, `mdi:application-check`) and showed none; they now use `mdi:progress-clock`, `mdi:block-helper` and `mdi:check-circle-outline`.
+- Emergency action: the notification service (option or `notify_service`) must be a `notify.*` service; any other service is refused instead of being called.
+
+### Performance
+- Visual editor: the form gets new data only when the configuration changes, no longer on every state change of Home Assistant (ha-form re-rendered every field each time).
+
+### Maintenance
+- `package.json` carries the integration's version again (it was left at 1.2.0).
+
 ## 1.2.1 - 2026-11-18
 
 ### Fixes

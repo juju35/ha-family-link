@@ -1,4 +1,4 @@
-var FAMILY_LINK_CARD_VERSION = '1.2.1';
+var FAMILY_LINK_CARD_VERSION = '1.2.2';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var FamilyLinkI18n = {
