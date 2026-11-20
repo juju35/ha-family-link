@@ -2546,6 +2546,41 @@ function flInDialog(ev) {
   return ev.composedPath().some((el) => el?.tagName && /^(HA-DIALOG|HA-MORE-INFO-DIALOG|MWC-DIALOG|HA-MD-DIALOG)$/.test(el.tagName));
 }
 
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app) a
+// tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to the
+// page. It counts when the press and the release are both outside the card (a slider dragged out of the card does not
+// close it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through the click
+// event. `tap(ev)` (a press and a release at the same spot) is for the tests.
+function flWatchOutside(isOut, handler) {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOut(ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOut(ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener('pointerdown', onDown, true);
+      document.addEventListener('pointerup', onUp, true);
+      document.addEventListener('click', onClick, true);
+    },
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('pointerup', onUp, true);
+      document.removeEventListener('click', onClick, true);
+    },
+  };
+}
+
 function flKm(points) {
   var total = 0;
   for (var i = 1; i < points.length; i++) {
@@ -2738,12 +2773,11 @@ class FamilyLinkCard extends HTMLElement {
   connectedCallback() {
     this._onOutside =
       this._onOutside ||
-      ((ev) => {
-        if (!this._popup || flInDialog(ev)) return;
-        if (ev.composedPath().includes(this)) return;
-        this._closePopup();
-      });
-    document.addEventListener('click', this._onOutside, true);
+      flWatchOutside(
+        (ev) => !!this._popup && !flInDialog(ev) && !ev.composedPath().includes(this),
+        () => this._closePopup()
+      );
+    this._onOutside.on();
     if (!this._timer) this._timer = setInterval(() => this._tick(), 30000);
     if (!this._fitObserver && typeof ResizeObserver === 'function') this._fitObserver = new ResizeObserver(() => this._fitPill());
     this._fitObserver?.observe(this);
@@ -2751,7 +2785,9 @@ class FamilyLinkCard extends HTMLElement {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('click', this._onOutside, true);
+    this._onOutside?.off();
+    clearTimeout(this._ringTimer);
+    this._ringTimer = null;
     this._fitObserver?.disconnect();
     clearInterval(this._timer);
     this._timer = null;
@@ -3202,7 +3238,8 @@ class FamilyLinkCard extends HTMLElement {
       case 'ring':
         if (device) {
           this._ringing[device.id] = Date.now() + 20000;
-          setTimeout(() => this._render(), 20500);
+          clearTimeout(this._ringTimer);
+          this._ringTimer = setTimeout(() => this._render(), 20500);
           this._call('ring', { child: a.child_id, device: device.id }, 'ring');
         }
         break;
@@ -3833,19 +3870,20 @@ class FamilyLinkMiniCard extends FamilyLinkCard {
   constructor() {
     super();
     this._zoomed = false;
-    this._onOutsideMini = (ev) => {
-      if (this._zoomed && !this._popup && !ev.composedPath().includes(this) && !flInDialog(ev)) this._setZoom(false);
-    };
+    this._onOutsideMini = flWatchOutside(
+      (ev) => this._zoomed && !this._popup && !ev.composedPath().includes(this) && !flInDialog(ev),
+      () => this._setZoom(false)
+    );
   }
 
   connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this._onOutsideMini, true);
+    this._onOutsideMini.on();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutsideMini, true);
+    this._onOutsideMini.off();
     if (this._zoomed) {
       this._zoomed = false;
       this._render();
@@ -3963,9 +4001,14 @@ var FL_LANGUAGES = [
   ['el', 'Ελληνικά'],
 ];
 
-function flEditorSchema(t, devices) {
+// children: the status sensors of the children (one per child); the entity picker offers only those, not the screen
+// time, apps or other sensors of the integration (a selector cannot filter on the translation key).
+function flEditorSchema(t, devices, children) {
+  var entity = children && children.length
+    ? { include_entities: children }
+    : { filter: { domain: 'sensor', integration: 'family_link' } };
   return [
-    { name: 'entity', selector: { entity: { filter: { domain: 'sensor', integration: 'family_link' } } } },
+    { name: 'entity', selector: { entity: entity } },
     { name: 'title', selector: { text: {} } },
     {
       type: 'grid',
@@ -4041,14 +4084,15 @@ class FamilyLinkCardEditor extends HTMLElement {
       this._form.addEventListener('value-changed', this._valueChanged.bind(this));
       this.appendChild(this._form);
     }
-    var entity = this._config.entity || FamilyLinkCard._findEntities(this._hass)[0];
+    var children = FamilyLinkCard._findEntities(this._hass);
+    var entity = this._config.entity || children[0];
     var devices = this._hass.states[entity]?.attributes?.devices || [];
     var lang = flLang(this._hass, this._config);
-    var key = `${lang}|${devices.map((d) => d.id).join(',')}`;
+    var key = `${lang}|${devices.map((d) => d.id).join(',')}|${children.join(',')}`;
     if (key !== this._key) {
       this._key = key;
       var t = FamilyLinkI18n[lang].editor;
-      this._form.schema = flEditorSchema(t, devices);
+      this._form.schema = flEditorSchema(t, devices, children);
       this._form.computeLabel = (field) => t[field.name] || field.name;
     }
     this._form.hass = this._hass;

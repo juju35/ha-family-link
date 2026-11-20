@@ -5,12 +5,17 @@
 ### Fixes
 - Entity icons: the screen time, blocked apps and always allowed apps sensors used icons that do not exist in Material Design Icons (`mdi:cellphone-clock`, `mdi:application-off`, `mdi:application-check`) and showed none; they now use `mdi:progress-clock`, `mdi:block-helper` and `mdi:check-circle-outline`.
 - Emergency action: the notification service (option or `notify_service`) must be a `notify.*` service; any other service is refused instead of being called.
+- A tap elsewhere on iOS (Safari and the companion app) now closes the card's popup and folds the expanded mini card: "elsewhere" is caught on the pointer press and release, not only on the click event, which iOS does not send for a tap on something that is not clickable.
+- Visual editor: the entity picker offers the children's status sensors only, no longer every sensor of the integration (screen time, apps…).
+- The re-render planned 20 s after *Ring* is cancelled when the card leaves the page.
 
 ### Performance
 - Visual editor: the form gets new data only when the configuration changes, no longer on every state change of Home Assistant (ha-form re-rendered every field each time).
 
 ### Maintenance
 - `package.json` carries the integration's version again (it was left at 1.2.0).
+- Tests for the weekly bedtime / school time entities (value, unavailable without a slot, setting a start or an end).
+- CI: pip downloads are cached; the branch cleanup recognises the commits of the `juju35-screenshots` app.
 
 ## 1.2.1 - 2026-11-18
 
