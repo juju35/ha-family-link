@@ -11,22 +11,22 @@
         }
       },
       "screen_time": {
-        "default": "mdi:cellphone-clock"
+        "default": "mdi:progress-clock"
       },
       "device_screen_time": {
-        "default": "mdi:cellphone-clock"
+        "default": "mdi:progress-clock"
       },
       "remaining_time": {
         "default": "mdi:timer-sand"
       },
       "blocked_apps": {
-        "default": "mdi:application-off"
+        "default": "mdi:block-helper"
       },
       "limited_apps": {
         "default": "mdi:application-cog"
       },
       "always_allowed_apps": {
-        "default": "mdi:application-check"
+        "default": "mdi:check-circle-outline"
       },
       "daily_limit": {
         "default": "mdi:timer-outline"
