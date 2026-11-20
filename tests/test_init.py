@@ -246,6 +246,24 @@ async def test_emergency_rings_and_notifies(hass: HomeAssistant, aioclient_mock)
         )
 
 
+async def test_emergency_refuses_a_service_outside_notify(hass: HomeAssistant, aioclient_mock) -> None:
+    called = []
+
+    async def other(call):
+        called.append(call.data)
+
+    hass.services.async_register("script", "anything", other)
+    await setup(hass, aioclient_mock)
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN,
+            "emergency",
+            {"child": "Alex", "device": "Pixel 8", "message": "Hi", "ring": False, "notify_service": "script.anything"},
+            blocking=True,
+        )
+    assert not called
+
+
 async def test_diagnostics_redact(hass: HomeAssistant, aioclient_mock) -> None:
     entry = await setup(hass, aioclient_mock)
     diag = await async_get_config_entry_diagnostics(hass, entry)
