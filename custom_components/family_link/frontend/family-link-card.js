@@ -4052,7 +4052,11 @@ class FamilyLinkCardEditor extends HTMLElement {
       this._form.computeLabel = (field) => t[field.name] || field.name;
     }
     this._form.hass = this._hass;
-    this._form.data = Object.assign({}, FL_DEFAULTS, this._config);
+    // A new data object re-renders the whole form: handed over only when the config changed, not on every state change
+    if (this._dataFor !== this._config) {
+      this._dataFor = this._config;
+      this._form.data = Object.assign({}, FL_DEFAULTS, this._config);
+    }
   }
 
   _valueChanged(ev) {
