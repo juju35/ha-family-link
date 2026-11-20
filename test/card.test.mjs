@@ -134,6 +134,40 @@ test('mini card starts compact and switches to the full card', () => {
   assert.ok(mini.getCardSize() > 2);
 });
 
+test('a tap elsewhere (pointer press and release outside) folds the mini card and closes a popup, iOS included', () => {
+  const mini = new FamilyLinkMiniCard();
+  mini.setConfig({});
+  mini._render = () => {};
+  const outside = { composedPath: () => [{ tagName: 'DIV' }], detail: 1 };
+  const inside = { composedPath: () => [mini], detail: 1 };
+  const dialog = { composedPath: () => [{ tagName: 'HA-MORE-INFO-DIALOG' }], detail: 1 };
+  mini._setZoom(true);
+  mini._onOutsideMini.tap(inside);
+  assert.equal(mini._zoomed, true);
+  mini._onOutsideMini.tap(dialog);
+  assert.equal(mini._zoomed, true);
+  mini._onOutsideMini.tap(outside);
+  assert.equal(mini._zoomed, false);
+
+  const card = new FamilyLinkCard();
+  card.setConfig({});
+  card._render = () => {};
+  card.connectedCallback();
+  let closed = 0;
+  card._closePopup = () => {
+    closed++;
+    card._popup = null;
+  };
+  card._onOutside.tap(outside);
+  assert.equal(closed, 0, 'no popup open: nothing to close');
+  card._popup = { type: 'location' };
+  card._onOutside.tap({ composedPath: () => [card], detail: 1 });
+  assert.equal(closed, 0);
+  card._onOutside.tap(outside);
+  assert.equal(closed, 1);
+  card.disconnectedCallback();
+});
+
 test('next restriction', () => {
   const card = new FamilyLinkCard();
   card.setConfig({});
@@ -154,6 +188,10 @@ test('editor schema lists the devices of the child', () => {
     plain(deviceField.selector.select.options.map((o) => o.value)),
     ['', 'p'],
   );
+  // The entity picker offers the children's status sensors only, when they are known.
+  assert.deepEqual(plain(schema[0].selector.entity), { filter: { domain: 'sensor', integration: 'family_link' } });
+  const picked = flEditorSchema(en.editor, [], ['sensor.alex_status', 'sensor.sam_status']);
+  assert.deepEqual(plain(picked[0].selector.entity), { include_entities: ['sensor.alex_status', 'sensor.sam_status'] });
 });
 
 test('emergency without a picked device rings every device of the child', () => {

@@ -187,3 +187,29 @@ async def test_schedule_writes_are_retried(hass: HomeAssistant, aioclient_mock) 
     with pytest.raises(TransientError):
         await client(hass).set_daily_limit_enabled(data.CHILD, True)
     assert aioclient_mock.call_count == 3
+
+
+async def test_time_entities(hass: HomeAssistant, aioclient_mock) -> None:
+    """Enabled time entities show the first start / last end of the day, set one edge, and are off without slots."""
+    entry = await setup(hass, aioclient_mock)
+    registry = er.async_get(hass)
+    ids = ("time.alex_bedtime_start_friday", "time.alex_bedtime_end_friday", "time.alex_school_time_start_saturday")
+    for entity_id in ids:
+        registry.async_update_entity(entity_id, disabled_by=None)
+    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    start, end, saturday = (hass.states.get(entity_id) for entity_id in ids)
+    assert start.state == "21:00:00"
+    assert end.state == "07:00:00"
+    # No school slot on Saturday: unavailable rather than a made-up time
+    assert saturday.state == "unavailable"
+    await hass.services.async_call("time", "set_value", {"entity_id": ids[0], "time": "21:30:00"}, blocking=True)
+    assert bodies(aioclient_mock, "timeLimit:update")[-1][2] == [
+        [None, None, None, [["CAEQBQ", [21, 30], [7, 0]]], None, None],
+        None,
+        None,
+        None,
+        [],
+    ]
+    await hass.services.async_call("time", "set_value", {"entity_id": ids[1], "time": "06:45:00"}, blocking=True)
+    assert bodies(aioclient_mock, "timeLimit:update")[-1][2][0][3][0][2] == [6, 45]

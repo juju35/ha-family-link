@@ -348,7 +348,8 @@ async def _notify(hass: HomeAssistant, service: str, message: str) -> None:
     domain, _, name = service.partition(".")
     if not name:
         domain, name = "notify", domain
-    if not hass.services.has_service(domain, name):
+    # A notify service only: the option and the action must not reach any other service of Home Assistant
+    if domain != "notify" or not hass.services.has_service(domain, name):
         raise ServiceValidationError(
             translation_domain=DOMAIN, translation_key="unknown_notify", translation_placeholders={"service": service}
         )
