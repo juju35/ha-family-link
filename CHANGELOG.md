@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.3 - 2026-11-21
+
+### Fixes
+- A session bound to its browser (Device Bound Session Credentials: Chrome and Edge on Windows) is now recognized: when Google refuses both the session and its cookie rotation, the *sign in again* notification and a warning in the log explain it and point to a Firefox private window; the diagnostics show the last rotation's HTTP status (#12).
+- Setup: the sign-in steps (form and README) recommend a Firefox private window, closed without signing out, instead of a browser profile kept open (#12).
+
 ## 1.2.2 - 2026-11-20
 
 ### Fixes

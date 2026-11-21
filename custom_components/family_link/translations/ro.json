@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link nu are un API oficial: integrarea folosește sesiunea dvs. Google, ca aplicația web familylink.google.com.\n\n1. Pe un computer, conectați-vă la {url} cu contul de **părinte**.\n2. Exportați cookie-urile acelei pagini, de exemplu cu extensia Cookie-Editor (Export → JSON), sau copiați antetul de cerere `Cookie` din instrumentele pentru dezvoltatori ale browserului (fila Rețea, orice cerere către kidsmanagement-pa.clients6.google.com).\n3. Lipiți-le mai jos.\n\nCookie-urile rămân în Home Assistant; integrarea le menține actualizate singură.",
+        "description": "Family Link nu are un API oficial: integrarea folosește sesiunea dvs. Google, ca aplicația web familylink.google.com.\n\n1. Pe un computer, conectați-vă la {url} cu contul de **părinte**.\n2. Exportați cookie-urile acelei pagini, de exemplu cu extensia Cookie-Editor (Export → JSON), sau copiați antetul de cerere `Cookie` din instrumentele pentru dezvoltatori ale browserului (fila Rețea, orice cerere către kidsmanagement-pa.clients6.google.com).\n3. Lipiți-le mai jos.\n\nChrome și Edge pe Windows leagă sesiunea de computer, iar cookie-urile exportate nu mai funcționează după câteva minute: conectați-vă dintr-o **fereastră privată Firefox**, exportați acolo cookie-urile, apoi închideți fereastra fără să vă deconectați.\n\nCookie-urile rămân în Home Assistant; integrarea le menține actualizate singură.",
         "data": {
           "cookies": "Cookie-uri"
         },

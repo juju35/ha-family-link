@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link non ha un’API ufficiale: l’integrazione usa la tua sessione Google, come l’app web familylink.google.com.\n\n1. Su un computer, accedi a {url} con il tuo account **genitore**.\n2. Esporta i cookie di quella pagina, ad esempio con l’estensione Cookie-Editor (Export → JSON), oppure copia l’intestazione di richiesta `Cookie` dagli strumenti per sviluppatori del browser (scheda Rete, una richiesta qualsiasi a kidsmanagement-pa.clients6.google.com).\n3. Incollali qui sotto.\n\nI cookie restano in Home Assistant; l’integrazione li mantiene aggiornati da sola.",
+        "description": "Family Link non ha un’API ufficiale: l’integrazione usa la tua sessione Google, come l’app web familylink.google.com.\n\n1. Su un computer, accedi a {url} con il tuo account **genitore**.\n2. Esporta i cookie di quella pagina, ad esempio con l’estensione Cookie-Editor (Export → JSON), oppure copia l’intestazione di richiesta `Cookie` dagli strumenti per sviluppatori del browser (scheda Rete, una richiesta qualsiasi a kidsmanagement-pa.clients6.google.com).\n3. Incollali qui sotto.\n\nChrome ed Edge su Windows legano la sessione al computer e i cookie esportati smettono di funzionare in pochi minuti: accedi da una **finestra anonima di Firefox**, esporta lì i cookie, poi chiudi la finestra senza disconnetterti.\n\nI cookie restano in Home Assistant; l’integrazione li mantiene aggiornati da sola.",
         "data": {
           "cookies": "Cookie"
         },
