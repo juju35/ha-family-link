@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link nima uradnega API-ja: integracija uporablja vašo sejo Google, tako kot spletna aplikacija familylink.google.com.\n\n1. Na računalniku se prijavite na {url} s **starševskim** računom.\n2. Izvozite piškotke te strani, na primer z razširitvijo Cookie-Editor (Export → JSON), ali kopirajte glavo zahteve `Cookie` iz razvijalskih orodij brskalnika (zavihek Omrežje, katera koli zahteva na kidsmanagement-pa.clients6.google.com).\n3. Prilepite jih spodaj.\n\nPiškotki ostanejo v Home Assistantu; integracija jih sama posodablja.",
+        "description": "Family Link nima uradnega API-ja: integracija uporablja vašo sejo Google, tako kot spletna aplikacija familylink.google.com.\n\n1. Na računalniku se prijavite na {url} s **starševskim** računom.\n2. Izvozite piškotke te strani, na primer z razširitvijo Cookie-Editor (Export → JSON), ali kopirajte glavo zahteve `Cookie` iz razvijalskih orodij brskalnika (zavihek Omrežje, katera koli zahteva na kidsmanagement-pa.clients6.google.com).\n3. Prilepite jih spodaj.\n\nChrome in Edge v sistemu Windows vežeta sejo na računalnik, zato izvoženi piškotki v nekaj minutah prenehajo delovati: prijavite se iz **zasebnega okna Firefoxa**, tam izvozite piškotke in nato zaprite okno brez odjave.\n\nPiškotki ostanejo v Home Assistantu; integracija jih sama posodablja.",
         "data": {
           "cookies": "Piškotki"
         },

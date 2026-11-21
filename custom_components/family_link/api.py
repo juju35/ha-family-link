@@ -80,7 +80,16 @@ class FamilyLinkError(Exception):
 
 
 class AuthError(FamilyLinkError):
-    """The Google session is no longer accepted: a new sign-in is needed."""
+    """The Google session is no longer accepted: a new sign-in is needed.
+
+    ``rotation_refused``: Google also refused to rotate the cookies (HTTP 401/403 from RotateCookies), the sign of a
+    session bound to the browser that created it (Device Bound Session Credentials, Chrome / Edge on Windows): its
+    short-lived cookies can only be renewed by that browser, so exported cookies stop working within minutes.
+    """
+
+    def __init__(self, message: str, rotation_refused: bool = False) -> None:
+        super().__init__(message)
+        self.rotation_refused = rotation_refused
 
 
 class TransientError(FamilyLinkError):
@@ -120,6 +129,8 @@ class FamilyLinkClient:
         self._on_cookies_changed = on_cookies_changed
         self._rotate_lock = asyncio.Lock()
         self.last_rotation: datetime | None = None
+        # HTTP status of the last RotateCookies answer (None: not tried yet, or no answer)
+        self.last_rotation_status: int | None = None
 
     def set_cookie_listener(self, listener: Callable[[GoogleCookies], None]) -> None:
         """Called with the cookies whenever Google rotated some of them (to save them)."""
@@ -176,7 +187,11 @@ class FamilyLinkClient:
                             auth_retry_done = True
                             await self.rotate_cookies(force=True)
                             continue
-                        raise AuthError(f"HTTP {status}")
+                        refused = self.rotation_refused
+                        raise AuthError(
+                            f"HTTP {status}" + (" (cookie rotation refused too)" if refused else ""),
+                            rotation_refused=refused,
+                        )
                     if status == 429 or status >= 500:
                         retry_after = _retry_after(response.headers.get("Retry-After"))
                         raise _Retry(f"HTTP {status}", status, retry_after)
@@ -224,14 +239,21 @@ class FamilyLinkClient:
                     },
                     timeout=TIMEOUT,
                 ) as response:
+                    self.last_rotation_status = response.status
                     changed = bool(response.cookies) and self.cookies.merge_set_cookies(response.cookies.items())
                     _LOGGER.debug("Cookie rotation: HTTP %s, changed: %s", response.status, changed)
             except (TimeoutError, aiohttp.ClientError) as err:
+                self.last_rotation_status = None
                 _LOGGER.debug("Cookie rotation failed: %s", err)
                 return False
             if changed and self._on_cookies_changed:
                 self._on_cookies_changed(self.cookies)
             return changed
+
+    @property
+    def rotation_refused(self) -> bool:
+        """Google refused the last cookie rotation: the session can't be renewed outside its browser."""
+        return self.last_rotation_status in (401, 403)
 
     # ── Reads ───────────────────────────────────────────────────────────────
 

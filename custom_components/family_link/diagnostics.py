@@ -49,6 +49,7 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: FamilyL
             "fingerprint": client.cookies.fingerprint(),
             "can_sign": client.cookies.can_sign,
             "last_rotation": client.last_rotation.isoformat() if client.last_rotation else None,
+            "last_rotation_status": client.last_rotation_status,
         },
         "last_update_success": coordinator.last_update_success,
         "children": children,

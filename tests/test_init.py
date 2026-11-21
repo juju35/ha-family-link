@@ -158,6 +158,21 @@ async def test_reauth_after_two_refusals(hass: HomeAssistant, aioclient_mock) ->
     assert f"family_link_reauth_{entry.entry_id}" not in hass.data.get("persistent_notification", {})
 
 
+async def test_reauth_notification_explains_a_bound_session(hass: HomeAssistant, aioclient_mock) -> None:
+    entry = await setup(hass, aioclient_mock)
+    coordinator = entry.runtime_data
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(f"{data.BASE}/people/{data.CHILD}/appsandusage", status=401)
+    aioclient_mock.get(f"{data.BASE}/people/{data.CHILD}/appliedTimeLimits", status=401)
+    aioclient_mock.get(f"{data.BASE}/families/mine/location/{data.CHILD}", status=401)
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", status=401, text="")
+    await coordinator.async_refresh()
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    notification = hass.data["persistent_notification"][f"family_link_reauth_{entry.entry_id}"]
+    assert "Firefox private window" in notification["message"]
+
+
 async def test_setup_with_refused_session_starts_reauth(hass: HomeAssistant, aioclient_mock) -> None:
     aioclient_mock.get(f"{data.BASE}/families/mine/members", status=401)
     aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link nema zvanični API: integracija koristi vašu Google sesiju, kao veb aplikacija familylink.google.com.\n\n1. Na računaru se prijavite na {url} **roditeljskim** nalogom.\n2. Izvezite kolačiće te stranice, na primer proširenjem Cookie-Editor (Export → JSON), ili kopirajte zaglavlje zahteva `Cookie` iz alatki za programere pregledača (kartica Mreža, bilo koji zahtev ka kidsmanagement-pa.clients6.google.com).\n3. Nalepite ih ispod.\n\nKolačići ostaju u Home Assistant-u; integracija ih sama održava ažurnim.",
+        "description": "Family Link nema zvanični API: integracija koristi vašu Google sesiju, kao veb aplikacija familylink.google.com.\n\n1. Na računaru se prijavite na {url} **roditeljskim** nalogom.\n2. Izvezite kolačiće te stranice, na primer proširenjem Cookie-Editor (Export → JSON), ili kopirajte zaglavlje zahteva `Cookie` iz alatki za programere pregledača (kartica Mreža, bilo koji zahtev ka kidsmanagement-pa.clients6.google.com).\n3. Nalepite ih ispod.\n\nChrome i Edge na Windows-u vezuju sesiju za računar, pa izvezeni kolačići prestaju da rade za nekoliko minuta: prijavite se iz **privatnog prozora Firefox-a**, tamo izvezite kolačiće, zatim zatvorite prozor bez odjavljivanja.\n\nKolačići ostaju u Home Assistant-u; integracija ih sama održava ažurnim.",
         "data": {
           "cookies": "Kolačići"
         },

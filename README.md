@@ -86,7 +86,7 @@ Copy `custom_components/family_link/` to `/config/custom_components/family_link/
 
 **Settings → Devices & services → Add integration → Family Link**, then paste your cookies:
 
-1. On a computer, sign in to [familylink.google.com](https://familylink.google.com) with the **parent** account.
+1. On a computer, open a **Firefox private window** and sign in to [familylink.google.com](https://familylink.google.com) with the **parent** account (see [Which browser](#which-browser) below).
 2. Export the cookies of the page, either:
    - with a cookie extension such as **Cookie-Editor**: *Export → JSON*;
    - or from the developer tools (F12): **Network** tab, reload, select any request to `kidsmanagement-pa.clients6.google.com`, copy the **`Cookie`** request header.
@@ -94,7 +94,14 @@ Copy `custom_components/family_link/` to `/config/custom_components/family_link/
 
 One entry per parent account. Every supervised child of the family is added, with their devices; children and devices added later in Family Link appear on their own.
 
-Tip: export the cookies from a browser profile you keep signed in, and don't sign out of that session (signing out revokes the cookies).
+#### Which browser
+
+**Chrome and Edge on Windows** (version 146 and later) bind the Google session to the computer they run on ([Device Bound Session Credentials](https://developer.chrome.com/docs/web-platform/device-bound-session-credentials)): its short-lived cookies can only be renewed by that browser, so cookies exported from it stop working within minutes — Home Assistant then reports *Family Link: sign in again* with `HTTP 401` in the log. Use **Firefox**, in a **private window**:
+
+1. open a private window, sign in to familylink.google.com, export the cookies;
+2. close the private window **without signing out** — signing out revokes the cookies, and a window left open would keep renewing the same cookies in parallel with Home Assistant.
+
+The integration then keeps the session alive by itself. When the session is refused and Google also refuses to renew its cookies, the notification and the log say so.
 
 ### Options
 

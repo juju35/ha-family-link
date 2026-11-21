@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "A Family Linknek nincs hivatalos API-ja: az integráció az Ön Google-munkamenetét használja, ahogy a familylink.google.com webalkalmazás is.\n\n1. Számítógépen jelentkezzen be ide: {url} a **szülői** fiókjával.\n2. Exportálja az oldal sütijeit, például a Cookie-Editor bővítménnyel (Export → JSON), vagy másolja ki a `Cookie` kérésfejlécet a böngésző fejlesztői eszközeiből (Hálózat lap, bármely kérés a kidsmanagement-pa.clients6.google.com felé).\n3. Illessze be őket alább.\n\nA sütik a Home Assistantben maradnak; az integráció maga tartja őket naprakészen.",
+        "description": "A Family Linknek nincs hivatalos API-ja: az integráció az Ön Google-munkamenetét használja, ahogy a familylink.google.com webalkalmazás is.\n\n1. Számítógépen jelentkezzen be ide: {url} a **szülői** fiókjával.\n2. Exportálja az oldal sütijeit, például a Cookie-Editor bővítménnyel (Export → JSON), vagy másolja ki a `Cookie` kérésfejlécet a böngésző fejlesztői eszközeiből (Hálózat lap, bármely kérés a kidsmanagement-pa.clients6.google.com felé).\n3. Illessze be őket alább.\n\nA Windowson futó Chrome és Edge a géphez köti a munkamenetet, így az exportált sütik néhány percen belül használhatatlanná válnak: jelentkezzen be egy **privát Firefox-ablakból**, ott exportálja a sütiket, majd zárja be az ablakot kijelentkezés nélkül.\n\nA sütik a Home Assistantben maradnak; az integráció maga tartja őket naprakészen.",
         "data": {
           "cookies": "Sütik"
         },

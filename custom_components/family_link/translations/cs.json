@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link nemá oficiální API: integrace používá vaši relaci Google, stejně jako webová aplikace familylink.google.com.\n\n1. Na počítači se přihlaste na {url} **rodičovským** účtem.\n2. Exportujte soubory cookie této stránky, například rozšířením Cookie-Editor (Export → JSON), nebo zkopírujte hlavičku požadavku `Cookie` z vývojářských nástrojů prohlížeče (karta Síť, libovolný požadavek na kidsmanagement-pa.clients6.google.com).\n3. Vložte je níže.\n\nSoubory cookie zůstávají v Home Assistantu; integrace je sama udržuje aktuální.",
+        "description": "Family Link nemá oficiální API: integrace používá vaši relaci Google, stejně jako webová aplikace familylink.google.com.\n\n1. Na počítači se přihlaste na {url} **rodičovským** účtem.\n2. Exportujte soubory cookie této stránky, například rozšířením Cookie-Editor (Export → JSON), nebo zkopírujte hlavičku požadavku `Cookie` z vývojářských nástrojů prohlížeče (karta Síť, libovolný požadavek na kidsmanagement-pa.clients6.google.com).\n3. Vložte je níže.\n\nChrome a Edge ve Windows vážou relaci k počítači a exportované soubory cookie pak během několika minut přestanou fungovat: přihlaste se z **anonymního okna Firefoxu**, exportujte tam soubory cookie a pak okno zavřete bez odhlášení.\n\nSoubory cookie zůstávají v Home Assistantu; integrace je sama udržuje aktuální.",
         "data": {
           "cookies": "Soubory cookie"
         },

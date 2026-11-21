@@ -247,24 +247,38 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
 
     def _auth_failed(self, data: FamilyLinkData, err: Exception) -> FamilyLinkData:
         self._auth_failures += 1
+        bound = isinstance(err, AuthError) and err.rotation_refused
         if self._auth_failures < AUTH_FAILURES_BEFORE_REAUTH and data.children:
             _LOGGER.debug("Google refused the session (%s), trying again at the next update", err)
             for child in data.children.values():
                 child.errors["auth"] = str(err)
             return data
-        self._create_reauth_notification()
+        if bound:
+            _LOGGER.warning(
+                "Google refused both the session and its cookie rotation: the session is bound to the browser it was "
+                "created in (Chrome or Edge on Windows). Export the cookies from a Firefox private window instead, "
+                "then close that window without signing out — see the README"
+            )
+        self._create_reauth_notification(bound)
         raise ConfigEntryAuthFailed(str(err)) from err
 
     # ── Re-authentication notification ──────────────────────────────────────
 
-    def _create_reauth_notification(self) -> None:
+    def _create_reauth_notification(self, bound: bool = False) -> None:
+        message = (
+            "Google no longer accepts the Family Link session. Open **Settings → Devices & services → "
+            "Family Link** and select **Reconfigure** to paste fresh cookies from familylink.google.com. "
+            "Cached data stays on the dashboards meanwhile."
+        )
+        if bound:
+            message += (
+                "\n\nGoogle also refused to renew the cookies: the session is bound to the browser it was created in "
+                "(Chrome or Edge on Windows), so exported cookies stop working within minutes. Sign in from a "
+                "**Firefox private window**, export the cookies there, then close the window without signing out."
+            )
         persistent_notification.async_create(
             self.hass,
-            (
-                "Google no longer accepts the Family Link session. Open **Settings → Devices & services → "
-                "Family Link** and select **Reconfigure** to paste fresh cookies from familylink.google.com. "
-                "Cached data stays on the dashboards meanwhile."
-            ),
+            message,
             title="Family Link: sign in again",
             notification_id=REAUTH_NOTIFICATION_ID.format(entry_id=self.config_entry.entry_id),
         )

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link har ingen officiel API: integrationen bruger din Google-session, ligesom webappen familylink.google.com.\n\n1. Log ind på {url} på en computer med din **forælder**-konto.\n2. Eksportér sidens cookies, for eksempel med udvidelsen Cookie-Editor (Export → JSON), eller kopiér request-headeren `Cookie` fra browserens udviklerværktøjer (fanen Netværk, en vilkårlig forespørgsel til kidsmanagement-pa.clients6.google.com).\n3. Indsæt dem herunder.\n\nCookies bliver i Home Assistant; integrationen holder dem selv opdaterede.",
+        "description": "Family Link har ingen officiel API: integrationen bruger din Google-session, ligesom webappen familylink.google.com.\n\n1. Log ind på {url} på en computer med din **forælder**-konto.\n2. Eksportér sidens cookies, for eksempel med udvidelsen Cookie-Editor (Export → JSON), eller kopiér request-headeren `Cookie` fra browserens udviklerværktøjer (fanen Netværk, en vilkårlig forespørgsel til kidsmanagement-pa.clients6.google.com).\n3. Indsæt dem herunder.\n\nChrome og Edge på Windows binder sessionen til computeren, og eksporterede cookies holder så op med at virke inden for få minutter: Log ind fra et **privat Firefox-vindue**, eksportér cookies der, og luk derefter vinduet uden at logge ud.\n\nCookies bliver i Home Assistant; integrationen holder dem selv opdaterede.",
         "data": {
           "cookies": "Cookies"
         },

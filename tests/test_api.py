@@ -71,6 +71,25 @@ async def test_401_rotates_then_reports_auth(hass: HomeAssistant, aioclient_mock
     assert sum("members" in u for u in urls) == 2
 
 
+async def test_401_with_rotation_refused_flags_bound_session(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=401)
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", status=401, text="")
+    c = client(hass)
+    with pytest.raises(AuthError) as err:
+        await c.get_members()
+    assert err.value.rotation_refused is True
+    assert c.last_rotation_status == 401
+    assert "rotation refused" in str(err.value)
+
+
+async def test_401_with_rotation_accepted_is_not_bound(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.get(f"{data.BASE}/families/mine/members", status=401)
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    with pytest.raises(AuthError) as err:
+        await client(hass).get_members()
+    assert err.value.rotation_refused is False
+
+
 async def test_403_forbidden_action_is_not_auth(hass: HomeAssistant, aioclient_mock) -> None:
     aioclient_mock.post(
         f"{data.BASE}/people/{data.CHILD}/devices/{data.PHONE}:executeRemoteAction",

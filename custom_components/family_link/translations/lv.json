@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Family Link",
-        "description": "Family Link nav oficiāla API: integrācija izmanto jūsu Google sesiju, tāpat kā tīmekļa lietotne familylink.google.com.\n\n1. Datorā pierakstieties {url} ar **vecāka** kontu.\n2. Eksportējiet šīs lapas sīkfailus, piemēram, ar paplašinājumu Cookie-Editor (Export → JSON), vai nokopējiet pieprasījuma galveni `Cookie` no pārlūka izstrādātāja rīkiem (cilne Tīkls, jebkurš pieprasījums uz kidsmanagement-pa.clients6.google.com).\n3. Ielīmējiet tos zemāk.\n\nSīkfaili paliek Home Assistant; integrācija pati tos uztur aktuālus.",
+        "description": "Family Link nav oficiāla API: integrācija izmanto jūsu Google sesiju, tāpat kā tīmekļa lietotne familylink.google.com.\n\n1. Datorā pierakstieties {url} ar **vecāka** kontu.\n2. Eksportējiet šīs lapas sīkfailus, piemēram, ar paplašinājumu Cookie-Editor (Export → JSON), vai nokopējiet pieprasījuma galveni `Cookie` no pārlūka izstrādātāja rīkiem (cilne Tīkls, jebkurš pieprasījums uz kidsmanagement-pa.clients6.google.com).\n3. Ielīmējiet tos zemāk.\n\nChrome un Edge operētājsistēmā Windows piesaista sesiju datoram, un eksportētās sīkdatnes pēc dažām minūtēm pārstāj darboties: piesakieties no **Firefox privātā loga**, tur eksportējiet sīkdatnes un pēc tam aizveriet logu, neizrakstoties.\n\nSīkfaili paliek Home Assistant; integrācija pati tos uztur aktuālus.",
         "data": {
           "cookies": "Sīkfaili"
         },
