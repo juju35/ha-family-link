@@ -1,4 +1,4 @@
-var FAMILY_LINK_CARD_VERSION = '1.2.3';
+var FAMILY_LINK_CARD_VERSION = '1.2.4';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var FamilyLinkI18n = {
@@ -4124,7 +4124,7 @@ if (!customElements.get('family-link-card')) {
     type: 'family-link-card',
     name: 'Family Link',
     description: 'Your child’s phone or tablet: screen time, top apps, bonus, lock, ring, location route and emergency.',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-family-link',
   });
 }
@@ -4135,7 +4135,7 @@ if (!customElements.get('family-link-mini-card')) {
     type: 'family-link-mini-card',
     name: 'Family Link (mini)',
     description: 'Compact view of a child’s devices, with a button to open the full card.',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-family-link',
   });
 }
