@@ -1,10 +1,11 @@
 // Unit tests for the card logic: the card file is evaluated with stubs, no browser needed.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
+// The frontend files as scripts/build-frontend.mjs assembles them from their ES modules in src/.
+import { bundle } from '../scripts/bundle.mjs';
 
-const source = readFileSync(new URL('../custom_components/family_link/frontend/family-link-card.js', import.meta.url), 'utf8');
+const source = bundle('src/family-link-card/index.js');
 const defined = {};
 const context = {
   HTMLElement: class {

@@ -19,6 +19,7 @@
 ## Before opening a PR — run the checks locally
 CI mirrors these; running them first avoids round-trips:
 ```sh
+npm install && npm run build:frontend
 pre-commit run -a
 vulture custom_components .vulture_whitelist.py --min-confidence 60
 npx --yes jscpd@5.4.2 .
@@ -38,7 +39,7 @@ This is an **INTEGRATION (with a card)** repo. A bump is complete only when **ev
 carries the new version, updated together in one commit:
 1. `CHANGELOG.md` → add a "## X.Y.Z - YYYY-MM-DD" section at the top (`### Features` | `Fixes` | `Performance` | `Maintenance`).
 2. `custom_components/family_link/manifest.json` → `"version": "X.Y.Z"`.
-3. `custom_components/family_link/frontend/family-link-card.js` → `FAMILY_LINK_CARD_VERSION = 'X.Y.Z'`.
+3. `src/family-link-card/card-picker.js` → `FAMILY_LINK_CARD_VERSION = 'X.Y.Z'`.
 - Bump rule: `fix` → patch, `feat` → minor, breaking change → major.
 - The PR/commit title carries the version in parentheses, e.g. `feat: new option (X.Y.Z)`.
 
@@ -56,6 +57,14 @@ carries the new version, updated together in one commit:
 
 ## Supported integrations
 This is a **standalone integration** (its own integration, with its own card) — it talks to its device/service directly, not on top of other Home Assistant integrations — so it has **no** `## Supported integrations` section (that section is only for cards/integrations that sit on top of others). If it does build on external integrations, add the section (title verbatim).
+
+## Source layout
+- The big frontend files are written as ES modules in `src/family-link-card/` (entry `index.js`, translations one file per
+  language in `i18n/` where the file has a table). `scripts/build-frontend.mjs` assembles each into
+  `custom_components/family_link/frontend/<stem>.js` (scripts/bundle.mjs, needs acorn: `npm install`); those files are build output,
+  git-ignored and **not committed** — build before pytest, the screenshots or `scripts/split-frontend.mjs`.
+- The modules share one scope once assembled (a classic script): keep top-level names unique across them. A new module
+  must be listed in its `index.js`, in load order.
 
 ## Translations
 - English is the source. Keep every language in sync when a user-facing string changes.
