@@ -10,6 +10,7 @@ import argparse
 import asyncio
 import io
 import json
+import subprocess
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -17,6 +18,8 @@ from PIL import Image, ImageChops
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
+# The frontend files are assembled from their ES modules in src/ (build output, not committed).
+subprocess.run(["node", "scripts/build-frontend.mjs"], cwd=ROOT, check=True)
 CARD = ROOT / "custom_components" / "family_link" / "frontend" / "family-link-card.js"
 NOW = datetime(2026, 11, 14, 17, 44, tzinfo=UTC)
 

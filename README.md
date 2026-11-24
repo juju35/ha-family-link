@@ -389,10 +389,13 @@ Locations are last known positions: the device is only asked for a new fix by **
 
 ## Development
 
+The big frontend files are written as ES modules in `src/family-link-card/` (entry `index.js`, translations one file per language in `i18n/`). `scripts/build-frontend.mjs` assembles them into `family-link-card.js` in `custom_components/family_link/frontend/`, which are not committed: build them before running Home Assistant, the tests or the screenshots. The modules share one scope once assembled, so top-level names stay unique; a new module must be listed in its `index.js`.
+
 ```bash
+npm install && npm run build:frontend  # assembles the frontend files from src/
 pip install -r requirements_test.txt && pytest
 npm install && npm test          # card tests (node --test)
-npm run build                    # checks the translation split the release makes
+npm run build                    # assembles the frontend, then checks the translation split the release makes
 pip install playwright pillow && playwright install chromium
 python scripts/screenshots.py    # renders the stills and every animation GIF into screenshots/
 ```
@@ -401,7 +404,7 @@ Python tests live in `tests/` (pytest, every API answer mocked: no network neede
 
 ### Releasing
 
-1. Bump the version in `custom_components/family_link/manifest.json`, `FAMILY_LINK_CARD_VERSION` in the card and `package.json`
+1. Bump the version in `custom_components/family_link/manifest.json`, `FAMILY_LINK_CARD_VERSION` in `src/family-link-card/card-picker.js` and `package.json`
 2. Add a `## <version>` section at the top of [CHANGELOG.md](https://github.com/juju35/ha-family-link/blob/main/CHANGELOG.md)
 3. Merge to `main`: the **Release** workflow creates the tag and the GitHub release with the changelog section as notes
 

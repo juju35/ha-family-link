@@ -1,11 +1,12 @@
 {
   "name": "ha-family-link",
-  "version": "1.2.2",
+  "version": "1.2.6",
   "description": "Home Assistant integration and animated Lovelace cards for Google Family Link: screen time, device lock, time bonus, apps, location route and emergency.",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/split-frontend.mjs --check",
+    "build": "node scripts/build-frontend.mjs && node scripts/split-frontend.mjs --check",
+    "build:frontend": "node scripts/build-frontend.mjs",
     "split": "node scripts/split-frontend.mjs",
     "test": "node --test test/*.test.mjs"
   },

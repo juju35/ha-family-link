@@ -7,3 +7,5 @@ report/
 node_modules/
 dist/
 *.i18n.*.js
+# Assembled from their ES modules in src/ by scripts/build-frontend.mjs (build output, not committed)
+custom_components/family_link/frontend/family-link-card.js
