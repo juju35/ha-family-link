@@ -33,6 +33,7 @@ from .const import (
     CONF_COOKIES,
     CONF_LOCATION_INTERVAL,
     CONF_SCAN_INTERVAL,
+    CONF_SESSION,
     CONF_STALE_AFTER,
     DEFAULT_LOCATION_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
@@ -165,9 +166,10 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         def save(_now: datetime) -> None:
             self._save_cookies_unsub = None
             entry = self.config_entry
-            if entry.data.get(CONF_COOKIES) != cookies.to_storage():
+            session = self.client.session_storage()
+            if entry.data.get(CONF_COOKIES) != cookies.to_storage() or entry.data.get(CONF_SESSION) != session:
                 self.hass.config_entries.async_update_entry(
-                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage()}
+                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage(), CONF_SESSION: session}
                 )
 
         self._save_cookies_unsub = async_call_later(self.hass, SAVE_COOKIES_DELAY, save)
@@ -270,6 +272,7 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
             for child in data.children.values():
                 child.errors["auth"] = str(err)
             return data
+        _LOGGER.warning("Google ended the session (%s): %s", err, self.client.session_summary())
         if bound:
             _LOGGER.warning(
                 "Google refused both the session and its cookie rotation: the session is bound to the browser it was "

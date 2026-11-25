@@ -11,6 +11,8 @@ NAME: Final = "Family Link"
 # Config entry data / options
 CONF_COOKIES: Final = "cookies"  # list of {"name", "value", "domain"} kept up to date by the rotation
 CONF_ACCOUNT: Final = "account"  # parent account e-mail, the unique id of the entry
+# {"started": ISO, "renewed": ISO}: when the cookies were pasted, when Google last renewed __Secure-*PSIDTS
+CONF_SESSION: Final = "session"
 CONF_SCAN_INTERVAL: Final = "scan_interval"
 CONF_LOCATION_INTERVAL: Final = "location_interval"
 CONF_STALE_AFTER: Final = "stale_after"

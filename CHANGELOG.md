@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.8 - 2026-11-25
+
+### Fixes
+- An ending Google session is now visible before it fails. When Google accepts three cookie rotations in a row without renewing the short-lived session cookies (`__Secure-*PSIDTS`), a warning in the log says the session will end soon and suggests pasting fresh cookies. When Google does end it, the log tells how long ago the cookies were pasted and when they were last renewed (#19).
+- Diagnostics: the session block shows when the cookies were pasted, when the short-lived cookies were last renewed and the number of rotations in a row without renewal. These dates are kept across restarts; for an entry set up before this version, the paste date is unknown until the next cookie paste.
+
 ## 1.2.7 - 2026-11-25
 
 ### Fixes
