@@ -4,7 +4,8 @@
   value (cached data), flagged stale, so a Google hiccup never blanks the dashboard. Entities only go unavailable
   when nothing was fetched successfully for longer than the "stale after" option.
 - The Google session refreshes itself: the client signs every request again, takes the cookies Google rotates in
-  its answers and calls RotateCookies on a schedule; refreshed cookies are saved in the config entry (debounced).
+  its answers and calls RotateCookies at start, then as often as Google asks (10 min); refreshed cookies are saved
+  in the config entry (debounced).
 - A session Google refuses twice in a row (after a rotation each time) starts the re-authentication flow and
   shows a persistent notification, dismissed by the next successful update.
 - Actions update the state optimistically, then refresh once Google has applied them.
@@ -22,7 +23,7 @@ from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.event import async_call_later, async_track_time_interval
+from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -42,7 +43,6 @@ from .const import (
     LOCATION_OLD_SECONDS,
     MEMBERS_INTERVAL,
     REAUTH_NOTIFICATION_ID,
-    ROTATE_COOKIES_INTERVAL,
     STATUS_ATTENTION,
     STATUS_LOCKED,
     STATUS_NOT_TRACKED,
@@ -116,27 +116,44 @@ class FamilyLinkCoordinator(DataUpdateCoordinator[FamilyLinkData]):
         self._last_full_success: datetime = dt_util.now()
         self._save_cookies_unsub: CALLBACK_TYPE | None = None
         self._confirm_unsub: CALLBACK_TYPE | None = None
-        self._unsubs: list[CALLBACK_TYPE] = []
+        self._rotate_unsub: CALLBACK_TYPE | None = None
+        self._stopped = False
         self.data = FamilyLinkData()
 
     # ── Lifecycle ───────────────────────────────────────────────────────────
 
     @callback
     def async_start_background(self) -> None:
-        """Rotate the session cookies on a schedule, as a browser left open does."""
+        """Rotate the session cookies on a schedule, as a browser left open does.
+
+        Once right away (the stored cookies may be hours old after a restart), then every time Google asks for in its
+        answer (identity.hfcr, 10 min today): a session not rotated within that window stops being renewed (#19).
+        """
+        self._stopped = False
+        self._schedule_rotation(0)
+
+    @callback
+    def _schedule_rotation(self, delay: float) -> None:
+        if self._rotate_unsub:
+            self._rotate_unsub()
 
         async def rotate(_now: datetime) -> None:
-            await self.client.rotate_cookies()
+            self._rotate_unsub = None
+            try:
+                await self.client.rotate_cookies()
+            finally:
+                if not self._stopped:
+                    self._schedule_rotation(self.client.rotation_interval)
 
-        self._unsubs.append(async_track_time_interval(self.hass, rotate, timedelta(seconds=ROTATE_COOKIES_INTERVAL)))
+        self._rotate_unsub = async_call_later(self.hass, delay, rotate)
 
     @callback
     def async_stop_background(self) -> None:
-        for unsub in (*self._unsubs, self._save_cookies_unsub, self._confirm_unsub):
+        self._stopped = True
+        for unsub in (self._rotate_unsub, self._save_cookies_unsub, self._confirm_unsub):
             if unsub:
                 unsub()
-        self._unsubs.clear()
-        self._save_cookies_unsub = self._confirm_unsub = None
+        self._rotate_unsub = self._save_cookies_unsub = self._confirm_unsub = None
 
     @callback
     def cookies_changed(self, cookies: GoogleCookies) -> None:

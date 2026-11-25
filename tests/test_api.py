@@ -181,3 +181,28 @@ async def test_own_session_without_cookie_jar(hass: HomeAssistant) -> None:
     with patch("custom_components.family_link.api.async_create_clientsession") as create:
         create_session(hass)
     assert isinstance(create.call_args.kwargs["cookie_jar"], aiohttp.DummyCookieJar)
+
+
+async def test_rotation_follows_the_interval_google_asks(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text=')]}\'\n[["identity.hfcr",900],["di",42]]')
+    c = client(hass)
+    assert c.rotation_interval == 600
+    await c.rotate_cookies(force=True)
+    assert c.rotation_interval == 900
+
+
+async def test_rotation_interval_bounds_and_default(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text='[["identity.hfcr",5]]')
+    c = client(hass)
+    await c.rotate_cookies(force=True)
+    assert c.rotation_interval == 60
+    aioclient_mock.clear_requests()
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text='[["identity.hfcr",999999]]')
+    c = client(hass)
+    await c.rotate_cookies(force=True)
+    assert c.rotation_interval == 3600
+    aioclient_mock.clear_requests()
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    c = client(hass)
+    await c.rotate_cookies(force=True)
+    assert c.rotation_interval == 600
