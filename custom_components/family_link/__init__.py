@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -17,11 +18,12 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.util import dt as dt_util
 
 from .api import AuthError, FamilyLinkClient, create_session
 from .auth import GoogleCookies
 from .config_flow import OPTIONS_FLOW_RELOADS
-from .const import CARD_FILENAME, CONF_COOKIES, DOMAIN, FRONTEND_URL, REAUTH_NOTIFICATION_ID
+from .const import CARD_FILENAME, CONF_COOKIES, CONF_SESSION, DOMAIN, FRONTEND_URL, REAUTH_NOTIFICATION_ID
 from .coordinator import FamilyLinkConfigEntry, FamilyLinkCoordinator
 from .school_mode import SchoolMode
 from .services import async_setup_services
@@ -56,7 +58,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: FamilyLinkConfigEntry) -
     if not cookies.can_sign:
         raise ConfigEntryAuthFailed("no Google session cookie saved")
     # Own session, closed with the entry: Google's cookies never land in Home Assistant's shared one
-    client = FamilyLinkClient(create_session(hass), cookies)
+    session = entry.data.get(CONF_SESSION) or {}
+    client = FamilyLinkClient(
+        create_session(hass),
+        cookies,
+        session_started=_parse_time(session.get("started")),
+        psidts_renewed=_parse_time(session.get("renewed")),
+    )
     coordinator = FamilyLinkCoordinator(hass, entry, client)
     try:
         await coordinator.async_config_entry_first_refresh()
@@ -201,3 +209,7 @@ def _lovelace_resources(lovelace: Any) -> tuple[Any, str]:
     return getattr(lovelace, "resources", None), getattr(
         lovelace, "resource_mode", getattr(lovelace, "mode", "storage")
     )
+
+
+def _parse_time(value: str | None) -> datetime | None:
+    return dt_util.parse_datetime(value) if value else None

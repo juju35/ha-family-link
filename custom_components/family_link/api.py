@@ -69,6 +69,10 @@ BACKOFF = (1.0, 3.0, 8.0)
 MAX_RETRY_AFTER = 30.0
 # A rotation this recent already gave fresh cookies to the requests that waited for it
 ROTATION_SHARED_SECONDS = 10
+# Short-lived session cookies: while Google renews them the session lives, once it stops the session ends soon
+PSIDTS_NAMES = ("__Secure-1PSIDTS", "__Secure-3PSIDTS")
+# Rotations in a row answered without a new *PSIDTS before warning that the session is ending
+EMPTY_ROTATIONS_WARNING = 3
 LOCATION_REFRESH = "2"
 LOCATION_CACHED = "1"
 RING_ACTION = 2
@@ -126,6 +130,9 @@ class FamilyLinkClient:
         session: aiohttp.ClientSession,
         cookies: GoogleCookies,
         on_cookies_changed: Callable[[GoogleCookies], None] | None = None,
+        *,
+        session_started: datetime | None = None,
+        psidts_renewed: datetime | None = None,
     ) -> None:
         self._session = session
         self.cookies = cookies
@@ -136,6 +143,11 @@ class FamilyLinkClient:
         self.last_rotation_status: int | None = None
         # Seconds until the next scheduled rotation, as Google asked in its last answer (identity.hfcr)
         self.rotation_interval: int = ROTATE_COOKIES_INTERVAL
+        # When the cookies were pasted (None: before this was recorded) and when Google last renewed *PSIDTS
+        self.session_started = session_started
+        self.psidts_renewed = psidts_renewed
+        # Rotations in a row Google accepted without renewing *PSIDTS: the session is no longer renewed
+        self.empty_rotations = 0
 
     def set_cookie_listener(self, listener: Callable[[GoogleCookies], None]) -> None:
         """Called with the cookies whenever Google rotated some of them (to save them)."""
@@ -155,9 +167,41 @@ class FamilyLinkClient:
             "Content-Type": content_type,
         }
 
+    def _psidts(self) -> tuple[str | None, ...]:
+        return tuple(self.cookies.values.get(name) for name in PSIDTS_NAMES)
+
+    def _note_renewal(self, before: tuple[str | None, ...]) -> bool:
+        """Record a renewal of the short-lived cookies; True when Google gave new ones."""
+        if self._psidts() == before:
+            return False
+        self.psidts_renewed = dt_util.utcnow()
+        self.empty_rotations = 0
+        return True
+
+    def session_storage(self) -> dict[str, str | None]:
+        """What the config entry keeps of the session (no secret in it)."""
+        return {
+            "started": self.session_started.isoformat() if self.session_started else None,
+            "renewed": self.psidts_renewed.isoformat() if self.psidts_renewed else None,
+        }
+
+    def session_summary(self) -> str:
+        """Age of the session and of its last renewal, for the log when Google ends it."""
+        now = dt_util.utcnow()
+
+        def ago(when: datetime | None) -> str:
+            return f"{(now - when).total_seconds() / 60:.0f} min ago" if when else "unknown"
+
+        return (
+            f"cookies pasted {ago(self.session_started)}, short-lived cookies last renewed {ago(self.psidts_renewed)}, "
+            f"{self.empty_rotations} rotation(s) in a row without renewal"
+        )
+
     def _take_cookies(self, response: aiohttp.ClientResponse) -> None:
+        before = self._psidts()
         if response.cookies and self.cookies.merge_set_cookies(response.cookies.items()):
             _LOGGER.debug("Google refreshed session cookies in an answer")
+            self._note_renewal(before)
             if self._on_cookies_changed:
                 self._on_cookies_changed(self.cookies)
 
@@ -232,6 +276,7 @@ class FamilyLinkClient:
             if since is not None and since < (ROTATION_SHARED_SECONDS if force else 60):
                 return False
             self.last_rotation = now
+            before = self._psidts()
             try:
                 async with self._session.post(
                     ROTATE_URL,
@@ -248,6 +293,7 @@ class FamilyLinkClient:
                     changed = bool(response.cookies) and self.cookies.merge_set_cookies(response.cookies.items())
                     if response.status == 200:
                         self.rotation_interval = _rotation_interval(await response.text())
+                        self._count_rotation(before)
                     _LOGGER.debug(
                         "Cookie rotation: HTTP %s, changed: %s, next in %ss",
                         response.status,
@@ -261,6 +307,18 @@ class FamilyLinkClient:
             if changed and self._on_cookies_changed:
                 self._on_cookies_changed(self.cookies)
             return changed
+
+    def _count_rotation(self, before: tuple[str | None, ...]) -> None:
+        """An accepted rotation that brings no new *PSIDTS: Google no longer renews the session, it ends soon."""
+        if self._note_renewal(before) or not any(before):
+            return
+        self.empty_rotations += 1
+        if self.empty_rotations == EMPTY_ROTATIONS_WARNING:
+            _LOGGER.warning(
+                "Google accepts the cookie rotation but no longer renews the short-lived session cookies: the session "
+                "will end soon (%s). Paste fresh cookies before it does — see the README",
+                self.session_summary(),
+            )
 
     @property
     def rotation_refused(self) -> bool:

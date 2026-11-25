@@ -26,6 +26,7 @@ from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
 )
+from homeassistant.util import dt as dt_util
 
 from .api import AuthError, FamilyLinkClient, FamilyLinkError, create_session
 from .auth import CookieFormatError, GoogleCookies
@@ -37,6 +38,7 @@ from .const import (
     CONF_PRONOTE,
     CONF_SCAN_INTERVAL,
     CONF_SCHOOL_APPS,
+    CONF_SESSION,
     CONF_STALE_AFTER,
     DEFAULT_LOCATION_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
@@ -51,6 +53,14 @@ from .models import parse_members, parse_my_email
 _LOGGER = logging.getLogger(__name__)
 
 URL = "https://familylink.google.com"
+
+
+def _new_session() -> dict[str, str]:
+    """Freshly pasted cookies: the session starts now, with short-lived cookies just renewed."""
+    now = dt_util.utcnow().isoformat()
+    return {"started": now, "renewed": now}
+
+
 COOKIES_SCHEMA = vol.Schema({vol.Required(CONF_COOKIES): TextSelector(TextSelectorConfig(multiline=True))})
 
 
@@ -96,7 +106,7 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
                     title=f"{NAME} ({email})" if email else NAME,
-                    data={CONF_COOKIES: cookies.to_storage(), CONF_ACCOUNT: email},
+                    data={CONF_COOKIES: cookies.to_storage(), CONF_ACCOUNT: email, CONF_SESSION: _new_session()},
                 )
         return self.async_show_form(
             step_id="user", data_schema=COOKIES_SCHEMA, errors=errors, description_placeholders={"url": URL}
@@ -115,7 +125,7 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
                 if email and entry.unique_id and email.lower() != entry.unique_id:
                     return self.async_abort(reason="wrong_account")
                 return self.async_update_reload_and_abort(
-                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage()}
+                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage(), CONF_SESSION: _new_session()}
                 )
         return self.async_show_form(
             step_id="reauth_confirm",
@@ -132,7 +142,7 @@ class FamilyLinkConfigFlow(ConfigFlow, domain=DOMAIN):
             if result and not errors:
                 cookies, _email, _count = result
                 return self.async_update_reload_and_abort(
-                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage()}
+                    entry, data={**entry.data, CONF_COOKIES: cookies.to_storage(), CONF_SESSION: _new_session()}
                 )
         return self.async_show_form(
             step_id="reconfigure", data_schema=COOKIES_SCHEMA, errors=errors, description_placeholders={"url": URL}

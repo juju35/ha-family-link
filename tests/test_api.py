@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from datetime import timedelta
 from unittest.mock import patch
 
 import aiohttp
@@ -206,3 +207,34 @@ async def test_rotation_interval_bounds_and_default(hass: HomeAssistant, aioclie
     c = client(hass)
     await c.rotate_cookies(force=True)
     assert c.rotation_interval == 600
+
+
+async def test_rotations_without_renewal_warn_that_the_session_ends(
+    hass: HomeAssistant, aioclient_mock, freezer, caplog
+) -> None:
+    rotate = "https://accounts.google.com/RotateCookies"
+    aioclient_mock.post(rotate, text="", cookies={"SIDCC": "sidcc-new"})
+    c = client(hass)
+    for _ in range(3):
+        freezer.tick(timedelta(minutes=10))
+        await c.rotate_cookies()
+    assert c.empty_rotations == 3
+    assert c.psidts_renewed is None
+    assert "no longer renews the short-lived session cookies" in caplog.text
+    # Google renews them again: the count starts over
+    aioclient_mock.clear_requests()
+    aioclient_mock.post(rotate, text="", cookies={"__Secure-1PSIDTS": "sidts-new"})
+    freezer.tick(timedelta(minutes=10))
+    await c.rotate_cookies()
+    assert c.empty_rotations == 0
+    assert c.psidts_renewed is not None
+    assert c.session_storage()["renewed"] == c.psidts_renewed.isoformat()
+
+
+async def test_rotation_without_short_lived_cookies_is_not_counted(hass: HomeAssistant, aioclient_mock) -> None:
+    aioclient_mock.post("https://accounts.google.com/RotateCookies", text="")
+    c = client(hass)
+    del c.cookies.values["__Secure-1PSIDTS"]
+    c.cookies.values.pop("__Secure-3PSIDTS", None)
+    await c.rotate_cookies(force=True)
+    assert c.empty_rotations == 0

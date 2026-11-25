@@ -287,6 +287,8 @@ async def test_diagnostics_redact(hass: HomeAssistant, aioclient_mock) -> None:
     for secret in ("sapisid/abc", "parent@example.com", "Alex", "48.11", data.PHONE):
         assert secret not in text
     assert diag["children"][0]["devices"][1]["status"] == "locked"
+    # The mocked start-up rotation brings no new short-lived cookie
+    assert diag["session"]["rotations_without_renewal"] == 1
 
 
 async def test_unload(hass: HomeAssistant, aioclient_mock) -> None:

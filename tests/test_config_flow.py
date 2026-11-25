@@ -18,6 +18,7 @@ from custom_components.family_link.const import (
     CONF_PRONOTE,
     CONF_SCAN_INTERVAL,
     CONF_SCHOOL_APPS,
+    CONF_SESSION,
     DOMAIN,
 )
 from custom_components.family_link.models import Member
@@ -84,6 +85,8 @@ async def test_reauth_and_reconfigure(hass: HomeAssistant, aioclient_mock) -> No
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_COOKIES: fresh})
     assert result["type"] is FlowResultType.ABORT and result["reason"] == "reauth_successful"
     assert entry.data[CONF_COOKIES]["__Secure-1PSIDTS"] == "sidts-fresh"
+    # Fresh cookies start a new session, recorded for the diagnostics
+    assert entry.data[CONF_SESSION]["started"] and entry.data[CONF_SESSION]["renewed"]
     await hass.async_block_till_done()
     result = await entry.start_reconfigure_flow(hass)
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_COOKIES: data.COOKIES})
