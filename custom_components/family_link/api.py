@@ -5,8 +5,8 @@ Reliability choices, compared with the clients this integration learned from:
 - transient failures (network, timeouts, HTTP 429 and 5xx) are retried with backoff, honoring Retry-After; an
   action (POST) is only retried when Google surely did not get it (no connection, HTTP 429), so a timeout after
   Google applied it never gives a bonus twice;
-- the short-lived session cookies Google rotates are taken from every answer and refreshed on a schedule
-  (RotateCookies, what the browser does), so the session lasts as long as in a browser;
+- the short-lived session cookies Google rotates are taken from every answer and refreshed at start, then as often
+  as Google asks (RotateCookies every 10 min, what the browser does), so the session lasts as long as in a browser;
 - a 401 first tries a rotation and one more signed attempt before reporting that a new sign-in is needed;
 - an own aiohttp session without cookie jar (see create_session): the cookies are sent as a raw header and the
   ones Google sets are kept here only, never in Home Assistant's shared session where other integrations calling
@@ -29,6 +29,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.util import dt as dt_util
 
 from .auth import ORIGIN, GoogleCookies
+from .const import ROTATE_COOKIES_INTERVAL, ROTATE_COOKIES_MAX_INTERVAL, ROTATE_COOKIES_MIN_INTERVAL
 from .models import (
     CHROMEOS_ID_MIN_LEN,
     CONTACT_LEVELS,
@@ -71,6 +72,8 @@ ROTATION_SHARED_SECONDS = 10
 LOCATION_REFRESH = "2"
 LOCATION_CACHED = "1"
 RING_ACTION = 2
+# Next rotation Google asks for in the RotateCookies answer: )]}' [["identity.hfcr",600],["di",N]]
+_HFCR_RE = re.compile(r'\[\s*"identity\.hfcr"\s*,\s*(\d+)\s*\]')
 _ID_RE = re.compile(r"^[A-Za-z0-9_\-.:]{4,200}$")
 _UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
 
@@ -131,6 +134,8 @@ class FamilyLinkClient:
         self.last_rotation: datetime | None = None
         # HTTP status of the last RotateCookies answer (None: not tried yet, or no answer)
         self.last_rotation_status: int | None = None
+        # Seconds until the next scheduled rotation, as Google asked in its last answer (identity.hfcr)
+        self.rotation_interval: int = ROTATE_COOKIES_INTERVAL
 
     def set_cookie_listener(self, listener: Callable[[GoogleCookies], None]) -> None:
         """Called with the cookies whenever Google rotated some of them (to save them)."""
@@ -241,7 +246,14 @@ class FamilyLinkClient:
                 ) as response:
                     self.last_rotation_status = response.status
                     changed = bool(response.cookies) and self.cookies.merge_set_cookies(response.cookies.items())
-                    _LOGGER.debug("Cookie rotation: HTTP %s, changed: %s", response.status, changed)
+                    if response.status == 200:
+                        self.rotation_interval = _rotation_interval(await response.text())
+                    _LOGGER.debug(
+                        "Cookie rotation: HTTP %s, changed: %s, next in %ss",
+                        response.status,
+                        changed,
+                        self.rotation_interval,
+                    )
             except (TimeoutError, aiohttp.ClientError) as err:
                 self.last_rotation_status = None
                 _LOGGER.debug("Cookie rotation failed: %s", err)
@@ -477,6 +489,14 @@ class _Retry(Exception):
         super().__init__(message)
         self.status = status
         self.retry_after = retry_after
+
+
+def _rotation_interval(text: str) -> int:
+    """Seconds until the next rotation Google asks for (identity.hfcr), kept in bounds; the default without it."""
+    match = _HFCR_RE.search(text or "")
+    if not match:
+        return ROTATE_COOKIES_INTERVAL
+    return max(ROTATE_COOKIES_MIN_INTERVAL, min(ROTATE_COOKIES_MAX_INTERVAL, int(match.group(1))))
 
 
 def _retry_after(value: str | None) -> float | None:

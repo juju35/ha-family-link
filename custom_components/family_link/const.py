@@ -22,7 +22,11 @@ DEFAULT_SCAN_INTERVAL: Final = 120  # seconds: screen time, locks, bonuses
 DEFAULT_LOCATION_INTERVAL: Final = 300  # seconds: last known location (no refresh asked to the device)
 DEFAULT_STALE_AFTER: Final = 3600  # seconds the cached data is shown after the last success before going unavailable
 MEMBERS_INTERVAL: Final = 3600  # seconds: family members (children, names, photos) change rarely
-ROTATE_COOKIES_INTERVAL: Final = 6 * 3600  # seconds between two rotations of the short-lived session cookies
+# Seconds between two rotations of the short-lived session cookies (__Secure-*PSIDTS), as a browser left open does.
+# Google asks for the next one in its RotateCookies answer (identity.hfcr, 600 s today): that value wins, bounded.
+ROTATE_COOKIES_INTERVAL: Final = 10 * 60
+ROTATE_COOKIES_MIN_INTERVAL: Final = 60
+ROTATE_COOKIES_MAX_INTERVAL: Final = 3600
 
 # Status of a child or a device (header icon color of the cards, enum sensor)
 STATUS_TRACKED: Final = "tracked"

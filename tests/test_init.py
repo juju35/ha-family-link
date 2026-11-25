@@ -166,6 +166,7 @@ async def test_reauth_notification_explains_a_bound_session(hass: HomeAssistant,
     aioclient_mock.get(f"{data.BASE}/people/{data.CHILD}/appliedTimeLimits", status=401)
     aioclient_mock.get(f"{data.BASE}/families/mine/location/{data.CHILD}", status=401)
     aioclient_mock.post("https://accounts.google.com/RotateCookies", status=401, text="")
+    coordinator.client.last_rotation = None  # the start-up rotation is long past
     await coordinator.async_refresh()
     await coordinator.async_refresh()
     await hass.async_block_till_done()
@@ -361,3 +362,24 @@ async def test_remove_device_by_hand(hass: HomeAssistant, aioclient_mock) -> Non
     old = registry.async_get_or_create(config_entry_id=entry.entry_id, identifiers={(DOMAIN, "oldphone123")})
     assert not await async_remove_config_entry_device(hass, entry, child)
     assert await async_remove_config_entry_device(hass, entry, old)
+
+
+async def test_cookies_rotate_at_start_then_every_ten_minutes(hass: HomeAssistant, aioclient_mock, freezer) -> None:
+    """A session not rotated within the window Google asks for (10 min) stops being renewed (#19)."""
+    entry = await setup(hass, aioclient_mock)
+    rotate = "https://accounts.google.com/RotateCookies"
+
+    def rotations() -> int:
+        return [str(url) for _method, url, *_ in aioclient_mock.mock_calls].count(rotate)
+
+    freezer.tick(timedelta(seconds=1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert rotations() == 1
+    assert entry.runtime_data.client.rotation_interval == 600
+    freezer.tick(timedelta(seconds=601))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert rotations() == 2
+    await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()

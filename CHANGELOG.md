@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.7 - 2026-11-25
+
+### Fixes
+- The Google session no longer dies after about two hours: the short-lived session cookies (`__Secure-*PSIDTS`) are now rotated every 10 minutes, the cadence Google asks for in its `RotateCookies` answer (`identity.hfcr`, followed when present, bounded between 1 min and 1 h), instead of every 6 hours, by which time Google had stopped renewing them. A rotation also runs right at start-up, so a Home Assistant restart no longer leaves hours-old cookies waiting for the first one. The diagnostics show the rotation interval (#19).
+
 ## 1.2.6 - 2026-11-24
 
 ### Maintenance

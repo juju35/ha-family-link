@@ -66,4 +66,4 @@ export function pickerDefine(tag, Card, options) {
   return customElements.define(tag, lazy, options);
 }
 
-export var FAMILY_LINK_CARD_VERSION = '1.2.6';
+export var FAMILY_LINK_CARD_VERSION = '1.2.7';
