@@ -2,6 +2,7 @@
   "domain": "family_link",
   "name": "Family Link",
   "after_dependencies": ["lovelace", "recorder"],
+  "categories": ["presence_location.phones_companion_apps"],
   "codeowners": ["@juju35"],
   "config_flow": true,
   "dependencies": ["frontend", "http"],
