@@ -338,46 +338,46 @@ A click on the location tile (or **Locate**) opens a popup at the top of the car
 
 ### Animations
 
-Each animation of the cards, in the dark and light themes.
+Each animation of the cards, in the light and dark themes.
 
 **Phone**: the week's screen time rises with today's bar in the status color, the apps bob, a scan sweeps the screen, protection waves spread out and the shield pulses while the child is tracked; the location tile pings the last position.
 
-| Dark | Light |
+| Light | Dark |
 |---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-phone.gif" alt="phone animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-phone-light.gif" alt="phone animation, light" width="360"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-phone.gif" alt="phone animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-phone-dark.gif" alt="phone animation, dark" width="360"> |
 
 **Locked tablet**: the screen dims, the padlock drops in and its shackle snaps shut, with the reason (locked by a parent, bedtime, school time, daily limit).
 
-| Dark | Light |
+| Light | Dark |
 |---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-tablet-locked.gif" alt="locked tablet animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-tablet-locked-light.gif" alt="locked tablet animation, light" width="360"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-tablet-locked.gif" alt="locked tablet animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-tablet-locked-dark.gif" alt="locked tablet animation, dark" width="360"> |
 
 **Running bonus**: the band shines, its ring empties as the bonus runs out.
 
-| Dark | Light |
+| Light | Dark |
 |---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-bonus.gif" alt="bonus animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-bonus-light.gif" alt="bonus animation, light" width="360"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-bonus.gif" alt="bonus animation" width="360"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-bonus-dark.gif" alt="bonus animation, dark" width="360"> |
 
 **Mini card with two devices**: each device fills up with the time used; a locked one shows its padlock.
 
-| Dark | Light |
+| Light | Dark |
 |---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-mini-devices.gif" alt="mini card animation" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-mini-devices-light.gif" alt="mini card animation, light" width="300"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-mini-devices.gif" alt="mini card animation" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/anim-mini-devices-dark.gif" alt="mini card animation, dark" width="300"> |
 
 ### Cards
 
-| | Dark | Light |
+| | Light | Dark |
 |---|---|---|
-| Phone | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card.png" alt="card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-light.png" alt="card, light" width="320"> |
-| Locked tablet | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked.png" alt="locked tablet" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked-light.png" alt="locked tablet, light" width="320"> |
-| Bonus running | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus.png" alt="bonus" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus-light.png" alt="bonus, light" width="320"> |
-| Location popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location.png" alt="location popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location-light.png" alt="location popup, light" width="320"> |
-| School mode (Pronote) | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school.png" alt="school mode" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school-light.png" alt="school mode, light" width="320"> |
-| Emergency popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency.png" alt="emergency popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency-light.png" alt="emergency popup, light" width="320"> |
-| Mini, one device | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-light.png" alt="mini card, light" width="300"> |
-| Mini, two devices | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices.png" alt="mini card, devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices-light.png" alt="mini card, devices, light" width="300"> |
-| Mini, bedtime | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked.png" alt="mini card, bedtime" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked-light.png" alt="mini card, bedtime, light" width="300"> |
-| Mini, expanded | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom.png" alt="mini card expanded to the full card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom-light.png" alt="mini card expanded to the full card, light" width="320"> |
+| Phone | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card.png" alt="card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-dark.png" alt="card, dark" width="320"> |
+| Locked tablet | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked.png" alt="locked tablet" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-tablet-locked-dark.png" alt="locked tablet, dark" width="320"> |
+| Bonus running | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus.png" alt="bonus" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-bonus-dark.png" alt="bonus, dark" width="320"> |
+| Location popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location.png" alt="location popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-location-dark.png" alt="location popup, dark" width="320"> |
+| School mode (Pronote) | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school.png" alt="school mode" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-school-dark.png" alt="school mode, dark" width="320"> |
+| Emergency popup | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency.png" alt="emergency popup" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/card-emergency-dark.png" alt="emergency popup, dark" width="320"> |
+| Mini, one device | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-dark.png" alt="mini card, dark" width="300"> |
+| Mini, two devices | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices.png" alt="mini card, devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-devices-dark.png" alt="mini card, devices, dark" width="300"> |
+| Mini, bedtime | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked.png" alt="mini card, bedtime" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-locked-dark.png" alt="mini card, bedtime, dark" width="300"> |
+| Mini, expanded | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom.png" alt="mini card expanded to the full card" width="320"> | <img src="https://raw.githubusercontent.com/juju35/ha-family-link/main/screenshots/mini-card-zoom-dark.png" alt="mini card expanded to the full card, dark" width="320"> |
 
 ## How it works
 
