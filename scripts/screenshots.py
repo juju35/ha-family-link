@@ -306,7 +306,7 @@ async def main() -> None:
                     await page.locator("#wrap .zoom").click()
                     await page.mouse.move(0, 0)
                 card = await page.query_selector("#wrap")
-                suffix = "" if theme == "dark" else "-light"
+                suffix = "" if theme == "light" else "-dark"
                 if name in GIFS:
                     frames = []
                     for _ in range(GIF_FRAMES):

@@ -1007,7 +1007,7 @@ export class FamilyLinkCard extends HTMLElement {
 
       /* Tiles, apps */
       .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); grid-auto-flow: column; gap: 8px; }
-      .tile { background: var(--secondary-background-color, rgba(127,127,127,.08)); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; border: none; text-align: left; }
+      .tile { background: var(--secondary-background-color, rgba(127,127,127,.08)); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; border: none; text-align: left; }
       .tile.clickable { cursor: pointer; }
       .tile small { font-size: 11px; color: var(--secondary-text-color); }
       .tile b { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
